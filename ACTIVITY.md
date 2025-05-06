@@ -7,8 +7,8 @@ Created PR: https://github.com/remla25-team18/model-training/pull/1
 Approved PR: https://github.com/remla25-team18/app-frontend/pull/1
 
 -- Lemon: --  
-Created PR: ...  
-Approved PR: ...
+Created PR: https://github.com/remla25-team18/app-service/pull/4
+Approved PR: https://github.com/remla25-team18/model-service/pull/5
 
 -- Madalena: --  
 Created PR: https://github.com/remla25-team18/lib-version/pull/1 
