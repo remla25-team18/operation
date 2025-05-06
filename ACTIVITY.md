@@ -3,8 +3,8 @@
 Each of us created and approved more than 1 pull request but we will show only 1 created and 1 approved pull request for each member for the sake of simplicity.
 
 -- Lászlo: --  
-Created PR: ...  
-Approved PR: ...
+Created PR: https://github.com/remla25-team18/model-training/pull/1
+Approved PR: https://github.com/remla25-team18/app-frontend/pull/1
 
 -- Lemon: --  
 Created PR: ...  
