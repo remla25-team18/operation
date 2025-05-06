@@ -1,0 +1,21 @@
+version: '3.9'
+
+services:
+  web-app:
+    build:
+      context: ../app
+    container_name: app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - model-service
+    environment:
+      - MODEL_SERVICE_URL=model-service
+      - MODEL_SERVICE_PORT=5050
+
+  model-service:
+    build:
+      context: ../model-service
+    container_name: model-service
+    ports:
+      - "5050:5050"
