@@ -18,14 +18,9 @@ The following repositories are relevant for our REMLA group 18 project:
 - [lib-ml](https://github.com/remla2) - the library that contains a method to process input data.
 - [lib-version](https://github.com/remla25-team18/lib-version) - the library that can read its own version.
 
-## Code base overview
-
-
 ## Progress log
 
-
-# TODO:
-– An explanation on how to start the application (e.g., parameters, variables, requirements).
-– Pointers to relevant files that help outsiders understand the code base.
-– Add a new paragraph for each assignment as a continuous progress log that (briefly) describes which assignment parts have been implemented to support the peer-review process.
-
+- We created a structured organization with several repositories that are responsible for different parts of the project. Operation repository contains a README.md, provides the steps to run the application and docker-compose.yml file to run the whole project.
+- We created a workflow which automatically versions the artifacts and increases patch versions and bumps the version to the next pre-release version. Main is set to a pre-release after a stable release.
+- We released libraries lib-version and lib-ml through GitHub packages. lib-ml is reused in both model-training and model-service. A trained model is not part of a container image. 
+- We used REST API to communicate between the app and model-service, also within the app. DNS name and port are defined as ENV variables. All server endpoints have a well-defined API definition that follows Open API Specification. 
