@@ -3,7 +3,32 @@ REMLA Group Project | Group 18
 
 ## How to run
 
-?...
+Since there're still some issues with docker-compose, here we demonstate how to run locally.
+
+### Model
+
+To start the model-service, cd the `model-service` folder and run:
+```bash
+pip install -r requirements.txt
+python app.py
+```
+
+
+### App
+
+To start the App-service, cd the `app-service` folder and run:
+```bash
+node server.js
+```
+
+This frontend was generated using [Angular CLI](https://github.com/angular/angular-cli). To start a local development server, cd the `app-frontend` folder and run:
+
+```bash
+ng serve
+```
+
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
 
 ## Relevant repositories
 
