@@ -3,6 +3,12 @@
   hosts: all
   become: yes # execute the commands with elevated privileges
   tasks:
+    - name: Set up multiple authorized keys
+      ansible.posix.authorized_key:
+        user: deploy
+        state: present
+        key: '{{item}}'
+      with_file: 
 
     - name: Update apt package index
       apt: update_cache=yes # sudo apt update
