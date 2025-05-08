@@ -5,10 +5,12 @@
   tasks:
     - name: Set up multiple authorized keys
       ansible.posix.authorized_key:
-        user: deploy
+        user: vagrant
         state: present
         key: '{{item}}'
-      with_file: 
+      with_file:
+        - "ssh-keys/lemon.pub"
+        - "ssh-keys/madalena.pub"
 
     - name: Update apt package index
       apt: update_cache=yes # sudo apt update
