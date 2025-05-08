@@ -53,4 +53,4 @@ There you will see the running output of all the defined tasks.
 ```bash
 vagrant destroy -f
 ```
-Notion that this means next time you need to build the VM from scratch, which takes time.
+Note that this means next time you need to build the VM from scratch, which takes time.
