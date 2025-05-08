@@ -1,0 +1,62 @@
+---
+- name: Basic setup for all nodes
+  hosts: all
+  become: yes # execute the commands with elevated privileges
+  tasks:
+
+    - name: Update apt package index
+      apt: update_cache=yes # sudo apt update
+
+    - name: Install basic tools
+      apt: # manage packages
+        name: ["curl", "wget", "apt-transport-https"]
+        state: present # Ensures the package is installed.
+
+    - name: Install Docker
+      apt: 
+        name: docker.io
+        state: present
+
+    - name: Run Docker
+      service: 
+        name: docker
+        state: started
+        enabled: yes
+        
+    - name: Add vagrant user to docker group
+      user:
+        name: vagrant
+        groups: docker
+        append: yes
+
+    - name: Install kubectl
+      get_url:
+        url: https://storage.googleapis.com/kubernetes-release/release/v1.28.0/bin/linux/amd64/kubectl
+        dest: /usr/local/bin/kubectl
+        mode: '0755'
+      when: ansible_os_family != 'Debian'
+
+    - name: Disable swap
+      shell: |
+        swapoff -a
+        sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+    - name: Load kernel modules
+      shell: |
+        modprobe overlay
+        modprobe br_netfilter
+      register: modprobe
+      changed_when: false
+
+    - name: Configure sysctl
+      copy:
+        dest: /etc/sysctl.d/99-kubernetes.conf
+        content: |
+          net.bridge.bridge-nf-call-iptables  = 1
+          net.ipv4.ip_forward                 = 1
+          net.bridge.bridge-nf-call-ip6tables = 1
+      notify: reload sysctl
+
+  handlers:
+    - name: reload sysctl
+      command: sysctl --system
