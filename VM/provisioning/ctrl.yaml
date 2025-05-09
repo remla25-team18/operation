@@ -1,0 +1,17 @@
+---
+- name: Set up for control node
+  hosts: ctrl
+  become: yes
+  tasks:
+    # - name: Install k3s server
+    #   shell: |
+    #     curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik --write-kubeconfig-mode=644 --node-external-ip 192.168.56.2 --flannel-external-ip 192.168.56.2" sh -
+
+    # - name: Get k3s node token
+    #   command: cat /var/lib/rancher/k3s/server/node-token
+    #   register: node_token
+
+    # - name: Save node token
+    #   copy:
+    #     content: "{{ node_token.stdout }}"
+    #     dest: /vagrant/k3s_node_token
