@@ -18,6 +18,26 @@ Approved PR: https://github.com/remla25-team18/app-service/pull/1
 Created PR: https://github.com/remla25-team18/model-service/pull/2
 Approved PR: https://github.com/remla25-team18/model-training/pull/1
 
+
 # A2:
+
+-- Lászlo: --  
+Created PR: 
+Approved PR: 
+
+-- Lemon: --  
+Created PR: 
+Approved PR: 
+
+-- Madalena: --  
+Created PR: https://github.com/remla25-team18/operation/pull/4
+Approved PR: https://github.com/remla25-team18/operation/pull/3
+
+-- Yahor: -- 
+Created PR: 
+Approved PR: 
+
+
+# A3:
 
 ```
