@@ -8,11 +8,12 @@ Inside `./provisioning`, you can find `general.yaml`, which works for all VM, `c
 
 Make sure you're in `./VM` folder, then run the following command.
 
-1. To start the VM:
+1. To boot all the VM, use the following line:
 
 ```bash
-vagrant up
+vagrant up --parallel --no-provision
 ```
+By default, Vagrant will only run the first VM, but here we need all the three VMs to be running, so the `--parallel` is necessary here. 
 
 To validate the running process, run 
 `vagrant status`. If it successfully runs, you should get the output like this:
@@ -29,25 +30,28 @@ This environment represents multiple VMs. The VMs are all listed
 above with their current state. For more information about a specific
 VM, run `vagrant status NAME`.
 ```
+**Only when you see the three nodes are all running, go to the next step.**
 
-2. To verify the setup, you can ssh into the control mode of the VM using 
+2. (Optional)To verify the setup, you can ssh into the control mode of the VM using 
 ```bash
 vagrant ssh <name>
 ```
 where `<name> = ctrl / node-1 / node-2 `. The command for quiting ssh mode is `exit`.
 
-3. While you're working, you can use this to reload/suspend/resume:
+3. If this your first time running the VM, do `vagrant provision` for once. If you modify the ansible files(the `yaml` files under `./provisioning`), you don't need to reload VM, just run:
+```bash
+vagrant provision
+```
+There you will see the running output of all the defined tasks.
+
+
+4. (Optional)While you're working, you can use this to reload/suspend/resume:
 ```bash
 vagrant reload
 vagrant suspend
 vagrant resume
 ```
 
-4. If you modify the ansible files(the `yaml` files under `./provisioning`), you don't need to reload VM, just run:
-```bash
-vagrant provision
-```
-There you will see the running output of all the defined tasks.
 
 5. When you finish working, you can permanently delete the VMs using:
 ```bash

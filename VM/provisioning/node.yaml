@@ -3,18 +3,18 @@
   hosts: nodes
   become: yes
   tasks:
-    - name: Fetch node token from controller
-      slurp:
-        src: /vagrant/k3s_node_token
-      register: token_content
+    # - name: Fetch node token from controller
+    #   slurp:
+    #     src: /vagrant/k3s_node_token
+    #   register: token_content
 
-    - name: Save node token locally
-      copy:
-        content: "{{ token_content.content | b64decode }}" # Decode using base64 format
-        dest: /tmp/k3s_node_token
+    # - name: Save node token locally
+    #   copy:
+    #     content: "{{ token_content.content | b64decode }}" # Decode using base64 format
+    #     dest: /tmp/k3s_node_token
 
-    - name: Install k3s agent
-      shell: |
-        curl -sfL https://get.k3s.io | K3S_URL=https://192.168.56.2:6443 K3S_TOKEN=$(cat /tmp/k3s_node_token) sh -
-      args:
-        executable: /bin/bash
+    # - name: Install k3s agent
+    #   shell: |
+    #     curl -sfL https://get.k3s.io | K3S_URL=https://192.168.56.2:6443 K3S_TOKEN=$(cat /tmp/k3s_node_token) sh -
+    #   args:
+    #     executable: /bin/bash
