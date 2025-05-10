@@ -7,6 +7,12 @@ Under **operation** folder, run:
 docker-compose up
 ```
 
+Then you should be able to see the web page running at [http://127.0.0.1:4200/](http://127.0.0.1:4200/).
+
+> **Note:** This port is the default. To ensure it's the same port on your computer, check the terminal output, as shown in the image below:
+
+![Docker Port Output](Assets/docker_port.png)
+
 
 ## Relevant repositories
 
