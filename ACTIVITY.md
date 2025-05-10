@@ -26,8 +26,8 @@ Created PR:
 Approved PR: 
 
 -- Lemon: --  
-Created PR: https://github.com/remla25-team18/app/pull/3
-Approved PR: https://github.com/remla25-team18/app/pull/5
+Created PR: https://github.com/remla25-team18/operation/pull/3
+Approved PR: # TODO
 
 -- Madalena: --  
 Created PR: https://github.com/remla25-team18/operation/pull/4
