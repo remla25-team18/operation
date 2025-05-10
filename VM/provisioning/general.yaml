@@ -48,6 +48,90 @@
         mode: '0755'
       when: ansible_os_family != 'Debian'
 
+    - name: Add signing key
+      ansible.builtin.apt_key:
+        url: https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key
+        state: present
+
+    - name: Add kubernetes repository
+      ansible.builtin.apt_repository:
+        repo: deb https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /
+        state: present
+        filename: kubernetes.list
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+
+    # do "vagrant ssh ctrl" for example
+    # and check versions with "apt-cache policy containerd"
+    # so that the version to be installed is the same as the one in the apt-cache policy
+    - name: Install containerd
+      ansible.builtin.apt:
+        name: containerd=1.7.24-0ubuntu1~24.04.2
+        state: present
+
+    - name: Install runc (container runtime)
+      ansible.builtin.apt:
+        name: runc=1.1.12-0ubuntu3.1
+        state: present
+
+    - name: Install basic kubernetes tools
+      ansible.builtin.apt:
+        name:
+          - kubeadm=1.32.4-1.1
+          - kubelet=1.32.4-1.1
+          - kubectl=1.32.4-1.1
+        state: present
+
+    # configure containerd
+    - name: Ensure etc/containerd exits
+      ansible.builtin.file:
+        path: /etc/containerd
+        state: directory
+
+    - name: Get default containerd configuration
+      ansible.builtin.shell: containerd config default > /etc/containerd/config.toml
+      args:
+        creates: /etc/containerd/config.toml # only created the first time around, after that just line tweaks
+
+    # do "vagrant ssh ctrl" for example
+    # and check the content of the file with "cat /etc/containerd/config.toml"
+    - name: Disable AppArmor
+      ansible.builtin.lineinfile:
+        path: /etc/containerd/config.toml
+        regexp: '^(\s*)disable_apparmor' # does not capture indentation
+        line: 'disable_apparmor = true'
+        state: present
+        backup: yes # for debug
+
+    - name: Update sandbox image version
+      ansible.builtin.lineinfile:
+        path: /etc/containerd/config.toml
+        regexp: '^(\s*)sandbox_image' # does not capture indentation
+        line: 'sandbox_image = "registry.k8s.io/pause:3.10"'
+        state: present
+        backup: yes # for debug
+
+    - name: Setup systemd cgroup
+      ansible.builtin.lineinfile:
+        path: /etc/containerd/config.toml
+        regexp: '^(\s*)SystemdCgroup' # does not capture indentation
+        line: 'SystemdCgroup = true'
+        state: present
+        backup: yes # for debug
+
+    - name: Restart containerd service
+      ansible.builtin.service:
+        name: containerd
+        state: restarted
+        enabled: yes
+
+    - name: Auto start kubelet service with system boots
+      ansible.builtin.service:
+        name: kubelet
+        enabled: yes
+        state: started
 
     # ----- Section 3: Kubenetes setting -------------
     - name: Disable swap
@@ -82,6 +166,14 @@
           net.ipv4.ip_forward                 = 1
           net.bridge.bridge-nf-call-ip6tables = 1
       notify: reload sysctl
+
+    - name: Manage /etc/hosts with Jinja2
+      ansible.builtin.template:
+        src: templates/hosts.j2
+        dest: /etc/hosts
+        owner: root
+        group: root
+        mode: '0644'
 
   handlers:
     - name: reload sysctl
