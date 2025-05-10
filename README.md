@@ -2,32 +2,10 @@ REMLA Group Project | Group 18
 ====
 
 ## How to run
-
-Since there're still some issues with docker-compose, here we demonstate how to run locally.
-
-### Model
-
-To start the model-service, cd the `model-service` folder and run:
+Under **operation** folder, run:
 ```bash
-pip install -r requirements.txt
-python app.py
+docker-compose up
 ```
-
-
-### App
-
-To start the App-service, cd the `app-service` folder and run:
-```bash
-node server.js
-```
-
-This frontend was generated using [Angular CLI](https://github.com/angular/angular-cli). To start a local development server, cd the `app-frontend` folder and run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
 
 ## Relevant repositories
@@ -35,9 +13,7 @@ Once the server is running, open your browser and navigate to `http://localhost:
 The following repositories are relevant for our REMLA group 18 project:
 
 - [operation](https://github.com/remla25-team18/operation) - stores models and their versions, pointers to other repositories, general instructions how to run the app and a docker-compose file to run the whole project.
-- [app](https://github.com/remla25-team18/app) - the main repository that contains the following sub-repositories:
-    - [app-frontend](https://github.com/remla25-team18/app-frontend) - the frontend of the application, which is a web app that allows users to interact with the model and provide feedback.
-    - [app-service](https://github.com/remla25-team18/model-service) - the backend of the application, which is a REST API that serves the model and handles user requests.
+- [app](https://github.com/remla25-team18/app) - the app repository that use Flask framework to contain the frontend of the application, which is a web app that allows users to interact with the model and provide feedback and the backend of the application.
 - [model-service](https://github.com/remla25-team18/model-service) - the model service, which is a REST API that serves the model and is responsible for sending generating predictions for requested comments.
 - [model-training](https://github.com/remla25-team18/model-training) - the component that is responsible for training the model and generating a model version.
 - [lib-ml](https://github.com/remla2) - the library that contains a method to process input data.
