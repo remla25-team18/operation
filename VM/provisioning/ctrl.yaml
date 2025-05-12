@@ -1,17 +1,89 @@
----
-- name: Set up for control node
+- name: Initialize Kubernetes Cluster
   hosts: ctrl
   become: yes
+  gather_facts: yes
+  vars:
+    kube_apiserver_advertise_address: 192.168.56.100
+    kube_node_name: ctrl
+    kube_pod_network_cidr: 10.244.0.0/16
+    kube_config_path: /etc/kubernetes/admin.conf  
+
+
   tasks:
-    # - name: Install k3s server
-    #   shell: |
-    #     curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik --write-kubeconfig-mode=644 --node-external-ip 192.168.56.2 --flannel-external-ip 192.168.56.2" sh -
+    - name: Check if K8s cluster is already initialized
+      stat:
+        path: "{{ kube_config_path }}"
+      register: kube_config
 
-    # - name: Get k3s node token
-    #   command: cat /var/lib/rancher/k3s/server/node-token
-    #   register: node_token
+    - name: Initialize Kubernetes with kubeadm
+      command: >
+        kubeadm init
+        --apiserver-advertise-address={{ kube_apiserver_advertise_address }}
+        --node-name={{ kube_node_name }}
+        --pod-network-cidr={{ kube_pod_network_cidr }}     
+      when: not kube_config.stat.exists
 
-    # - name: Save node token
-    #   copy:
-    #     content: "{{ node_token.stdout }}"
-    #     dest: /vagrant/k3s_node_token
+    - name: Create .kube directory for root user
+      file:
+        path: /root/.kube
+        state: directory
+        mode: 0700
+      when: not kubeadm_already_done.stat.exists
+
+    - name: Copy admin.conf to root's kube config
+      copy:
+        src: "{{ kube_config_path }}"
+        dest: /root/.kube/config
+        remote_src: yes
+      when: not kubeadm_already_done.stat.exists
+
+    - name: Create .kube directory for vagrant
+      file:
+        path: /home/vagrant/.kube
+        state: directory
+        owner: vagrant
+        group: vagrant
+        mode: 0755
+      when: not kubeadm_already_done.stat.exists
+
+    - name: Copy admin.conf to vagrant's kube config
+      copy:
+        src: "{{ kube_config_path }}"
+        dest: /home/vagrant/.kube/config
+        remote_src: yes
+        owner: vagrant
+        group: vagrant
+        mode: 0644
+      when: not kubeadm_already_done.stat.exists
+
+    - name: Copy kube config to shared folder for host access
+      copy:
+        src: "{{ kube_config_path }}"
+        dest: /vagrant/admin.conf
+        remote_src: yes
+        mode: 0644
+      when: not kubeadm_already_done.stat.exists
+
+    - name: Apply Flannel CNI with --iface=eth1
+      command: kubectl apply -f /vagrant/provisioning/kube-flannel-modified.yml
+      environment:
+        KUBECONFIG: "{{ kube_config_path }}"
+      when: not kubeadm_already_done.stat.exists
+
+# Step 16
+- name: Helm
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Install Helm
+      shell: |
+        curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+        sudo apt-get install apt-transport-https --yes
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+        sudo apt-get update
+        sudo apt-get install helm
+
+    - name: Add helm diff
+      command: >
+          helm plugin install https://github.com/databus23/helm-diff 

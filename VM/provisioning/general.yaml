@@ -7,10 +7,11 @@
       ansible.posix.authorized_key:
         user: vagrant
         state: present
-        key: '{{item}}'
+        key: "{{item}}"
       with_file:
         - "ssh-keys/lemon.pub"
         - "ssh-keys/madalena.pub"
+        - "ssh-keys/laszlo.pub"
 
     # ----- Section 0: Install basic dependencies.------
     - name: Update apt package index
@@ -23,29 +24,28 @@
 
     # ----- Section 1: Install & Run Docker ------------
     - name: Install Docker
-      apt: 
+      apt:
         name: docker.io
         state: present
 
     - name: Run Docker
-      service: 
+      service:
         name: docker
         state: started
         enabled: yes
-        
+
     - name: Add vagrant user to docker group
       user:
         name: vagrant
         groups: docker
         append: yes
 
-    
     # ----- Section 2: Install Kubenetes dependency ----
     - name: Install kubectl
       get_url:
         url: https://storage.googleapis.com/kubernetes-release/release/v1.28.0/bin/linux/amd64/kubectl
         dest: /usr/local/bin/kubectl
-        mode: '0755'
+        mode: "0755"
       when: ansible_os_family != 'Debian'
 
     - name: Add signing key
@@ -101,7 +101,7 @@
       ansible.builtin.lineinfile:
         path: /etc/containerd/config.toml
         regexp: '^(\s*)disable_apparmor' # does not capture indentation
-        line: 'disable_apparmor = true'
+        line: "disable_apparmor = true"
         state: present
         backup: yes # for debug
 
@@ -117,7 +117,7 @@
       ansible.builtin.lineinfile:
         path: /etc/containerd/config.toml
         regexp: '^(\s*)SystemdCgroup' # does not capture indentation
-        line: 'SystemdCgroup = true'
+        line: "SystemdCgroup = true"
         state: present
         backup: yes # for debug
 
@@ -133,7 +133,7 @@
         enabled: yes
         state: started
 
-    # ----- Section 3: Kubenetes setting -------------
+    # ----- Section 3: Kubernetes settings -------------
     - name: Disable swap
       shell: |
         swapoff -a
@@ -152,7 +152,7 @@
           overlay
           br_netfilter
         mode: "0644" # authorization for file
-    
+
     - name: Load module
       modprobe:
         name: br_netfilter
@@ -173,7 +173,7 @@
         dest: /etc/hosts
         owner: root
         group: root
-        mode: '0644'
+        mode: "0644"
 
   handlers:
     - name: reload sysctl
