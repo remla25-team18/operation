@@ -65,7 +65,7 @@
       when: not kube_config.stat.exists
 
     - name: Apply Flannel CNI with --iface=eth1
-      command: kubectl apply -f /vagrant/provisioning/kube-flannel-modified.yml
+      command: kubectl apply -f /vagrant/provisioning/kube-flannel.yml
       environment:
         KUBECONFIG: "{{ kube_config_path }}"
       when: not kube_config.stat.exists
