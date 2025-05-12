@@ -2,6 +2,52 @@ REMLA Group Project | Group 18
 ====
 
 ## How to run
+
+### Assignment 2
+For assignment 2, here are the steps to run the project:
+
+1. Make sure you're in `./VM` folder, by doing:
+
+```bash
+cd VM
+```
+
+2. To boot all the VMs, use the following:
+
+```bash
+vagrant up
+```
+
+To validate the running process, run
+
+```bash
+vagrant status
+```
+If it successfully runs, you should get the output like this:
+
+```
+Current machine states:
+
+ctrl                      running (virtualbox)
+node-1                    running (virtualbox)
+node-2                    running (virtualbox)
+
+This environment represents multiple VMs. The VMs are all listed above with their current state. For more information about a specific VM, run `vagrant status NAME`.
+
+```
+3. To finalize the cluster setup, run the following command from the `./VM` folder:
+```bash
+ansible-playbook -u vagrant -i 192.168.56.100, provisioning/finalization.yml
+```
+
+4. When you finish working, you can permanently delete the VMs using:
+```bash
+vagrant destroy -f
+```
+Note: this means next time you need to build the VMs from scratch, which takes time.
+
+### Assignment 1
+For assignment 1, we have created a docker-compose file that allows you to run the entire project with a single command.
 Under **operation** folder, run:
 ```bash
 docker-compose up
