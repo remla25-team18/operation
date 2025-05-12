@@ -1,3 +1,12 @@
+## Required Software
+
+To run this project, the following applications need to be installed on your system:
+
+- Docker
+- Vagrant
+- VirtualBox
+- Ansible
+
 ## Repository Links:
 
 Our project is composed of the following repositories:
@@ -22,19 +31,16 @@ Git tags for every repo to be reviewed are marked with $a2$.
 
 We have finished the following aspects:
 
+- Set up VM infrastructure
+- Set up Software environment
+- Set up basic Kubernetes cluster
+
 We haven't finished the following:
+
+- Setting up Istio service mesh
 
 ## Comments for A1:
 
 Git tags for every repo to be reviewed are marked with $a1$.
 
-We have finished the following aspects:
-- Basic Requirements for Data Availability and Sensible Use Case;
-- Automated Release Process, which can be triggered by `git push origin <vx.x.x>`;
-- Exposing a Model via REST, all ports and DNS are defined as env variable;
-- A dummy docker compose.
-
-
-We haven't finished the following:
-- We have packaged lib-ml, but not for lib-version.
-- The Docker Compose Operation is not fully functioning because we have 3 separate images for app-frontend, app-service and model-service now.
+For A1, all `Good` requirements have been met. Some excellent criteria are also met, but not all.
