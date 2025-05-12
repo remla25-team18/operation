@@ -1,9 +1,9 @@
 ---
-- hosts: ctrl
+- hosts: 192.168.56.100
   become: yes
   tasks:
     # Step 20: MetalLB Installation
-    - name: Install MetalLB natve
+    - name: Install MetalLB native manifest
       command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.7/config/manifests/metallb-native.yaml
 
     - name: Wait for MetalLB to be ready

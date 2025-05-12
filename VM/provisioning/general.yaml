@@ -12,6 +12,7 @@
         - "ssh-keys/lemon.pub"
         - "ssh-keys/madalena.pub"
         - "ssh-keys/laszlo.pub"
+        - "ssh-keys/yahor.pub"
 
     - name: Update apt package index
       apt: update_cache=yes # sudo apt update
