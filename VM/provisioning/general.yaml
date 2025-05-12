@@ -13,7 +13,6 @@
         - "ssh-keys/madalena.pub"
         - "ssh-keys/laszlo.pub"
 
-    # ----- Section 0: Install basic dependencies.------
     - name: Update apt package index
       apt: update_cache=yes # sudo apt update
 
@@ -22,7 +21,6 @@
         name: ["curl", "wget", "apt-transport-https"]
         state: present # Ensures the package is installed.
 
-    # ----- Section 1: Install & Run Docker ------------
     - name: Install Docker
       apt:
         name: docker.io
@@ -39,14 +37,6 @@
         name: vagrant
         groups: docker
         append: yes
-
-    # ----- Section 2: Install Kubenetes dependency ----
-    - name: Install kubectl
-      get_url:
-        url: https://storage.googleapis.com/kubernetes-release/release/v1.28.0/bin/linux/amd64/kubectl
-        dest: /usr/local/bin/kubectl
-        mode: "0755"
-      when: ansible_os_family != 'Debian'
 
     - name: Add signing key
       ansible.builtin.apt_key:
@@ -133,7 +123,6 @@
         enabled: yes
         state: started
 
-    # ----- Section 3: Kubernetes settings -------------
     - name: Disable swap
       shell: |
         swapoff -a
