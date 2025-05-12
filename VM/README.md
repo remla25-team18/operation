@@ -1,7 +1,7 @@
 # File structure
 All virtual machine setups are in the folder `./VM`, where you can see `Vagrantfile`. This is also the working directory for the vagrant commands that will be introduced below.
 
-Inside `./provisioning`, you can find `general.yaml`, which works for all VMs, `ctrl.yaml`, which works for the controller only, and `node.yaml`, which works for the nodes. These files are the ones we need to work on so far. 
+Inside `./provisioning`, you can find `general.yaml`, which works for all VMs, `ctrl.yaml`, which works for the controller only, and `node.yaml`, which works for the nodes.
 
 
 # Steps
@@ -12,16 +12,20 @@ Inside `./provisioning`, you can find `general.yaml`, which works for all VMs, `
 cd VM
 ```
 
-2. To boot all the VM, use the following line:
+2. To boot all the VMs, use the following:
 
 ```bash
 vagrant up
 ```
 
-To validate the running process, run 
-`vagrant status`. If it successfully runs, you should get the output like this:
+To validate the running process, run
 
 ```bash
+vagrant status
+```
+If it successfully runs, you should get the output like this:
+
+```
 Current machine states:
 
 ctrl                      running (virtualbox)
@@ -29,6 +33,7 @@ node-1                    running (virtualbox)
 node-2                    running (virtualbox)
 
 This environment represents multiple VMs. The VMs are all listed above with their current state. For more information about a specific VM, run `vagrant status NAME`.
+
 ```
 **Only when you see the three nodes are all running, go to the next step.**
 
@@ -38,7 +43,7 @@ vagrant ssh <name>
 ```
 where `<name> = ctrl / node-1 / node-2 `. The command for quiting ssh mode is `exit`.
 
-4. If this your first time running the VM, do `vagrant provision` for once. If you modify the ansible files(the `yaml` files under `./provisioning`), you don't need to reload VM, just run:
+4. If you modify the ansible files (the `yaml` files under `./provisioning`), you don't need to reload VM, just run:
 ```bash
 vagrant provision
 ```
