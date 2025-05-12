@@ -1,6 +1,6 @@
 ## Repository Links:
 
-We have 8 repos in total(the app repo is not used so far), can be found namely through:
+Our project is composed of the following repositories:
 
 operation: https://github.com/remla25-team18/operation
 
@@ -10,12 +10,19 @@ model service: https://github.com/remla25-team18/model-service
 
 lib-ml: https://github.com/remla25-team18/lib-ml
 
-app-frontend: https://github.com/remla25-team18/app-frontend
-
-app-service: https://github.com/remla25-team18/app-service
-
 lib-version: https://github.com/remla25-team18/lib-version
 
+app: https://github.com/remla25-team18/app
+
+Note: In our organization there are two other repositories, namely app-frontend and app-service, which are only there for activity tracking reasons. The current project uses the app repository.
+
+## Comments for A2:
+
+Git tags for every repo to be reviewed are marked with $a2$.
+
+We have finished the following aspects:
+
+We haven't finished the following:
 
 ## Comments for A1:
 
@@ -28,6 +35,6 @@ We have finished the following aspects:
 - A dummy docker compose.
 
 
-We havn't finished the following:
+We haven't finished the following:
 - We have packaged lib-ml, but not for lib-version.
 - The Docker Compose Operation is not fully functioning because we have 3 separate images for app-frontend, app-service and model-service now.
