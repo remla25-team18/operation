@@ -1,5 +1,5 @@
 - name: Join worker node to Kubernetes cluster
-  hosts: worker
+  hosts: node-1, node-2
   become: yes
   vars:
     kube_config_path: /etc/kubernetes/admin.conf
