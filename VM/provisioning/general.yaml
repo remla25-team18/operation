@@ -7,8 +7,8 @@
       ansible.posix.authorized_key:
         user: vagrant
         state: present
-        key: "{{item}}"
-      with_file:
+        key: "{{ lookup('file', item) }}"
+      loop:
         - "ssh-keys/lemon.pub"
         - "ssh-keys/madalena.pub"
         - "ssh-keys/laszlo.pub"
