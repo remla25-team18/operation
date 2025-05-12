@@ -14,7 +14,7 @@ lib-version: https://github.com/remla25-team18/lib-version
 
 app: https://github.com/remla25-team18/app
 
-Note: In our organization there are two other repositories, namely app-frontend and app-service, which are only there for activity tracking reasons. The current project uses the app repository.
+Note: In our organization there are two other repositories, namely app-frontend and app-service. These repositories are no longer maintained, and are only there for activity tracking reasons. The current project uses the app repository.
 
 ## Comments for A2:
 
