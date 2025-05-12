@@ -72,7 +72,7 @@
 
 # Step 16
 - name: Helm
-  hosts: all
+  hosts: ctrl
   become: yes
 
   tasks:
