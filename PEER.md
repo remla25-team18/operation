@@ -33,10 +33,11 @@ We have finished the following aspects:
 
 - Set up VM infrastructure
 - Set up Software environment
-- Set up basic Kubernetes cluster
+- Set up basic Kubernetes cluster (steps 20-21)
 
 We haven't finished the following:
 
+- Set up basic Kubernetes cluster (step 22)
 - Setting up Istio service mesh
 
 ## Comments for A1:
