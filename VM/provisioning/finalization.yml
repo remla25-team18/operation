@@ -1,0 +1,66 @@
+---
+- hosts: 192.168.56.100
+  become: yes
+  tasks:
+    # Step 20: MetalLB Installation
+    - name: Install MetalLB native manifest
+      command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.7/config/manifests/metallb-native.yaml
+
+    - name: Wait for MetalLB to be ready
+      command: kubectl wait -n metallb-system -l app=metallb,component=controller --for=condition=ready pod --timeout=60s
+
+    - name: Add IP address pool
+      command: kubectl apply -f /vagrant/provisioning/ipaddresspool.yml
+
+    - name: Add Layer 2 advertisement
+      command: kubectl apply -f /vagrant/provisioning/l2advertisement.yml
+    
+    # Step 21: Nginx Ingress
+    - name: Add ingress-nginx repo
+      command: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+
+    - name: Update helm repo
+      command: helm repo update
+    
+    - name: Install ingress-nginx with help
+      kubernetes.core.helm:
+        name: ingress-nginx
+        chart_ref: ingress-nginx/ingress-nginx
+        namespace: ingress-nginx
+        create_namespace: true
+        values:
+          controller:
+            service:
+              loadBalancerIP: 192.168.56.90
+    
+    # Step 22: Kubernetes Dashboard
+    - name: Add Kubernetes Dashboard Helm repository
+      kubernetes.core.helm_repository:
+        name: kubernetes-dashboard
+        repo_url: https://kubernetes.github.io/dashboard/
+
+    - name: Update Helm repositories
+      kubernetes.core.helm_repository:
+        name: kubernetes-dashboard
+        repo_url: https://kubernetes.github.io/dashboard/
+        state: present
+
+    - name: Install Kubernetes Dashboard via Helm
+      kubernetes.core.helm:
+        name: kubernetes-dashboard
+        chart_ref: kubernetes-dashboard/kubernetes-dashboard
+        namespace: kubernetes-dashboard
+        create_namespace: true
+
+    - name: Apply admin-user ServiceAccount and ClusterRoleBinding
+      kubernetes.core.k8s:
+        state: present
+        src: /vagrant/provisioning/dashboard-admin.yml
+
+    - name: Apply Ingress for Kubernetes Dashboard
+      kubernetes.core.k8s:
+        state: present
+        src: /vagrant/provisioning/dashboard-ingress.yml
+      
+    # Step 23: Istio (optional)
+    # TODO
