@@ -56,7 +56,12 @@ vagrant suspend
 vagrant resume
 ```
 
-6. When you finish working, you can permanently delete the VMs using:
+6. To finalize the cluster setup, run the following command from the `./VM` folder:
+```bash
+ansible-playbook -u vagrant -i 192.168.56.100, provisioning/finalization.yml
+```
+
+7. When you finish working, you can permanently delete the VMs using:
 ```bash
 vagrant destroy -f
 ```
