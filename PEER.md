@@ -30,7 +30,7 @@ Git tags for every repo to be reviewed are marked with $a1$.
 
 We have finished the following aspects:
 - Basic Requirements for Data Availability and Sensible Use Case;
-- Automated Release Process, which can be trigger by `git push origin <vx.x.x>`;
+- Automated Release Process, which can be triggered by `git push origin <vx.x.x>`;
 - Exposing a Model via REST, all ports and DNS are defined as env variable;
 - A dummy docker compose.
 
