@@ -34,8 +34,8 @@ Created PR: https://github.com/remla25-team18/operation/pull/4
 Approved PR: https://github.com/remla25-team18/operation/pull/3
 
 -- Yahor: -- 
-Created PR: 
-Approved PR: 
+Created PR: https://github.com/remla25-team18/operation/pull/10
+Approved PR: https://github.com/remla25-team18/operation/pull/6
 
 
 # A3:
