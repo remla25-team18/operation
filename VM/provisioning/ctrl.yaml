@@ -28,14 +28,14 @@
         path: /root/.kube
         state: directory
         mode: 0700
-      when: not kubeadm_already_done.stat.exists
+      when: not kube_config.stat.exists
 
     - name: Copy admin.conf to root's kube config
       copy:
         src: "{{ kube_config_path }}"
         dest: /root/.kube/config
         remote_src: yes
-      when: not kubeadm_already_done.stat.exists
+      when: not kube_config.stat.exists
 
     - name: Create .kube directory for vagrant
       file:
@@ -44,7 +44,7 @@
         owner: vagrant
         group: vagrant
         mode: 0755
-      when: not kubeadm_already_done.stat.exists
+      when: not kube_config.stat.exists
 
     - name: Copy admin.conf to vagrant's kube config
       copy:
@@ -54,7 +54,7 @@
         owner: vagrant
         group: vagrant
         mode: 0644
-      when: not kubeadm_already_done.stat.exists
+      when: not kube_config.stat.exists
 
     - name: Copy kube config to shared folder for host access
       copy:
@@ -62,13 +62,13 @@
         dest: /vagrant/admin.conf
         remote_src: yes
         mode: 0644
-      when: not kubeadm_already_done.stat.exists
+      when: not kube_config.stat.exists
 
     - name: Apply Flannel CNI with --iface=eth1
       command: kubectl apply -f /vagrant/provisioning/kube-flannel-modified.yml
       environment:
         KUBECONFIG: "{{ kube_config_path }}"
-      when: not kubeadm_already_done.stat.exists
+      when: not kube_config.stat.exists
 
 # Step 16
 - name: Helm
