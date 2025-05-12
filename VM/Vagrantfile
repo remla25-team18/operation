@@ -3,7 +3,7 @@
 
 WORKER_COUNT = ENV.fetch("WORKER_COUNT", 2).to_i  # Number of worker nodes (default: 2)
 CTRL_MEMORY = ENV.fetch("CTRL_MEMORY", 4096).to_i # Memory size for the controller (default: 4096 MB)
-CTRL_CPUS = ENV.fetch("CTRL_CPUS", 1).to_i        # CPU cores for the controller (default: 1)
+CTRL_CPUS = ENV.fetch("CTRL_CPUS", 2).to_i        # CPU cores for the controller (default: 2)
 NODE_MEMORY = ENV.fetch("NODE_MEMORY", 6144).to_i # Memory size for each worker node (default: 6144 MB)
 NODE_CPUS = ENV.fetch("NODE_CPUS", 2).to_i  
 ANSIBLE_COMPATIBILITY_MODE = ENV.fetch("ANSIBLE_COMPATIBILITY_MODE", "2.0") # Ansible compatibility mode (default: 2.0)
