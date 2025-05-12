@@ -22,8 +22,8 @@ Approved PR: https://github.com/remla25-team18/model-training/pull/1
 # A2:
 
 -- Lászlo: --  
-Created PR: 
-Approved PR: 
+Created PR: https://github.com/remla25-team18/operation/pull/6
+Approved PR: https://github.com/remla25-team18/operation/pull/4 
 
 -- Lemon: --  
 Created PR: https://github.com/remla25-team18/operation/pull/3
