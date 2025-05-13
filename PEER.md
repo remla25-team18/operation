@@ -15,15 +15,29 @@ operation: https://github.com/remla25-team18/operation
 
 model training: https://github.com/remla25-team18/model-training
 
+- Release A1: https://github.com/remla25-team18/model-training/releases/tag/a1
+- Release A2: https://github.com/remla25-team18/model-training/releases/tag/a2
+
 model service: https://github.com/remla25-team18/model-service
+
+- Release A1: https://github.com/remla25-team18/model-service/releases/tag/a1
+- Release A2: https://github.com/remla25-team18/model-service/releases/tag/a2
 
 lib-ml: https://github.com/remla25-team18/lib-ml
 
+- Release A1: https://github.com/remla25-team18/lib-ml/releases/tag/a1
+- Release A2: https://github.com/remla25-team18/lib-ml/releases/tag/a2
+
 lib-version: https://github.com/remla25-team18/lib-version
+
+- Release A1: https://github.com/remla25-team18/lib-version/releases/tag/a1
+- Release A2: https://github.com/remla25-team18/lib-version/releases/tag/a2
 
 app: https://github.com/remla25-team18/app
 
-Note: In our organization there are two other repositories, namely app-frontend and app-service. These repositories are no longer maintained, and are only there for activity tracking reasons. The current project uses the app repository.
+- Release A1: https://github.com/remla25-team18/app/releases/tag/a1
+- Release A2: https://github.com/remla25-team18/app/releases/tag/a2
+  Note: In our organization there are two other repositories, namely app-frontend and app-service. These repositories are no longer maintained, and are only there for activity tracking reasons. The current project uses the app repository.
 
 ## Comments for A2:
 
