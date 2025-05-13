@@ -13,6 +13,9 @@ Our project is composed of the following repositories:
 
 operation: https://github.com/remla25-team18/operation
 
+- Release A1: https://github.com/remla25-team18/operation/releases/tag/a1
+- Release A2: https://github.com/remla25-team18/operation/releases/tag/a2
+
 model training: https://github.com/remla25-team18/model-training
 
 - Release A1: https://github.com/remla25-team18/model-training/releases/tag/a1
