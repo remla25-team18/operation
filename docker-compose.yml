@@ -1,9 +1,6 @@
-version: '3.9'
-
 services:
   app:
-    build:
-      context: ../app
+    image: ghcr.io/remla25-team18/app:0.0.5
     container_name: app_container
     ports:
       - "4200:4200"
@@ -16,8 +13,7 @@ services:
       - app-network
 
   model-service:
-    build:
-      context: ../model-service
+    image: ghcr.io/remla25-team18/model-service:1.0.1
     container_name: model_container
     ports:
       - "5050:5050"
