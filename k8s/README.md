@@ -13,13 +13,15 @@
 
 2. **In another local terminal under /operation**, Copy the k8s setting from local to vm:
 
-    *Lemon's note: I'm not so sure how we can use the local file directly, this doesn't sound very reliable but it works so I'm building on it. Future exploration needed.*
+    > *Lemon's note: I'm not so sure how we can use the local file directly, this doesn't sound very reliable but it works so I'm building on it. Future exploration needed.*
 
     ```bash
     scp ./k8s/app.yaml ./k8s/model.yaml vagrant@192.168.56.100:/home/vagrant/
     ```
 
-3. Generate the k8s SECRET(replace the `GITHUB_USERNAME`, `GHCR_PAT`  and `your@email.com` with your own):
+    **This is the only place where you need to use this terminal. The rest of the steps will be done in the VM.**
+
+3. Now go back to the virual machine, which means the terminal with `vagrant@ctrl`, generate the k8s SECRET(replace the `GITHUB_USERNAME`, `GHCR_PAT`  and `your@email.com` with your own):
     ```bash
     kubectl create secret docker-registry ghcr-secret \
     --docker-server=ghcr.io \
