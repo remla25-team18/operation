@@ -10,7 +10,11 @@
       delegate_to: ctrl
       register: join_command_output
 
+    - name: Check if node is already joined
+      stat:
+        path: /etc/kubernetes/kubelet.conf
+      register: kubelet_conf
+
     - name: Run the join command on the worker node
       shell: "{{ join_command_output.stdout }}"
-      environment:
-        KUBECONFIG: "{{ kube_config_path }}"
+      when: not kubelet_conf.stat.exists

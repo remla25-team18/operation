@@ -83,7 +83,13 @@
         echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
         sudo apt-get update
         sudo apt-get install helm
+      args:
+        creates: /usr/bin/helm
 
-    - name: Add helm diff
-      command: >
-          helm plugin install https://github.com/databus23/helm-diff 
+    - name: Check if helm diff plugin is already installed
+      command: helm plugin list
+      register: helm_plugins
+
+    - name: Add helm diff plugin
+      command: helm plugin install https://github.com/databus23/helm-diff
+      when: "'diff' not in helm_plugins.stdout"
