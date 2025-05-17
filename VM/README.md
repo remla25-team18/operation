@@ -61,7 +61,27 @@ vagrant resume
 ansible-playbook -u vagrant -i 192.168.56.100, provisioning/finalization.yml
 ```
 
-7. When you finish working, you can permanently delete the VMs using:
+7. To access the kubernetes dashboard, follow the instructions below:
+
+    a. Open the browser and navigate to `https://192.168.56.90/`
+
+    b. You will be asked to ender a bearer token. First you will need to access the control node using ssh. 
+
+    ```bash
+    vagant ssh ctrl
+    ```
+
+    c. Then you can generate the token by running the following command in the terminal:
+
+    ```bash
+    kubectl -n kubernetes-dashboard create token admin-user
+    ```
+    
+    d. Copy the token and paste it into the browser.
+    
+    e. You should be able to see the dashboard.
+
+8. When you finish working, you can permanently delete the VMs using:
 ```bash
 vagrant destroy -f
 ```
