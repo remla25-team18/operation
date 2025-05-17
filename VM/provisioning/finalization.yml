@@ -53,6 +53,17 @@
         namespace: kubernetes-dashboard
         create_namespace: true
 
+    - name: Wait for ingress-nginx admission webhook to be ready
+      shell: >
+        kubectl wait --namespace ingress-nginx
+        --for=condition=ready pod
+        --selector=app.kubernetes.io/component=controller
+        --timeout=90s
+      register: wait_webhook
+      retries: 5
+      delay: 10
+      until: wait_webhook.rc == 0
+
     - name: Apply admin-user ServiceAccount and ClusterRoleBinding
       command: kubectl apply -f /vagrant/provisioning/dashboard-admin.yml
 
