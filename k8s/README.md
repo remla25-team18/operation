@@ -16,12 +16,12 @@
     > *Lemon's note: I'm not so sure how we can use the local file directly, this doesn't sound very reliable but it works so I'm building on it. Future exploration needed.*
 
     ```bash
-    scp ./k8s/app.yaml ./k8s/model.yaml vagrant@192.168.56.100:/home/vagrant/
+    scp ./k8s/app.yaml ./k8s/model.yaml ./k8s/monitoring.yaml vagrant@192.168.56.100:/home/vagrant/
     ```
 
     **This is the only place where you need to use this terminal. The rest of the steps will be done in the VM.**
 
-3. Now go back to the virual machine, which means the terminal with `vagrant@ctrl`, generate the k8s SECRET(replace the `GITHUB_USERNAME`, `GHCR_PAT`  and `your@email.com` with your own):
+3. Now go back to the virtual machine, which means the terminal with `vagrant@ctrl`, generate the k8s SECRET(replace the `GITHUB_USERNAME`, `GHCR_PAT`  and `your@email.com` with your own):
     ```bash
     kubectl create secret docker-registry ghcr-secret \
     --docker-server=ghcr.io \
@@ -34,6 +34,7 @@
     ```bash
     kubectl apply -f app.yaml
     kubectl apply -f model.yaml
+    kubectl apply -f monitoring.yaml
     ```
 
     This will create the pods and services for the app and model service. You can check the status of the pods and services using ``kubectl get pods`` and ``kubectl get services`` commands. The output should look like this:

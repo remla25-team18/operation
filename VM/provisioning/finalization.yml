@@ -2,6 +2,7 @@
 - hosts: 192.168.56.100
   become: yes
   tasks:
+
     # Step 20: MetalLB Installation
     - name: Install MetalLB native manifest
       command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.7/config/manifests/metallb-native.yaml
@@ -96,3 +97,19 @@
 
     - name: Apply custom IstioOperator
       command: istioctl install --skip-confirmation -f /vagrant/provisioning/istio-operator.yml
+
+    # Enabling Prometheus
+    - name: Add Prometheus Community Helm repo
+      ansible.builtin.shell: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+
+    - name: Update Helm repos
+      ansible.builtin.shell: helm repo update
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+
+    - name: Install kube-prometheus-stack (includes Prometheus Operator)
+      ansible.builtin.shell: helm install prometheus-operator prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
