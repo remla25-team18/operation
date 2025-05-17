@@ -2,6 +2,7 @@
 - hosts: 192.168.56.100
   become: yes
   tasks:
+
     # Step 20: MetalLB Installation
     - name: Install MetalLB native manifest
       command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.7/config/manifests/metallb-native.yaml
@@ -52,15 +53,74 @@
         namespace: kubernetes-dashboard
         create_namespace: true
 
+    - name: Wait for ingress-nginx admission webhook to be ready
+      shell: >
+        kubectl wait --namespace ingress-nginx
+        --for=condition=ready pod
+        --selector=app.kubernetes.io/component=controller
+        --timeout=90s
+      register: wait_webhook
+      retries: 5
+      delay: 10
+      until: wait_webhook.rc == 0
+
     - name: Apply admin-user ServiceAccount and ClusterRoleBinding
-      kubernetes.core.k8s:
-        state: present
-        src: /vagrant/provisioning/dashboard-admin.yml
+      command: kubectl apply -f /vagrant/provisioning/dashboard-admin.yml
 
     - name: Apply Ingress for Kubernetes Dashboard
-      kubernetes.core.k8s:
-        state: present
-        src: /vagrant/provisioning/dashboard-ingress.yml
+      command: kubectl apply -f /vagrant/provisioning/dashboard-ingress.yml
       
     # Step 23: Istio (optional)
-    # TODO
+    - name: Download Istio 1.25.2 tarball
+      get_url:
+        url: https://github.com/istio/istio/releases/download/1.25.2/istio-1.25.2-linux-amd64.tar.gz
+        dest: /tmp/istio-1.25.2.tgz
+
+    - name: Unpack Istio
+      unarchive:
+        src: /tmp/istio-1.25.2.tgz
+        dest: /opt/
+        remote_src: yes
+
+    - name: Ensure /opt/istio-1.25.2 is accessible
+      file:
+        path: /opt/istio-1.25.2
+        state: directory
+        mode: '0755'
+
+    - name: Ensure /opt/istio-1.25.2/bin is accessible
+      file:
+        path: /opt/istio-1.25.2/bin
+        state: directory
+        mode: '0755'
+
+    - name: Ensure istioctl is in PATH
+      file:
+        src: /opt/istio-1.25.2/bin/istioctl
+        dest: /usr/local/bin/istioctl
+        state: link
+        force: yes
+
+    - name: Install Istio default profile
+      command: istioctl install --set profile=default --skip-confirmation
+      args:
+        creates: /etc/istio
+
+    - name: Apply custom IstioOperator
+      command: istioctl install --skip-confirmation -f /vagrant/provisioning/istio-operator.yml
+
+    # Enabling Prometheus
+    - name: Add Prometheus Community Helm repo
+      ansible.builtin.shell: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+
+    - name: Update Helm repos
+      ansible.builtin.shell: helm repo update
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+
+    - name: Install kube-prometheus-stack (includes Prometheus Operator)
+      ansible.builtin.shell: helm install prometheus-operator prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
