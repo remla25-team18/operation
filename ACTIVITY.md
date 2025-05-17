@@ -49,8 +49,8 @@ Created PR:
 Approved PR: 
 
 -- Madalena: --  
-Created PR: 
-Approved PR: 
+Created PR: https://github.com/remla25-team18/app/pull/7
+Approved PR: https://github.com/remla25-team18/operation/pull/12
 
 -- Yahor: -- 
 Created PR: 
