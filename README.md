@@ -2,6 +2,52 @@ REMLA Group Project | Group 18
 ====
 
 ## How to run
+
+### Assignment 2
+For assignment 2, here are the steps to run the project:
+
+1. Make sure you're in `./VM` folder, by doing:
+
+```bash
+cd VM
+```
+
+2. To boot all the VMs, use the following:
+
+```bash
+vagrant up
+```
+
+To validate the running process, run
+
+```bash
+vagrant status
+```
+If it successfully runs, you should get the output like this:
+
+```
+Current machine states:
+
+ctrl                      running (virtualbox)
+node-1                    running (virtualbox)
+node-2                    running (virtualbox)
+
+This environment represents multiple VMs. The VMs are all listed above with their current state. For more information about a specific VM, run `vagrant status NAME`.
+
+```
+3. To finalize the cluster setup, run the following command from the `./VM` folder:
+```bash
+ansible-playbook -u vagrant -i 192.168.56.100, provisioning/finalization.yml
+```
+
+4. When you finish working, you can permanently delete the VMs using:
+```bash
+vagrant destroy -f
+```
+Note: this means next time you need to build the VMs from scratch, which takes time.
+
+### Assignment 1
+For assignment 1, we have created a docker-compose file that allows you to run the entire project with a single command.
 Under **operation** folder, run:
 ```bash
 docker-compose up
@@ -26,6 +72,12 @@ The following repositories are relevant for our REMLA group 18 project:
 - [lib-version](https://github.com/remla25-team18/lib-version) - the library that can read its own version.
 
 ## Progress log
+
+### Assignment 2
+
+- **[Setting up (Virtual) Infrastructure]** We created a Vagrantfile that sets up a virtual machine with Ansible installed. The Vagrantfile is located in the `./VM` folder. The Ansible playbook is located in the `provisioning` folder. All the requirements are met.
+
+- **[Setting up Software Environment]** The Ansible playbook is designed to ensure idempotent provisioning by using several built-in modules. It registers variables to share values between different tasks, enabling seamless communication across the provisioning process. Additionally, the playbook incorporates automation with loops, such as copying multiple SSH keys. 
 
 ### Assignment 1
 - **[Basic Requirements]** We created a structured organization with several repositories that are responsible for different parts of the project. Operation repository contains a README.md, provides the steps to run the application and docker-compose.yml file to run the whole project. The app has a frontend and a backend which allows a user to interact with the model and provide feedback.
