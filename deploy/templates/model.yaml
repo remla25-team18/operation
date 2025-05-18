@@ -1,37 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: team18-model-service
+  name: {{ .Values.releaseNamePrefix }}-model-service
   labels:
-    app: team18-model-service
+    app: {{ .Values.releaseNamePrefix }}-model-service
 spec:
-  replicas: 1
+  replicas: {{ .Values.model.replicaCount }}
   selector:
     matchLabels:
-      app: team18-model-service
+      app: {{ .Values.releaseNamePrefix }}-model-service
   template:
     metadata:
       labels:
-        app: team18-model-service
+        app: {{ .Values.releaseNamePrefix }}-model-service
     spec:
       containers:
         - name: team18-model-service
-          imagePullPolicy: Always
-          image: ghcr.io/remla25-team18/model-service:1.0.2
+          imagePullPolicy: {{ .Values.model.image.pullPolicy }}
+          image: "{{ .Values.model.image.repository }}:{{ .Values.model.image.tag }}"
           ports:
-            - containerPort: 5050
+            - containerPort: {{ .Values.model.servicePort }}
       imagePullSecrets:
         - name: ghcr-secret
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: team18-model-service
+  name: {{ .Values.releaseNamePrefix }}-model-service
 spec:
   type: ClusterIP
   ports:
-    - port: 5050
-      targetPort: 5050
+    - port: {{ .Values.model.servicePort }}
+      targetPort: {{ .Values.model.servicePort }}
   selector:
-    app: team18-model-service
+    app: {{ .Values.releaseNamePrefix }}-model-service

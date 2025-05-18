@@ -1,30 +1,29 @@
-# app.yaml
 apiVersion: apps/v1
 kind: Deployment
-# A Deployment manages a set of Pods to run an application workload
 metadata:
-  name: team18-app
+  name: {{ .Values.releaseNamePrefix }}-app
   labels:
-    app: team18-app
+    app: {{ .Values.releaseNamePrefix }}-app
 spec:
-  replicas: 1
+  replicas: {{ .Values.app.replicaCount }}
   selector:
     matchLabels:
-      app: team18-app
-  template: # all pods will be created from this template
+      app: {{ .Values.releaseNamePrefix }}-app
+  template:
     metadata:
       labels:
-        app: team18-app
+        app: {{ .Values.releaseNamePrefix }}-app
     spec:
       containers:
         - name: team18-app
-          image: ghcr.io/remla25-team18/app:0.0.7
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
           ports:
             - containerPort: 8080
           env:
             - name: MODEL_SERVICE_URL
-              value: "team18-model-service"
+              value: "{{ .Values.app.env.MODEL_SERVICE_URL }}"
             - name: MODEL_SERVICE_PORT
-              value: "5050"
+              value: "{{ .Values.app.env.MODEL_SERVICE_PORT }}"
       imagePullSecrets:
         - name: ghcr-secret
