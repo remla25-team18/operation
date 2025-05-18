@@ -23,7 +23,7 @@
     - name: Update helm repo
       command: helm repo update
     
-    - name: Install ingress-nginx with help
+    - name: Install ingress-nginx with helm
       kubernetes.core.helm:
         name: ingress-nginx
         chart_ref: ingress-nginx/ingress-nginx
