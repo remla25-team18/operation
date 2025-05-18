@@ -28,3 +28,15 @@ spec:
               value: "5050"
       imagePullSecrets:
         - name: ghcr-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: team18-app
+spec:
+  selector:
+    app: team18-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
