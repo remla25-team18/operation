@@ -22,16 +22,12 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: MODEL_SERVICE_URL
+            - name: MODEL_HOST
               valueFrom:
                 configMapKeyRef:
                   name: app-config
-                  key: model_service_url
-            - name: MODEL_SERVICE_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: app-config
-                  key: model_service_port
+                  key: model.host
+
       imagePullSecrets:
         - name: ghcr-secret
 ---

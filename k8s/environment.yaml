@@ -3,5 +3,4 @@ kind: ConfigMap
 metadata:
   name: app-config
 data:
-  model_service_url: http://team18-model-service
-  model_service_port: 5050
+  model.host: "httpL//team18-model-service:5050"
