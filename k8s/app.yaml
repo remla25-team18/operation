@@ -23,9 +23,15 @@ spec:
             - containerPort: 8080
           env:
             - name: MODEL_SERVICE_URL
-              value: "team18-model-service"
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: model_service_url
             - name: MODEL_SERVICE_PORT
-              value: "5050"
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: model_service_port
       imagePullSecrets:
         - name: ghcr-secret
 ---
