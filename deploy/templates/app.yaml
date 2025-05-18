@@ -1,0 +1,30 @@
+# app.yaml
+apiVersion: apps/v1
+kind: Deployment
+# A Deployment manages a set of Pods to run an application workload
+metadata:
+  name: team18-app
+  labels:
+    app: team18-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: team18-app
+  template: # all pods will be created from this template
+    metadata:
+      labels:
+        app: team18-app
+    spec:
+      containers:
+        - name: team18-app
+          image: ghcr.io/remla25-team18/app:0.0.7
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MODEL_SERVICE_URL
+              value: "team18-model-service"
+            - name: MODEL_SERVICE_PORT
+              value: "5050"
+      imagePullSecrets:
+        - name: ghcr-secret
