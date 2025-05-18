@@ -7,15 +7,23 @@
     - name: Install MetalLB native manifest
       command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.7/config/manifests/metallb-native.yaml
 
-    - name: Wait for MetalLB to be ready
-      command: kubectl wait -n metallb-system -l app=metallb,component=controller --for=condition=ready pod --timeout=60s
+    - name: Wait for MetalLB controller to be ready
+      shell: >
+        kubectl wait --namespace metallb-system
+        --for=condition=ready pod
+        --selector=app.kubernetes.io/component=controller
+        --timeout=90s
+      register: wait_metallb
+      retries: 5
+      delay: 10
+      until: wait_metallb.rc == 0
 
-    - name: Add IP address pool
+    - name: Add IP address pool if not already applied
       command: kubectl apply -f /vagrant/provisioning/ipaddresspool.yml
 
-    - name: Add Layer 2 advertisement
+    - name: Add Layer 2 advertisement if not already applied
       command: kubectl apply -f /vagrant/provisioning/l2advertisement.yml
-    
+
     # Step 21: Nginx Ingress
     - name: Add ingress-nginx repo
       command: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
@@ -121,6 +129,9 @@
         KUBECONFIG: /home/vagrant/.kube/config
 
     - name: Install kube-prometheus-stack (includes Prometheus Operator)
-      ansible.builtin.shell: helm install prometheus-operator prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
+      ansible.builtin.shell: helm upgrade --install prometheus-operator prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
       environment:
         KUBECONFIG: /home/vagrant/.kube/config
+
+    - name: Expose Prometheus service
+      command: kubectl apply -f /vagrant/provisioning/prometheus-ingress.yml

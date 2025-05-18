@@ -76,14 +76,22 @@
   become: yes
 
   tasks:
-    - name: Install Helm
-      shell: |
+  - name: Install Helm (if not already installed)
+    shell: |
+      if ! command -v helm >/dev/null 2>&1; then
         curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
         sudo apt-get install apt-transport-https --yes
         echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
         sudo apt-get update
-        sudo apt-get install helm
+        sudo apt-get install -y helm
+      fi
+    args:
+      executable: /bin/bash
 
-    - name: Add helm diff
-      command: >
-          helm plugin install https://github.com/databus23/helm-diff 
+  - name: Ensure helm-diff plugin is installed
+    shell: |
+      if ! helm plugin list | grep -q 'diff'; then
+        helm plugin install https://github.com/databus23/helm-diff
+      fi
+    args:
+      executable: /bin/bash
