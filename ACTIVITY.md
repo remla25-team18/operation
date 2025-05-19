@@ -41,8 +41,10 @@ Approved PR: https://github.com/remla25-team18/operation/pull/6
 
 # Week 4:
 -- Lászlo: --  
-Created PR: 
-Approved PR: 
+Created PR: https://github.com/remla25-team18/operation/pull/14 * (related to A3)
+Approved PR: https://github.com/remla25-team18/operation/pull/15 *
+
+* These have been written down pre-emtpively. At the time of editing these files, we are still trying to fix bugs within the system.
 
 -- Lemon: --  
 Created PR: 
