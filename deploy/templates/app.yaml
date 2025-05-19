@@ -5,7 +5,7 @@ metadata:
   labels:
     app: "{{ .Values.releaseNamePrefix }}-app"
 spec:
-  replicas: "{{ .Values.app.replicaCount }}"
+  replicas: {{ .Values.app.replicaCount }}
   selector:
     matchLabels:
       app: "{{ .Values.releaseNamePrefix }}-app"
@@ -19,7 +19,7 @@ spec:
           image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
           imagePullPolicy: "{{ .Values.app.image.pullPolicy }}"
           ports:
-            - containerPort: "8080"
+            - containerPort: 8080
           env:
             - name: MODEL_SERVICE_URL
               value: "{{ .Values.app.env.MODEL_SERVICE_URL }}"

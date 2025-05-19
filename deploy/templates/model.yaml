@@ -5,7 +5,7 @@ metadata:
   labels:
     app: "{{ .Values.releaseNamePrefix }}-model-service"
 spec:
-  replicas: "{{ .Values.model.replicaCount }}"
+  replicas: {{ .Values.model.replicaCount }}
   selector:
     matchLabels:
       app: "{{ .Values.releaseNamePrefix }}-model-service"
@@ -19,18 +19,18 @@ spec:
           imagePullPolicy: "{{ .Values.model.image.pullPolicy }}"
           image: "{{ .Values.model.image.repository }}:{{ .Values.model.image.tag }}"
           ports:
-            - containerPort: "{{ .Values.model.servicePort }}"
+            - containerPort: {{ .Values.model.servicePort }}
       imagePullSecrets:
         - name: "ghcr-secret"
 ---
-apiVersion: "v1"
-kind: "Service"
+apiVersion: v1
+kind: Service
 metadata:
   name: "{{ .Values.releaseNamePrefix }}-model-service"
 spec:
-  type: "ClusterIP"
+  type: ClusterIP
   ports:
-    - port: "{{ .Values.model.servicePort }}"
-      targetPort: "{{ .Values.model.servicePort }}"
+    - port: {{ .Values.model.servicePort }}
+      targetPort: {{ .Values.model.servicePort }}
   selector:
     app: "{{ .Values.releaseNamePrefix }}-model-service"
