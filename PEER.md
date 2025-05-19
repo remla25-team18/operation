@@ -45,7 +45,7 @@ app: https://github.com/remla25-team18/app
 
 - Release A1: https://github.com/remla25-team18/app/releases/tag/a1
 - Release A2: https://github.com/remla25-team18/app/releases/tag/a2
-- Release A3: https://github.com/remla25-team18/lib-version/releases/tag/a3
+- Release A3: https://github.com/remla25-team18/app/releases/tag/a3
   
 Note: In our organization there are two other repositories, namely app-frontend and app-service. These repositories are no longer maintained, and are only there for activity tracking reasons. The current project uses the app repository.
 
