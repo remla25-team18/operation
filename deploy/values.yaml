@@ -1,0 +1,28 @@
+# This files stores the variables used in the Helm chart for deploying the application and its components.
+
+releaseNamePrefix: team18
+
+app:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/remla25-team18/app
+    tag: "0.0.7"
+    pullPolicy: IfNotPresent
+  env:
+    MODEL_SERVICE_URL: team18-model-service
+    MODEL_SERVICE_PORT: "5050"
+
+model:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/remla25-team18/model-service
+    tag: "1.0.2"
+    pullPolicy: Always
+  servicePort: 5050
+
+monitoring:
+  enabled: false
+  appService:
+    nodePort: 30001
+    port: 9090
+    targetPort: 9090
