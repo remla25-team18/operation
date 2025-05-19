@@ -136,11 +136,23 @@ The following repositories are relevant for our REMLA group 18 project:
 
 ## Progress log
 
+### Assignment 3
+
+- **[Kubernetes Usage]** Deployed the app and model service to the Kubernetes cluster
+
+- **[Helm Installation]** Created an Helm chart for the deployment
+
+- **[App Monitoring]** The app has more than 3 app-specific metrics, of the types gauge and counter, that can be used to reason about user behaviour or model performance. The metrics are automatically discovered and collected by Prometheus through a service monitor. 
+
+- **[Grafana]** Not yet implemented
+
 ### Assignment 2
 
 - **[Setting up (Virtual) Infrastructure]** We created a Vagrantfile that sets up a virtual machine with Ansible installed. The Vagrantfile is located in the `./VM` folder. The Ansible playbook is located in the `provisioning` folder. All the requirements are met.
 
 - **[Setting up Software Environment]** The Ansible playbook is designed to ensure idempotent provisioning by using several built-in modules. It registers variables to share values between different tasks, enabling seamless communication across the provisioning process. Additionally, the playbook incorporates automation with loops, such as copying multiple SSH keys. 
+
+- **[Setting up Kubernetes]** 
 
 ### Assignment 1
 - **[Basic Requirements]** We created a structured organization with several repositories that are responsible for different parts of the project. Operation repository contains a README.md, provides the steps to run the application and docker-compose.yml file to run the whole project. The app has a frontend and a backend which allows a user to interact with the model and provide feedback.
