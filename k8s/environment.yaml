@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: app-config
 data:
-  model.host: "httpL//team18-model-service:5050"
+  model.host: "http://team18-model-service:5050"
