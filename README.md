@@ -4,6 +4,8 @@ REMLA Group Project | Group 18
 ## How to run
 
 ### Assignment 3
+
+#### Kubernetes deployment
 Make sure now you're under /operation, and then you have vagrant booted by running:
 
 ```bash
@@ -15,8 +17,6 @@ then connect to the VM using SSH:
 vagrant ssh ctrl
 ```
 In another local terminal under /operation, Copy the k8s setting from local to vm:
-
-> Lemon's note: I'm not so sure how we can use the local file directly, this doesn't sound very reliable but it works so I'm building on it. Future exploration needed.
 
 ```bash
 scp ./k8s/app.yaml ./k8s/model.yaml ./k8s/ingress.yaml ./k8s/environment.yaml ./k8s/monitoring.yaml vagrant@192.168.56.100:/home/vagrant/
@@ -33,7 +33,6 @@ kubectl create secret docker-registry ghcr-secret \
 --docker-password=GHCR_PAT \
 --docker-email=your@email.com
 
-echo Deploy the app and model service
 
 kubectl apply -f app.yaml
 kubectl apply -f model.yaml
@@ -65,8 +64,6 @@ node-1   Ready    <none>          37m   v1.32.4   192.168.56.101   <none>       
 node-2   Ready    <none>          35m   v1.32.4   192.168.56.102   <none>        Ubuntu 24.04.2 LTS   6.8.0-53-generic   containerd://1.7.24
 ```
 
-Access the app: The app is exposed on port 30001 of the control node (
-So you can access the app using http://192.168.56.100:30001/).
 
 ### Assignment 2
 For assignment 2, here are the steps to run the project:
