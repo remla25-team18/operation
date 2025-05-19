@@ -1,27 +1,29 @@
+{{- if .Values.monitoring.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: "{{ .Values.releaseNamePrefix }}-app-service"
+  name: team18-app-service
 spec:
   type: NodePort
   ports:
-    - port: "{{ .Values.monitoring.appService.port }}"
-      targetPort: "{{ .Values.monitoring.appService.targetPort }}"
-      nodePort: "{{ .Values.monitoring.appService.nodePort }}"
+    - port: 9090
+      targetPort: 9090
+      nodePort: 30001
   selector:
-    app: "{{ .Values.releaseNamePrefix }}-app"
+    app: team18-app
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: "{{ .Values.releaseNamePrefix }}-app-servicemonitor"
+  name: team18-app-servicemonitor
   labels:
     release: prometheus
 spec:
   selector:
     matchLabels:
-      app: "{{ .Values.releaseNamePrefix }}-app"
+      app: team18-app
   endpoints:
-    - port: metrics
-      path: /metrics
-      interval: 15s
+  - port: metrics
+    path: /metrics
+    interval: 15s
+{{- end }}
