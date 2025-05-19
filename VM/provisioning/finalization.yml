@@ -23,7 +23,7 @@
     - name: Update helm repo
       command: helm repo update
     
-    - name: Install ingress-nginx with help
+    - name: Install ingress-nginx with helm
       kubernetes.core.helm:
         name: ingress-nginx
         chart_ref: ingress-nginx/ingress-nginx
@@ -40,11 +40,11 @@
         name: kubernetes-dashboard
         repo_url: https://kubernetes.github.io/dashboard/
 
-    - name: Update Helm repositories
-      kubernetes.core.helm_repository:
-        name: kubernetes-dashboard
-        repo_url: https://kubernetes.github.io/dashboard/
-        state: present
+    # - name: Update Helm repositories
+    #   kubernetes.core.helm_repository:
+    #     name: kubernetes-dashboard
+    #     repo_url: https://kubernetes.github.io/dashboard/
+    #     state: present
 
     - name: Install Kubernetes Dashboard via Helm
       kubernetes.core.helm:
@@ -70,45 +70,36 @@
     - name: Apply Ingress for Kubernetes Dashboard
       command: kubectl apply -f /vagrant/provisioning/dashboard-ingress.yml
       
-    # Step 23: Istio (optional)
-    - name: Download Istio 1.25.2 tarball
+    # Step 23: Install Istio
+    - name: Download Istio 1.25.2
       get_url:
         url: https://github.com/istio/istio/releases/download/1.25.2/istio-1.25.2-linux-amd64.tar.gz
-        dest: /tmp/istio-1.25.2.tgz
+        dest: /tmp/istio.tar.gz
+        mode: '0644'
+      become: true
 
-    - name: Unpack Istio
-      unarchive:
-        src: /tmp/istio-1.25.2.tgz
-        dest: /opt/
+    - name: Extract Istio
+      ansible.builtin.unarchive:
+        src: /tmp/istio.tar.gz
+        dest: /home/vagrant/
         remote_src: yes
-
-    - name: Ensure /opt/istio-1.25.2 is accessible
-      file:
-        path: /opt/istio-1.25.2
-        state: directory
-        mode: '0755'
-
-    - name: Ensure /opt/istio-1.25.2/bin is accessible
-      file:
-        path: /opt/istio-1.25.2/bin
-        state: directory
-        mode: '0755'
-
-    - name: Ensure istioctl is in PATH
-      file:
-        src: /opt/istio-1.25.2/bin/istioctl
-        dest: /usr/local/bin/istioctl
-        state: link
-        force: yes
-
-    - name: Install Istio default profile
-      command: istioctl install --set profile=default --skip-confirmation
+      become: true
       args:
-        creates: /etc/istio
+        creates: /home/vagrant/istio-1.25.2/manifests
 
-    - name: Apply custom IstioOperator
-      command: istioctl install --skip-confirmation -f /vagrant/provisioning/istio-operator.yml
+    - name: Add istioctl to PATH
+      lineinfile:
+        path: /home/vagrant/.bashrc
+        line: 'export PATH=$PATH:/home/vagrant/istio-1.25.2/bin'
+        insertafter: EOF
+        state: present
 
+    - name: Run istioctl install (demo profile)
+      shell: |
+        istioctl install --set profile=demo -y
+      args:
+        creates: /home/vagrant/istio-1.25.2/manifests
+        
     # Enabling Prometheus
     - name: Add Prometheus Community Helm repo
       ansible.builtin.shell: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
