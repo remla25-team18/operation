@@ -21,7 +21,7 @@ ls
 If this is the case, and Helm was succesfully installed into the VM, you can deploy the Kubernetes cluster via:
 
 ```bash
-helm install release .
+helm install release deploy/
 ```
 
 The expected output is:
