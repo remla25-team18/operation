@@ -40,18 +40,17 @@ Approved PR: https://github.com/remla25-team18/operation/pull/6
 
 
 # Week 4:
+* These have been written down pre-emtpively. At the time of editing these files, we are still trying to fix bugs within the system.
 -- Lászlo: --  
 Created PR: https://github.com/remla25-team18/operation/pull/14 * (related to A3)
 Approved PR: https://github.com/remla25-team18/operation/pull/15 *
 
-* These have been written down pre-emtpively. At the time of editing these files, we are still trying to fix bugs within the system.
-
 -- Lemon: --  
-Created PR: https://github.com/remla25-team18/operation/pull/12
+Created PR: https://github.com/remla25-team18/operation/pull/12 (related to A3)
 Approved PR: https://github.com/remla25-team18/operation/pull/14
 
 -- Madalena: --  
-Created PR: https://github.com/remla25-team18/app/pull/7
+Created PR: https://github.com/remla25-team18/app/pull/7 (related to A3)
 Approved PR: https://github.com/remla25-team18/operation/pull/12
 
 -- Yahor: -- 
