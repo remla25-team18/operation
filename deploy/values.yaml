@@ -1,3 +1,5 @@
+# This files stores the variables used in the Helm chart for deploying the application and its components.
+
 releaseNamePrefix: team18
 
 app:

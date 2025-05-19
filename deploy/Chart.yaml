@@ -1,3 +1,4 @@
+# This file serves as a manifest, providing metadata about the Helm chart.
 apiVersion: v2
 name: deploy
 description: A Helm chart for Kubernetes deployment of the application

@@ -1,26 +1,26 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.releaseNamePrefix }}-app-service
+  name: "{{ .Values.releaseNamePrefix }}-app-service"
 spec:
   type: NodePort
   ports:
-    - port: {{ .Values.monitoring.appService.port }}
-      targetPort: {{ .Values.monitoring.appService.targetPort }}
-      nodePort: {{ .Values.monitoring.appService.nodePort }}
+    - port: "{{ .Values.monitoring.appService.port }}"
+      targetPort: "{{ .Values.monitoring.appService.targetPort }}"
+      nodePort: "{{ .Values.monitoring.appService.nodePort }}"
   selector:
-    app: {{ .Values.releaseNamePrefix }}-app
+    app: "{{ .Values.releaseNamePrefix }}-app"
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ .Values.releaseNamePrefix }}-app-servicemonitor
+  name: "{{ .Values.releaseNamePrefix }}-app-servicemonitor"
   labels:
     release: prometheus
 spec:
   selector:
     matchLabels:
-      app: {{ .Values.releaseNamePrefix }}-app
+      app: "{{ .Values.releaseNamePrefix }}-app"
   endpoints:
     - port: metrics
       path: /metrics

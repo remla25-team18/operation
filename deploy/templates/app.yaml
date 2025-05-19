@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.releaseNamePrefix }}-app
+  name: "{{ .Values.releaseNamePrefix }}-app"
   labels:
-    app: {{ .Values.releaseNamePrefix }}-app
+    app: "{{ .Values.releaseNamePrefix }}-app"
 spec:
-  replicas: {{ .Values.app.replicaCount }}
+  replicas: "{{ .Values.app.replicaCount }}"
   selector:
     matchLabels:
-      app: {{ .Values.releaseNamePrefix }}-app
+      app: "{{ .Values.releaseNamePrefix }}-app"
   template:
     metadata:
       labels:
-        app: {{ .Values.releaseNamePrefix }}-app
+        app: "{{ .Values.releaseNamePrefix }}-app"
     spec:
       containers:
-        - name: team18-app
+        - name: "team18-app"
           image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
-          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          imagePullPolicy: "{{ .Values.app.image.pullPolicy }}"
           ports:
-            - containerPort: 8080
+            - containerPort: "8080"
           env:
             - name: MODEL_SERVICE_URL
               value: "{{ .Values.app.env.MODEL_SERVICE_URL }}"
             - name: MODEL_SERVICE_PORT
               value: "{{ .Values.app.env.MODEL_SERVICE_PORT }}"
       imagePullSecrets:
-        - name: ghcr-secret
+        - name: "ghcr-secret"
