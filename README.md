@@ -11,6 +11,7 @@ Make sure now you're under /operation, and then you have vagrant booted by runni
 ```bash
 cd VM
 vagrant up
+ansible-playbook -u vagrant -i 192.168.56.100, provisioning/finalization.yml
 ```
 then connect to the VM using SSH:
 ```bash
