@@ -37,6 +37,7 @@
     kubectl apply -f monitoring.yaml
     ```
 
+    # TODO: updated the outputs
     This will create the pods and services for the app and model service. You can check the status of the pods and services using ``kubectl get pods`` and ``kubectl get services`` commands. The output should look like this:
     ```bash
     vagrant@ctrl:~/model-service$ kubectl get pods -w
@@ -61,3 +62,22 @@
 
 5. **Access the app**: The app is exposed on port 30001 of the control node (
     So you can access the app using `http://192.168.56.100:30001/`).
+
+6. **Access Promethesus**: The Prometheus is exposed on port 31090. Just go the `http://192.168.56.100:31090/` to access it.
+    You can check the status of the Prometheus server by going to `http://192.168.56.100:31090/targets`.
+  
+    > !WARNING! To get Prometheus working, I had to run the foollwing commands. Ideally, this should be done automatically by the ansible playbook, but it didn't reach that yet. 
+    ```bash
+    cd VM
+    vagrant ssh ctrl
+
+    rem Prometheus finds namespaces by labels, so we need to add the label to the default namespace
+    kubectl label namespace default kubernetes.io/metadata.name=default
+
+    rem changing the serviceMonitorNamespaceSelector to default so it could find the serviceMonitor
+    kubectl -n monitoring patch prometheus prometheus-operator-kube-p-prometheus \ 
+    --type='merge' \
+    -p '{"spec":{"serviceMonitorNamespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"default"}}}}'
+
+
+

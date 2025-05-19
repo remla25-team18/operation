@@ -14,6 +14,28 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: prometheus-operated
+            name: kube-prometheus-stack-p-prometheus
             port:
               number: 9090
+---
+# Exposes the Prometheus UI on every node IP at TCP port 31090.
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-nodeport
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: prometheus
+    purpose: external-access
+spec:
+  type: NodePort
+  selector:               # must match the labels on the Prometheus pods!
+    app.kubernetes.io/name: prometheus
+    operator.prometheus.io/name: prometheus-operator-kube-p-prometheus
+  ports:
+    - name: web
+      port: 9090          # service port (internal)
+      targetPort: 9090    # container port
+      nodePort: 31090     # external port on every node
+  selector:
+    app.kubernetes.io/name: prometheus

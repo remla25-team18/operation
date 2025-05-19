@@ -18,9 +18,9 @@ spec:
     spec:
       containers:
         - name: team18-app
-          image: ghcr.io/remla25-team18/app:0.0.7
+          image: ghcr.io/remla25-team18/app:0.0.11
           ports:
-            - containerPort: 8080
+            - containerPort: 4200
           env:
             - name: MODEL_SERVICE_URL
               value: "team18-model-service"
@@ -28,3 +28,19 @@ spec:
               value: "5050"
       imagePullSecrets:
         - name: ghcr-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: team18-app
+  labels:
+    app: team18-app
+spec:
+  type: NodePort
+  selector:
+    app: team18-app
+  ports:
+    - name: web
+      port: 4200
+      targetPort: 4200
+      nodePort: 30001
