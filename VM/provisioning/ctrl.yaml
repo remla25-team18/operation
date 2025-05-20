@@ -87,12 +87,12 @@
     args:
       executable: /bin/bash
 
-    - name: Check if helm-diff plugin is already installed
-      command: helm plugin list
-      register: helm_plugins
-      changed_when: false
-      failed_when: false
+  - name: Check if helm-diff plugin is already installed
+    command: helm plugin list
+    register: helm_plugins
+    changed_when: false
+    failed_when: false
 
-    - name: Install helm diff plugin if not already installed
-      command: helm plugin install https://github.com/databus23/helm-diff
-      when: helm_plugins.stdout is not search("diff")
+  - name: Install helm diff plugin if not already installed
+    command: helm plugin install https://github.com/databus23/helm-diff
+    when: helm_plugins.stdout is not search("diff")
