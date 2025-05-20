@@ -1,37 +1,46 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: team18-model-service
-  labels:
-    app: team18-model-service
+  name: model-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: team18-model-service
+      app: model-service
   template:
     metadata:
       labels:
-        app: team18-model-service
+        app: model-service
     spec:
       containers:
-        - name: team18-model-service
-          imagePullPolicy: Always
-          image: ghcr.io/remla25-team18/model-service:1.0.2
+        - name: model-service
+          image: ghcr.io/remla25-team18/model-service:1.0.1
           ports:
-            - containerPort: 5050
+            - containerPort: 1234
+          envFrom:
+            - configMapRef:
+                name: model-service-config
       imagePullSecrets:
         - name: ghcr-secret
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: team18-model-service
+  name: model-service
 spec:
   type: ClusterIP
   ports:
-    - port: 5050
-      targetPort: 5050
+    - port: 5678
+      targetPort: 5678
   selector:
-    app: team18-model-service
+    app: model-service
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: model-service-config
+data:
+  MODEL_SERVICE_URL: "http://team18-model-service"
+  MODEL_SERVICE_VERSION: "1.0.1"
+  # PORT: "5050"
+  HOST: "0.0.0.0"

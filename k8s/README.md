@@ -16,7 +16,7 @@
     > *Lemon's note: I'm not so sure how we can use the local file directly, this doesn't sound very reliable but it works so I'm building on it. Future exploration needed.*
 
     ```bash
-    scp ./k8s/app.yaml ./k8s/model.yaml ./k8s/ingress.yaml ./k8s/environment.yaml ./k8s/monitoring.yaml vagrant@192.168.56.100:/home/vagrant/
+    scp ./k8s/app.yaml ./k8s/model.yaml ./k8s/ingress.yaml ./k8s/monitoring.yaml vagrant@192.168.56.100:/home/vagrant/
     ```
 
     **This is the only place where you need to use this terminal. The rest of the steps will be done in the VM.**

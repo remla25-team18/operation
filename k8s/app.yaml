@@ -3,30 +3,25 @@ apiVersion: apps/v1
 kind: Deployment
 # A Deployment manages a set of Pods to run an application workload
 metadata:
-  name: team18-app
-  labels:
-    app: team18-app
+  name: app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: team18-app
+      app: app
   template: # all pods will be created from this template
     metadata:
       labels:
-        app: team18-app
+        app: app
     spec:
       containers:
-        - name: team18-app
+        - name: app
           image: ghcr.io/remla25-team18/app:0.0.7
           ports:
-            - containerPort: 8080
-          env:
-            - name: MODEL_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: app-config
-                  key: model.host
+            - containerPort: 4200
+          envFrom:
+            - configMapRef:
+                name: app-config
 
       imagePullSecrets:
         - name: ghcr-secret
@@ -34,11 +29,22 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: team18-app
+  name: app
 spec:
   selector:
-    app: team18-app
+    app: app
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 8080
+    - name: http
+      port: 4200
+      targetPort: 4200
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  
+  APP_SERVICE_VERSION: "0.0.7"
+  port: "4200"
+  host: "0.0.0.0"

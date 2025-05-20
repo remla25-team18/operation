@@ -1,8 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: team18-ingress
-  namespace: default
+  name: app-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
@@ -11,10 +10,10 @@ spec:
     - host: team18.local
       http:
         paths:
-          - path: /
+          - path: /app
             pathType: Prefix
             backend:
               service:
-                name: team18-app
+                name: app
                 port:
-                  number: 80
+                  number: 4200
