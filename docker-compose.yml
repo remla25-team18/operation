@@ -1,6 +1,6 @@
 services:
   app:
-    image: ghcr.io/remla25-team18/app:0.0.8
+    image: ghcr.io/remla25-team18/app:0.0.12
     container_name: app_container
     ports:
       - "4200:4200"
