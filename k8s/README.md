@@ -32,11 +32,7 @@
 
 4. Deploy the app and model service:
     ```bash
-    kubectl apply -f app.yaml
-    kubectl apply -f model.yaml
-    kubectl apply -f ingress.yaml
-    kubectl apply -f environment.yaml
-    kubectl apply -f monitoring.yaml
+    find . -name '*.yaml' -exec kubectl apply -f {} \;
     ```
 
     This will create the pods and services for the app and model service. You can check the status of the pods and services using ``kubectl get pods`` and ``kubectl get services`` commands. The output should look like this:
@@ -61,5 +57,10 @@
     node-2   Ready    <none>          35m   v1.32.4   192.168.56.102   <none>        Ubuntu 24.04.2 LTS   6.8.0-53-generic   containerd://1.7.24
     ```
 
-5. **Access the app**: The app is exposed on port 30001 of the control node (
+5. Apply the following IP mapping:
+    ```bash
+    echo "192.168.56.90 team18.local" | sudo tee -a /etc/hosts
+    ```
+
+6. **Access the app**: The app is exposed on port 30001 of the control node (
     So you can access the app using `http://192.168.56.100:30001/`).
