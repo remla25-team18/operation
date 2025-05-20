@@ -1,0 +1,28 @@
+- name: Cluster Configuration for ctrl Node
+  hosts: 192.168.56.100
+  become: yes
+  tasks:    
+
+    # Creating pods and services for the model and app, setting up monitoring and ingress
+    - name: Apply Kubernetes yml files
+      shell: |
+        kubectl apply -f /vagrant/k8s/model.yaml
+        kubectl apply -f /vagrant/k8s/app.yaml
+        kubectl apply -f /vagrant/k8s/monitoring.yaml
+        kubectl apply -f /vagrant/k8s/ingress.yaml
+
+    # Enabling Prometheus
+    - name: Add Prometheus Community Helm repo
+      ansible.builtin.shell: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+
+    - name: Update Helm repos
+      ansible.builtin.shell: helm repo update
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+
+    - name: Install kube-prometheus-stack (includes Prometheus Operator)
+      ansible.builtin.shell: helm install prometheus-operator prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config

@@ -9,10 +9,10 @@
 
     - name: Wait for MetalLB controller to be ready
       shell: >
-        kubectl wait --namespace metallb-system
-        --for=condition=ready pod
-        --selector=app.kubernetes.io/component=controller
-        --timeout=90s
+        kubectl wait -n metallb-system 
+        -l app=metallb,component=controller 
+        --for=condition=ready pod 
+        --timeout=60s
       register: wait_metallb
       retries: 5
       delay: 10
@@ -101,26 +101,3 @@
         istioctl install --set profile=demo -y
       args:
         creates: /home/vagrant/istio-1.25.2/manifests
-        
-    # Enabling Prometheus
-    - name: Add Prometheus Community Helm repo
-      ansible.builtin.shell: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-      environment:
-        KUBECONFIG: /home/vagrant/.kube/config
-
-    - name: Update Helm repos
-      ansible.builtin.shell: helm repo update
-      environment:
-        KUBECONFIG: /home/vagrant/.kube/config
-
-    - name: Install kube-prometheus-stack (includes Prometheus Operator)
-      ansible.builtin.shell: helm install prometheus-operator prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
-      environment:
-        KUBECONFIG: /home/vagrant/.kube/config
-
-    - name: Apply Kubernetes yml files
-        shell: |
-          kubectl apply -f /vagrant/k8s/model.yaml
-          kubectl apply -f /vagrant/k8s/app.yaml
-          kubectl apply -f /vagrant/k8s/monitoring.yaml
-          kubectl apply -f /vagrant/k8s/ingress.yaml
