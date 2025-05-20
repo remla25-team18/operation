@@ -7,14 +7,19 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
-  rules:
-    - host: team18.local
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: team18-app
-                port:
-                  number: 80
+  defaultBackend:
+    service:
+      name: team18-app
+      port:
+        number: 80
+  # rules:
+  #   - host: team18.local
+  #     http:
+  #       paths:
+  #         - path: /
+  #           pathType: Prefix
+  #           backend:
+  #             service:
+  #               name: team18-app
+  #               port:
+  #                 number: 80
