@@ -112,7 +112,6 @@
     
     - name: Apply Kubernetes yml files
       shell: |
-        kubectl apply -f /vagrant/k8s/environment.yaml
         kubectl apply -f /vagrant/k8s/model.yaml
         kubectl apply -f /vagrant/k8s/app.yaml
         kubectl apply -f /vagrant/k8s/monitoring.yaml
