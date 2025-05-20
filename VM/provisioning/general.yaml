@@ -22,23 +22,6 @@
         name: ["curl", "wget", "apt-transport-https"]
         state: present # Ensures the package is installed.
 
-    - name: Install Docker
-      apt:
-        name: docker.io
-        state: present
-
-    - name: Run Docker
-      service:
-        name: docker
-        state: started
-        enabled: yes
-
-    - name: Add vagrant user to docker group
-      user:
-        name: vagrant
-        groups: docker
-        append: yes
-
     - name: Add signing key
       ansible.builtin.apt_key:
         url: https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key
