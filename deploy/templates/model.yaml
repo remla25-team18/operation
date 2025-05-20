@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.releaseNamePrefix }}-model-service"
+  labels:
+    app: "{{ .Values.releaseNamePrefix }}-model-service"
+spec:
+  replicas: {{ .Values.model.replicaCount }}
+  selector:
+    matchLabels:
+      app: "{{ .Values.releaseNamePrefix }}-model-service"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.releaseNamePrefix }}-model-service"
+    spec:
+      containers:
+        - name: "team18-model-service"
+          imagePullPolicy: "{{ .Values.model.image.pullPolicy }}"
+          image: "{{ .Values.model.image.repository }}:{{ .Values.model.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.model.servicePort }}
+      imagePullSecrets:
+        - name: "ghcr-secret"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.releaseNamePrefix }}-model-service"
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.model.servicePort }}
+      targetPort: {{ .Values.model.servicePort }}
+  selector:
+    app: "{{ .Values.releaseNamePrefix }}-model-service"

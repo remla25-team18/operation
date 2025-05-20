@@ -9,6 +9,6 @@ spec:
     matchLabels:
       app: team18-app
   endpoints:
-  - port: web
-    path: /metrics 
-    interval: 1s
+  - port: metrics
+    path: /metrics
+    interval: 15s

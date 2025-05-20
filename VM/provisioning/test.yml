@@ -1,0 +1,9 @@
+- name: Finalization Step for ctrl Node
+  hosts: 192.168.56.100
+  become: yes
+  tasks:
+
+  - name: Delete Kubernetes yml files
+    shell: |
+      kubectl delete -f /vagrant/k8s/ingress.yaml
+    ignore_errors: yes

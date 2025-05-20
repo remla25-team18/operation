@@ -6,8 +6,7 @@
     kube_apiserver_advertise_address: 192.168.56.100
     kube_node_name: ctrl
     kube_pod_network_cidr: 10.244.0.0/16
-    kube_config_path: /etc/kubernetes/admin.conf  
-
+    kube_config_path: /etc/kubernetes/admin.conf
 
   tasks:
     - name: Check if K8s cluster is already initialized
@@ -20,7 +19,7 @@
         kubeadm init
         --apiserver-advertise-address={{ kube_apiserver_advertise_address }}
         --node-name={{ kube_node_name }}
-        --pod-network-cidr={{ kube_pod_network_cidr }}     
+        --pod-network-cidr={{ kube_pod_network_cidr }}
       when: not kube_config.stat.exists
 
     - name: Create .kube directory for root user
@@ -88,10 +87,12 @@
     args:
       executable: /bin/bash
 
-  - name: Ensure helm-diff plugin is installed
-    shell: |
-      if ! helm plugin list | grep -q 'diff'; then
-        helm plugin install https://github.com/databus23/helm-diff
-      fi
-    args:
-      executable: /bin/bash
+    - name: Check if helm-diff plugin is already installed
+      command: helm plugin list
+      register: helm_plugins
+      changed_when: false
+      failed_when: false
+
+    - name: Install helm diff plugin if not already installed
+      command: helm plugin install https://github.com/databus23/helm-diff
+      when: helm_plugins.stdout is not search("diff")
