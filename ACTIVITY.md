@@ -55,8 +55,26 @@ Approved PR: https://github.com/remla25-team18/operation/pull/12
 
 -- Yahor: -- 
 Created PR: https://github.com/remla25-team18/operation/pull/16 (related to A3)
-Approved PR: https://github.com/remla25-team18/app/pull/7 (related to A3)
+Approved PR: https://github.com/remla25-team18/app/pull/7
 
 
 # Week 5:
+-- Lászlo: --  
+Created PR: (related to A4)
+Approved PR:
+
+-- Lemon: --  
+Created PR: (related to A4)
+Approved PR:
+
+-- Madalena: --  
+Created PR: https://github.com/remla25-team18/model-training/pull/3 (related to A4)
+Approved PR: https://github.com/remla25-team18/model-training/pull/2
+
+-- Yahor: -- 
+Created PR: (related to A4)
+Approved PR:
+
+
+# Week 6:
 ```
