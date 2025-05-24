@@ -146,7 +146,7 @@ The following repositories are relevant for our REMLA group 18 project:
 
 - **[Pipeline Management with DVC]** 
 
-- **[Code Quality]** Pylint has a non-standard configuration and one custom rule for the ML code smell Randomness Uncontrolled. The project applies multiple linters, namely flake8 and bandit, which have a non-default configuration.
+- **[Code Quality]** Pylint has a non-standard configuration and one custom rule for the ML code smell Randomness Uncontrolled. The project additionally applies flake8 and bandit, which have a non-default configuration. All three linters are automatically run as part of the GitHub workflow
 
 ### Assignment 3
 
