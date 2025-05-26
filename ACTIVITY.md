@@ -64,8 +64,8 @@ Created PR: https://github.com/remla25-team18/model-training/pull/4 (related to 
 Approved PR: https://github.com/remla25-team18/model-training/pull/6
 
 -- Lemon: --  
-Created PR: (related to A4)
-Approved PR:
+Created PR: https://github.com/remla25-team18/model-training/pull/2 (related to A4)
+Approved PR: https://github.com/remla25-team18/model-training/pull/4
 
 -- Madalena: --  
 Created PR: https://github.com/remla25-team18/model-training/pull/3 (related to A4)
