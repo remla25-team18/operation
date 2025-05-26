@@ -63,6 +63,7 @@ We have finished the following aspects:
 - Basic automated ML tests have been implemented
 - Test coverage is measured with `coverage.py`
 - For both linting & testing, automated workflows have been set up (coverage is automatically updated in README)
+- For the ML Config Management rubrics, we got everything up to and including the Good requirements working
 
 
 ## Comments for A3:
