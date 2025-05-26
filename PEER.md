@@ -16,38 +16,54 @@ operation: https://github.com/remla25-team18/operation
 - Release A1: https://github.com/remla25-team18/operation/releases/tag/a1
 - Release A2: https://github.com/remla25-team18/operation/releases/tag/a2
 - Release A3: https://github.com/remla25-team18/operation/releases/tag/a3
+- Release A4: https://github.com/remla25-team18/operation/releases/tag/a4
 
 model training: https://github.com/remla25-team18/model-training
 
 - Release A1: https://github.com/remla25-team18/model-training/releases/tag/a1
 - Release A2: https://github.com/remla25-team18/model-training/releases/tag/a2
 - Release A3: https://github.com/remla25-team18/model-training/releases/tag/a3
+- Release A4: https://github.com/remla25-team18/model-training/releases/tag/a4
 
 model service: https://github.com/remla25-team18/model-service
 
 - Release A1: https://github.com/remla25-team18/model-service/releases/tag/a1
 - Release A2: https://github.com/remla25-team18/model-service/releases/tag/a2
 - Release A3: https://github.com/remla25-team18/model-service/releases/tag/a3
+- Release A4: https://github.com/remla25-team18/model-service/releases/tag/a4
 
 lib-ml: https://github.com/remla25-team18/lib-ml
 
 - Release A1: https://github.com/remla25-team18/lib-ml/releases/tag/a1
 - Release A2: https://github.com/remla25-team18/lib-ml/releases/tag/a2
 - Release A3: https://github.com/remla25-team18/lib-ml/releases/tag/a3
+- Release A4: https://github.com/remla25-team18/lib-ml/releases/tag/a4
 
 lib-version: https://github.com/remla25-team18/lib-version
 
 - Release A1: https://github.com/remla25-team18/lib-version/releases/tag/a1
 - Release A2: https://github.com/remla25-team18/lib-version/releases/tag/a2
 - Release A3: https://github.com/remla25-team18/lib-version/releases/tag/a3
+- Release A4: https://github.com/remla25-team18/lib-version/releases/tag/a4
 
 app: https://github.com/remla25-team18/app
 
 - Release A1: https://github.com/remla25-team18/app/releases/tag/a1
 - Release A2: https://github.com/remla25-team18/app/releases/tag/a2
 - Release A3: https://github.com/remla25-team18/app/releases/tag/a3
+- Release A4: https://github.com/remla25-team18/app/releases/tag/a4
   
 Note: In our organization there are two other repositories, namely app-frontend and app-service. These repositories are no longer maintained, and are only there for activity tracking reasons. The current project uses the app repository.
+
+## Comments for A4:
+
+Git tags for every repo to be reviewed are marked with $a4$
+
+We have finished the following aspects:
+- Basic automated ML tests have been implemented
+- Test coverage is measured with `coverage.py`
+- For both linting & testing, automated workflows have been set up (coverage is automatically updated in README)
+
 
 ## Comments for A3:
 
