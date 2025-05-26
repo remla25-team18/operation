@@ -1,4 +1,3 @@
-```
 Team members may have created and approved more than one pull request per week, but we will only show one pull each member created and approved per week for the sake of simplicity.
 
 # Week 2:
@@ -59,4 +58,19 @@ Approved PR: https://github.com/remla25-team18/app/pull/7 (related to A3)
 
 
 # Week 5:
-```
+
+-- Lászlo: --  
+Created PR: (related to A4)
+Approved PR: 
+
+-- Lemon: --  
+Created PR:  (related to A4)
+Approved PR: 
+
+-- Madalena: --  
+Created PR: (related to A4)
+Approved PR: 
+
+-- Yahor: -- 
+Created PR: https://github.com/remla25-team18/model-training/pull/6 (related to A4)
+Approved PR: 
