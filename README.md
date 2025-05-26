@@ -17,15 +17,8 @@ then connect to the VM using SSH:
 ```bash
 vagrant ssh ctrl
 ```
-In another local terminal under /operation, Copy the k8s setting from local to vm:
 
-```bash
-scp ./k8s/app.yaml ./k8s/model.yaml ./k8s/ingress.yaml ./k8s/environment.yaml ./k8s/monitoring.yaml vagrant@192.168.56.100:/home/vagrant/
-```
-
-This is the only place where you need to use this terminal. The rest of the steps will be done in the VM.
-
-Now go back to the virtual machine, which means the terminal with vagrant@ctrl, generate the k8s SECRET(replace the GITHUB_USERNAME, GHCR_PAT and your@email.com with your own):
+Now generate the k8s SECRET(replace the GITHUB_USERNAME, GHCR_PAT and your@email.com with your own):
 
 ```bash
 kubectl create secret docker-registry ghcr-secret \
@@ -33,13 +26,6 @@ kubectl create secret docker-registry ghcr-secret \
 --docker-username=GITHUB_USERNAME \
 --docker-password=GHCR_PAT \
 --docker-email=your@email.com
-
-
-kubectl apply -f app.yaml
-kubectl apply -f model.yaml
-kubectl apply -f ingress.yaml
-kubectl apply -f environment.yaml
-kubectl apply -f monitoring.yaml
 ```
 
 This will create the pods and services for the app and model service. You can check the status of the pods and services using kubectl get pods and kubectl get services commands. The output should look like this:
