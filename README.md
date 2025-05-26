@@ -122,6 +122,18 @@ The following repositories are relevant for our REMLA group 18 project:
 
 ## Progress log
 
+### Assignment 4
+
+- **[Automated Tests]** 
+
+- **[Continuous Training]** 
+
+- **[Project Organization]** 
+
+- **[Pipeline Management with DVC]** 
+
+- **[Code Quality]** Pylint has a non-standard configuration and one custom rule for the ML code smell Randomness Uncontrolled. The project additionally applies flake8 and bandit, which have a non-default configuration. All three linters are automatically run as part of the GitHub workflow
+
 ### Assignment 3
 
 - **[Kubernetes Usage]** Deployed the app and model service to the Kubernetes cluster
