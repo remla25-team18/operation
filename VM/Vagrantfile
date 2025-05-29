@@ -10,10 +10,28 @@ ANSIBLE_COMPATIBILITY_MODE = ENV.fetch("ANSIBLE_COMPATIBILITY_MODE", "2.0")
 
 public_key = File.read(File.expand_path("ssh/ansible-provision-key.pub"))
 
+INVENTORY_PATH = "provisioning/inventory.cfg"
+
+# Generate inventory.cfg dynamically
+inventory = "[controller]\nctrl ansible_host=192.168.56.100 ansible_user=vagrant ansible_ssh_private_key_file=./ssh/ansible-provision-key\n\n[nodes]\n"
+(1..WORKER_COUNT).each do |i|
+  inventory += "node-#{ i } ansible_host=192.168.56.10#{i} ansible_user=vagrant ansible_ssh_private_key_file=./ssh/ansible-provision-key\n"
+end
+inventory += "\n[all:vars]\nansible_python_interpreter=/usr/bin/python3\nansible_host_key_checking=False\n"
+
+# Write inventory.cfg to file
+File.open(INVENTORY_PATH, "w") do |file|
+  file.write(inventory)
+end
+
 Vagrant.configure("2") do |config|
+  # General Vagrant configuration
   config.ssh.insert_key = false
+  config.vm.synced_folder "./shared_folder", "/mnt/shared", type: "virtualbox"
+  config.vm.box = "bento/ubuntu-24.04"
+
+  # Defining the controller VM
   config.vm.define "ctrl" do |ctrl|
-    ctrl.vm.box = "bento/ubuntu-24.04"
     ctrl.vm.hostname = "ctrl"
     ctrl.vm.network "private_network", ip: "192.168.56.100"
     ctrl.vm.provider "virtualbox" do |vb|
@@ -22,7 +40,8 @@ Vagrant.configure("2") do |config|
     end
     ctrl.vm.provision "shell", name: "inject-ssh-key", privileged: false, inline: <<-SHELL
       mkdir -p /home/vagrant/.ssh
-      echo "#{public_key}" > /home/vagrant/.ssh/authorized_keys
+      echo "#{public_key}" >> /home/vagrant/.ssh/authorized_keys
+      chmod 700 /home/vagrant/.ssh
       chmod 600 /home/vagrant/.ssh/authorized_keys
       chown -R vagrant:vagrant /home/vagrant/.ssh/authorized_keys
     SHELL
