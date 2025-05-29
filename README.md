@@ -10,8 +10,12 @@ Make sure now you're under /operation, and then you have vagrant booted by runni
 
 ```bash
 cd VM
+
 vagrant up
+
 ansible-playbook -u vagrant -i 192.168.56.100, provisioning/finalization.yml
+
+ansible-playbook -u vagrant -i 192.168.56.100, provisioning/cluster-configuration.yml
 ```
 then connect to the VM using SSH:
 ```bash
@@ -51,6 +55,28 @@ node-1   Ready    <none>          37m   v1.32.4   192.168.56.101   <none>       
 node-2   Ready    <none>          35m   v1.32.4   192.168.56.102   <none>        Ubuntu 24.04.2 LTS   6.8.0-53-generic   containerd://1.7.24
 ```
 
+#### Monitoring
+To monitor the app, you can use the Prometheus and Grafana setup. The Prometheus server is already configured to scrape the app metrics. You can access the Prometheus UI by running:
+
+```bash
+kubectl -n istio-system port-forward deployment/prometheus 9090
+```
+Now the Prometheus server is running on port 9090 on the virtual machine. To run the Prometheus UI on your local machine, you need to forward the port from the VM to your local machine. You can do this by running:
+
+```bash
+ssh -L 9090:localhost:9090 vagrant@192.168.56.100
+```
+
+Then, open your browser and go to [http://localhost:9090](http://localhost:9090) to access the Prometheus UI, the ssh terminal will show you the logs of the Prometheus server, like this:
+
+```
+vagrant@ctrl:~$ kubectl -n istio-system port-forward deployment/prometheus 9090
+Forwarding from 127.0.0.1:9090 -> 9090
+Forwarding from [::1]:9090 -> 9090
+Handling connection for 9090
+Handling connection for 9090
+Handling connection for 9090
+```
 
 ### Assignment 2
 For assignment 2, here are the steps to run the project:
