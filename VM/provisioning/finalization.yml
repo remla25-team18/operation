@@ -102,6 +102,12 @@
       args:
         creates: /home/vagrant/istio-1.25.2/manifests
 
+    - name: Create istio-system namespace if it does not exist
+      ansible.builtin.shell: |
+        kubectl get namespace istio-system || kubectl create namespace istio-system
+      args:
+        executable: /bin/bash
+
     - name: Install Istio Prometheus add-on
       shell: |
         cd /home/vagrant/istio-1.25.2/samples/addons
