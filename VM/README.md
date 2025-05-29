@@ -15,7 +15,9 @@ cd VM
 2. To boot all the VMs, use the following:
 
 ```bash
-vagrant up
+chmod +x create-keys.sh # make sure the create-keys.sh script is executable
+./create-keys.sh        # create the ssh keys for the VMs
+vagrant up              # create the VMs and provision them
 ```
 
 To validate the running process, run
