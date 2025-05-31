@@ -86,7 +86,9 @@ ansible-playbook -u vagrant -i 192.168.56.100, provisioning/cluster-configuratio
 
 Continue from the previous step after provisioning the cluster.
 
-#### 1. Install Helm Chart
+#### 1. Install Helm Chart [Skip fo now]
+
+> **⚠️ Lemon's note: Not verified, will modify in the future, skip this whole step now!!!**
 
 Copy and deploy the chart:
 
