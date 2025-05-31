@@ -188,6 +188,7 @@ To be reorganized.
 
 ---
 
+
 ## 🗓️ Progress Log
 
 ### ✅ Assignment 1
@@ -205,6 +206,15 @@ To be reorganized.
 * Kubernetes deployment via Helm.
 * Monitoring with Prometheus and Grafana.
 * Exposes custom metrics and dashboards.
+
+
+### ✅ Assignment 4
+
+* Automated Tests
+* Continuous Training
+* Project Organization
+* Pipeline Management with DVC
+* Code Quality: Pylint has a non-standard configuration and one custom rule for the ML code smell Randomness Uncontrolled. The project additionally applies flake8 and bandit, which have a non-default configuration. All three linters are automatically run as part of the GitHub workflow
 
 ---
 
