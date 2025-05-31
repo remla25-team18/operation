@@ -21,7 +21,7 @@ model:
   servicePort: 5050
 
 monitoring:
-  enabled: false
+  enabled: true
   appService:
     nodePort: 30001
     port: 9090

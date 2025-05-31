@@ -130,3 +130,4 @@ venv.bak/
 dmypy.json
 
 tmp/
+ssh/

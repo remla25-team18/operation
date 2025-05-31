@@ -1,160 +1,227 @@
-REMLA Group Project | Group 18
-====
+# REMLA Group Project – Group 18
 
-## How to run
+This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm, and Prometheus/Grafana. It features a restaurant sentiment analysis model served via REST APIs and deployed using container orchestration tools.
 
-### Assignment 3
+## 📚 Table of Contents
 
-#### Kubernetes deployment
-Make sure now you're under /operation, and then you have vagrant booted by running:
+* [📌 Overview of Components](#-overview-of-components)
+* [🚀 Running the Application](#-running-the-application)
+  * [🔪 Assignment 1 – Local Development with Docker Compose](#-assignment-1--local-development-with-docker-compose)
+  * [⚙️ Assignment 2 – Provisioning Kubernetes Cluster (Vagrant + Ansible)](#-assignment-2--provisioning-kubernetes-cluster-vagrant--ansible)
+  * [☕️ Assignment 3 – Kubernetes Deployment & Monitoring](#-assignment-3--kubernetes-deployment--monitoring)
+* [📊 App Monitoring](#-app-monitoring)
+* [📁 File Structure](#-file-structure)
+* [🗓️ Progress Log](#-progress-log)
+* [🧠 Notes](#-notes)
+
+---
+
+## 📌 Overview of Components
+
+| Repository                                                         | Description                                                            |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| [operation](https://github.com/remla25-team18/operation)           | Contains deployment orchestration (Docker Compose, Kubernetes, Helm).  |
+| [app](https://github.com/remla25-team18/app)                       | Flask web app (frontend + backend) interacting with the model-service. |
+| [model-service](https://github.com/remla25-team18/model-service)   | REST API serving the trained ML model.                                 |
+| [model-training](https://github.com/remla25-team18/model-training) | Pipeline for training and versioning sentiment analysis models.        |
+| [lib-ml](https://github.com/remla25-team18/lib-ml)                 | Preprocessing utilities used in training and inference.                |
+| [lib-version](https://github.com/remla25-team18/lib-version)       | Lightweight utility for exposing software version metadata.            |
+
+---
+
+## 🚀 Running the Application
+
+### 🔪 Assignment 1 – Local Development with Docker Compose
+
+1. Navigate to the `operation` repository:
+
+   ```bash
+   cd operation
+   docker-compose up
+   ```
+
+2. Open the app:
+
+   [http://127.0.0.1:4200](http://127.0.0.1:4200)
+
+> Docker Compose launches the entire stack: frontend, app backend, and model-service.
+
+---
+
+### ⚙️ Assignment 2 – Provisioning Kubernetes Cluster (Vagrant + Ansible)
+
+#### 1. Boot the Virtual Machines
 
 ```bash
 cd VM
+chmod +x create-keys.sh
+./create-keys.sh
 vagrant up
-ansible-playbook -u vagrant -i 192.168.56.100, provisioning/finalization.yml
-```
-then connect to the VM using SSH:
-```bash
-vagrant ssh ctrl
 ```
 
-Now generate the k8s SECRET(replace the GITHUB_USERNAME, GHCR_PAT and your@email.com with your own):
+> This creates 1 controller (192.168.56.100) and 2 workers (192.168.56.101+).
+
+#### 2. Provision the Cluster
+
+```bash
+ansible-playbook -u vagrant -i 192.168.56.100, provisioning/finalization.yml
+ansible-playbook -u vagrant -i 192.168.56.100, provisioning/cluster-configuration.yml
+```
+
+> Use `vagrant ssh <name>` (e.g., ctrl, node-1) to access individual VMs.
+
+#### 3. Access Kubernetes Dashboard
+
+1. Open: `https://192.168.56.90/`
+2. Get the token:
+
+   ```bash
+   vagrant ssh ctrl
+   kubectl -n kubernetes-dashboard create token admin-user
+   ```
+
+---
+
+### ☕️ Assignment 3 – Kubernetes Deployment & Monitoring
+
+Continue from the previous step after provisioning the cluster.
+
+#### 1. Install Helm Chart [Skip fo now]
+
+> **⚠️ Lemon's note: Not verified, will modify in the future, skip this whole step now!!!**
+
+Copy and deploy the chart:
+
+```bash
+scp -r ./deploy/ vagrant@192.168.56.100:/home/vagrant/
+vagrant ssh ctrl
+helm install release deploy/
+```
+
+> Helm auto-injects values from `values.yaml` into Kubernetes manifests.
+
+#### 2. Create Container Registry Secret
 
 ```bash
 kubectl create secret docker-registry ghcr-secret \
 --docker-server=ghcr.io \
 --docker-username=GITHUB_USERNAME \
 --docker-password=GHCR_PAT \
---docker-email=your@email.com
+--docker-email=you@example.com
 ```
 
-This will create the pods and services for the app and model service. You can check the status of the pods and services using kubectl get pods and kubectl get services commands. The output should look like this:
+#### 3. Validate the Deployment
 
 ```bash
-vagrant@ctrl:~/model-service$ kubectl get pods -w
-NAME                                    READY   STATUS    RESTARTS   AGE
-team18-app-575598cb84-m99t4             1/1     Running   0          15m
-team18-model-service-7789876bf7-gwwxz   1/1     Running   0          72s
-
-
-vagrant@ctrl:~/model-service$ kubectl get services
-NAME                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
-kubernetes             ClusterIP   10.96.0.1       <none>        443/TCP          39m
-team18-app             NodePort    10.100.5.251    <none>        4200:30001/TCP   26m
-team18-model-service   ClusterIP   10.103.48.115   <none>        5050/TCP         26m
-
-
-vagrant@ctrl:~/model-service$ kubectl get nodes -o wide
-NAME     STATUS   ROLES           AGE   VERSION   INTERNAL-IP      EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION     CONTAINER-RUNTIME
-ctrl     Ready    control-plane   39m   v1.32.4   192.168.56.100   <none>        Ubuntu 24.04.2 LTS   6.8.0-53-generic   containerd://1.7.24
-node-1   Ready    <none>          37m   v1.32.4   192.168.56.101   <none>        Ubuntu 24.04.2 LTS   6.8.0-53-generic   containerd://1.7.24
-node-2   Ready    <none>          35m   v1.32.4   192.168.56.102   <none>        Ubuntu 24.04.2 LTS   6.8.0-53-generic   containerd://1.7.24
+kubectl get pods
+kubectl get services
+kubectl get ingress
 ```
 
+#### 4. Monitoring Setup (Prometheus + Grafana)
 
-### Assignment 2
-For assignment 2, here are the steps to run the project:
+Install the monitoring stack:
 
-1. Make sure you're in `./VM` folder, by doing:
+Open a new terminal, use the command to access the VM:
 
 ```bash
-cd VM
+ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
 ```
 
-2. To boot all the VMs, use the following:
+Inside the VM, run
 
 ```bash
-vagrant up
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install prometheus prometheus-community/kube-prometheus-stack \
+  --namespace monitoring \
+  --create-namespace
 ```
 
-To validate the running process, run
+You can check the status of the Prometheus using:
 
 ```bash
-vagrant status
+kubectl get servicemonitor -n monitoring
 ```
-If it successfully runs, you should get the output like this:
 
-```
-Current machine states:
-
-ctrl                      running (virtualbox)
-node-1                    running (virtualbox)
-node-2                    running (virtualbox)
-
-This environment represents multiple VMs. The VMs are all listed above with their current state. For more information about a specific VM, run `vagrant status NAME`.
-
-```
-3. To finalize the cluster setup, run the following command from the `./VM` folder:
 ```bash
-ansible-playbook -u vagrant -i 192.168.56.100, provisioning/finalization.yml
+# Forward Prometheus
+kubectl port-forward svc/prometheus-kube-prometheus-prometheus -n monitoring 9090:9090
+
+# In a separate terminal (or backgrounded process)
+kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
 ```
 
-4. When you finish working, you can permanently delete the VMs using:
-```bash
-vagrant destroy -f
-```
-Note: this means next time you need to build the VMs from scratch, which takes time.
+##### Visit in host machine
 
-### Assignment 1
-For assignment 1, we have created a docker-compose file that allows you to run the entire project with a single command.
-Under **operation** folder, run:
-```bash
-docker-compose up
-```
+* Prometheus: [http://localhost:9090](http://localhost:9090)
+* Grafana: [http://localhost:3000](http://localhost:3000)
+* Default credentials: `admin/prom-operator`
 
-Then you should be able to see the web page running at [http://127.0.0.1:4200/](http://127.0.0.1:4200/).
+> Custom app-specific metrics (counters, gauges) are auto-scraped by Prometheus via `ServiceMonitor`.
+> Grafana dashboards are defined in JSON files (see `grafana/team18-dashboard.json`), import manually through:
 
-> **Note:** This port is the default. To ensure it's the same port on your computer, check the terminal output, as shown in the image below:
+##### Grafana Dashboard
 
-![Docker Port Output](Assets/docker_port.png)
+To import the custom dashboard:
+
+1. Access Grafana at <http://localhost:3000>
+2. Go to Dashboards > Import
+3. Upload `dashboards/team18-dashboard.json`
+4. Click Import
+
+---
+
+## 📊 App Monitoring
+
+The app exposes Prometheus metrics such as:
+
+* `app_request_count` (Counter)
+* `prediction_duration_seconds` (Histogram)
+* `user_feedback_score` (Gauge)
+
+A `ServiceMonitor` is used for automatic metric discovery.
+
+---
+
+## 📁 File Structure
+
+To be reorganized.
+
+---
 
 
-## Relevant repositories
+## 🗓️ Progress Log
 
-The following repositories are relevant for our REMLA group 18 project:
+### ✅ Assignment 1
 
-- [operation](https://github.com/remla25-team18/operation) - stores models and their versions, pointers to other repositories, general instructions how to run the app and a docker-compose file to run the whole project.
-- [app](https://github.com/remla25-team18/app) - the app repository that use Flask framework to contain the frontend of the application, which is a web app that allows users to interact with the model and provide feedback and the backend of the application.
-- [model-service](https://github.com/remla25-team18/model-service) - the model service, which is a REST API that serves the model and is responsible for sending generating predictions for requested comments.
-- [model-training](https://github.com/remla25-team18/model-training) - the component that is responsible for training the model and generating a model version.
-- [lib-ml](https://github.com/remla2) - the library that contains a method to process input data.
-- [lib-version](https://github.com/remla25-team18/lib-version) - the library that can read its own version.
+* Docker Compose setup with modular app and model.
+* Versioned model, reusable libraries (`lib-ml`, `lib-version`).
 
-## Progress log
+### ✅ Assignment 2
 
-### Assignment 4
+* Cluster provisioned via Vagrant + Ansible.
+* All tasks are idempotent and modular.
 
-- **[Automated Tests]** 
+### ✅ Assignment 3
 
-- **[Continuous Training]** 
+* Kubernetes deployment via Helm.
+* Monitoring with Prometheus and Grafana.
+* Exposes custom metrics and dashboards.
 
-- **[Project Organization]** 
 
-- **[Pipeline Management with DVC]** 
+### ✅ Assignment 4
 
-- **[Code Quality]** Pylint has a non-standard configuration and one custom rule for the ML code smell Randomness Uncontrolled. The project additionally applies flake8 and bandit, which have a non-default configuration. All three linters are automatically run as part of the GitHub workflow
+* Automated Tests
+* Continuous Training
+* Project Organization
+* Pipeline Management with DVC
+* Code Quality: Pylint has a non-standard configuration and one custom rule for the ML code smell Randomness Uncontrolled. The project additionally applies flake8 and bandit, which have a non-default configuration. All three linters are automatically run as part of the GitHub workflow
 
-### Assignment 3
+---
 
-- **[Kubernetes Usage]** Deployed the app and model service to the Kubernetes cluster
+## 🧠 Notes
 
-- **[Helm Installation]** Created an Helm chart for the deployment
-
-- **[App Monitoring]** The app has more than 3 app-specific metrics, of the types gauge and counter, that can be used to reason about user behaviour or model performance. The metrics are automatically discovered and collected by Prometheus through a service monitor. 
-
-- **[Grafana]** Not yet implemented
-
-### Assignment 2
-
-- **[Setting up (Virtual) Infrastructure]** We created a Vagrantfile that sets up a virtual machine with Ansible installed. The Vagrantfile is located in the `./VM` folder. The Ansible playbook is located in the `provisioning` folder. All the requirements are met.
-
-- **[Setting up Software Environment]** The Ansible playbook is designed to ensure idempotent provisioning by using several built-in modules. It registers variables to share values between different tasks, enabling seamless communication across the provisioning process. Additionally, the playbook incorporates automation with loops, such as copying multiple SSH keys. 
-
-- **[Setting up Kubernetes]** 
-
-### Assignment 1
-- **[Basic Requirements]** We created a structured organization with several repositories that are responsible for different parts of the project. Operation repository contains a README.md, provides the steps to run the application and docker-compose.yml file to run the whole project. The app has a frontend and a backend which allows a user to interact with the model and provide feedback.
-- **[Automated Release Process]** We created a workflow which automatically versions the artifacts and increases patch versions and bumps the version to the next pre-release version. Main is set to a pre-release after a stable release.
-- **[Software Reuse in Libraries]** We released libraries lib-version and lib-ml through GitHub packages. lib-ml is reused in both model-training and model-service. A trained model is not part of a container image. 
-- **[Exposing a Model via REST]** We used REST API to communicate between the app and model-service, also within the app. DNS name and port are defined as ENV variables. All server endpoints have a well-defined API definition that follows Open API Specification. 
-- **[Docker Compose Operation]** We added an attempt to configure a docker-compose file to run the whole project.
+* Do **not** store secrets in source files. Use Kubernetes `Secrets`.
+* Helm charts should support custom values and be re-installable.
+* Use `--kubeconfig` or set `KUBECONFIG` to interact with your cluster from host.
