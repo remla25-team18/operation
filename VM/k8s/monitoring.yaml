@@ -4,13 +4,15 @@ metadata:
   name: team18-app-servicemonitor
   namespace: monitoring
   labels:
-    release: prometheus # This label is used to identify the ServiceMonitor for Prometheus
+    release: prometheus
 spec:
   selector:
     matchLabels:
       app: team18-app
+  namespaceSelector:
+    matchNames:
+      - default
   endpoints:
     - port: metrics
       path: /metrics
       interval: 15s
-      
