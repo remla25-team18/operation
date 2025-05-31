@@ -4,12 +4,11 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
 
 ## 📚 Table of Contents
 
-* [📌 Overview of Components](#📌-overview-of-components)
-* [🚀 Running the Application](#🚀-running-the-application)
-
-  * [🔪 Assignment 1 – Local Development with Docker Compose](#🔪-assignment-1--local-development-with-docker-compose)
-  * [⚙️ Assignment 2 – Provisioning Kubernetes Cluster (Vagrant + Ansible)](#️-assignment-2--provisioning-kubernetes-cluster-vagrant--ansible)
-  * [☕️ Assignment 3 – Kubernetes Deployment & Monitoring](#️-assignment-3--kubernetes-deployment--monitoring)
+* [📌 Overview of Components](#-overview-of-components)
+* [🚀 Running the Application](#-running-the-application)
+  * [🔪 Assignment 1 – Local Development with Docker Compose](#-assignment-1--local-development-with-docker-compose)
+  * [⚙️ Assignment 2 – Provisioning Kubernetes Cluster (Vagrant + Ansible)](#-assignment-2--provisioning-kubernetes-cluster-vagrant--ansible)
+  * [☕️ Assignment 3 – Kubernetes Deployment & Monitoring](#-assignment-3--kubernetes-deployment--monitoring)
 * [📊 App Monitoring](#-app-monitoring)
 * [📁 File Structure](#-file-structure)
 * [🗓️ Progress Log](#-progress-log)
@@ -151,14 +150,23 @@ kubectl port-forward svc/prometheus-kube-prometheus-prometheus -n monitoring 909
 kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
 ```
 
-Visit in host machine:
-- Prometheus: [http://localhost:9090](http://localhost:9090)
-- Grafana: [http://localhost:3000](http://localhost:3000)
-- Default credentials: `admin/prom-operator`
+##### Visit in host machine
+
+* Prometheus: [http://localhost:9090](http://localhost:9090)
+* Grafana: [http://localhost:3000](http://localhost:3000)
+* Default credentials: `admin/prom-operator`
 
 > Custom app-specific metrics (counters, gauges) are auto-scraped by Prometheus via `ServiceMonitor`.
+> Grafana dashboards are defined in JSON files (see `grafana/team18-dashboard.json`), import manually through:
 
-> Grafana dashboards are defined in JSON files (see `grafana/`), import manually or auto-configure via ConfigMap.
+##### Grafana Dashboard
+
+To import the custom dashboard:
+
+1. Access Grafana at <http://localhost:3000>
+2. Go to Dashboards > Import
+3. Upload `dashboards/team18-dashboard.json`
+4. Click Import
 
 ---
 
