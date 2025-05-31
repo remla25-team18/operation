@@ -2,13 +2,15 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: team18-app-servicemonitor
+  namespace: monitoring
   labels:
-    release: prometheus
+    release: prometheus # This label is used to identify the ServiceMonitor for Prometheus
 spec:
   selector:
     matchLabels:
       app: team18-app
   endpoints:
-  - port: metrics
-    path: /metrics
-    interval: 15s
+    - port: metrics
+      path: /metrics
+      interval: 15s
+      
