@@ -4,15 +4,30 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
 
 ## 📚 Table of Contents
 
-* [📌 Overview of Components](#-overview-of-components)
-* [🚀 Running the Application](#-running-the-application)
-  * [🔪 Assignment 1 – Local Development with Docker Compose](#-assignment-1--local-development-with-docker-compose)
-  * [⚙️ Assignment 2 – Provisioning Kubernetes Cluster (Vagrant + Ansible)](#-assignment-2--provisioning-kubernetes-cluster-vagrant--ansible)
-  * [☕️ Assignment 3 – Kubernetes Deployment & Monitoring](#-assignment-3--kubernetes-deployment--monitoring)
-* [📊 App Monitoring](#-app-monitoring)
-* [📁 File Structure](#-file-structure)
-* [🗓️ Progress Log](#-progress-log)
-* [🧠 Notes](#-notes)
+- [REMLA Group Project – Group 18](#remla-group-project--group-18)
+  - [📚 Table of Contents](#-table-of-contents)
+  - [📌 Overview of Components](#-overview-of-components)
+  - [🚀 Running the Application](#-running-the-application)
+    - [🔪 Assignment 1 – Local Development with Docker Compose](#-assignment-1--local-development-with-docker-compose)
+    - [⚙️ Assignment 2 – Provisioning Kubernetes Cluster (Vagrant + Ansible)](#️-assignment-2--provisioning-kubernetes-cluster-vagrant--ansible)
+      - [1. Boot the Virtual Machines](#1-boot-the-virtual-machines)
+      - [2. Provision the Cluster](#2-provision-the-cluster)
+      - [3. Create Container Registry Secret](#3-create-container-registry-secret)
+      - [4. Apply the Kubernetes Configuration](#4-apply-the-kubernetes-configuration)
+      - [5. Access Kubernetes Dashboard](#5-access-kubernetes-dashboard)
+    - [☕️ Assignment 3 – Kubernetes Deployment \& Monitoring](#️-assignment-3--kubernetes-deployment--monitoring)
+      - [1. Install Helm Chart \[Skip fo now\]](#1-install-helm-chart-skip-fo-now)
+      - [3. Validate the Deployment](#3-validate-the-deployment)
+      - [4. Monitoring Setup (Prometheus + Grafana)](#4-monitoring-setup-prometheus--grafana)
+        - [Visit in host machine](#visit-in-host-machine)
+  - [📊 App Monitoring](#-app-monitoring)
+  - [📁 File Structure](#-file-structure)
+  - [🗓️ Progress Log](#️-progress-log)
+    - [✅ Assignment 1](#-assignment-1)
+    - [✅ Assignment 2](#-assignment-2)
+    - [✅ Assignment 3](#-assignment-3)
+    - [✅ Assignment 4](#-assignment-4)
+  - [🧠 Notes](#-notes)
 
 ---
 
@@ -52,6 +67,11 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
 
 #### 1. Boot the Virtual Machines
 
+Make sure you have Vagrant and VirtualBox installed. Navigate to the `VM` directory in the `operation` repository:
+
+
+If you have run the project and have the ssh keys already created, you can directly run `vagrant up` to start the VMs.
+ If you haven't created the keys yet, run the following commands:
 ```bash
 cd VM
 chmod +x create-keys.sh
@@ -65,42 +85,15 @@ vagrant up
 
 ```bash
 ansible-playbook -u vagrant -i 192.168.56.100, provisioning/finalization.yml
-ansible-playbook -u vagrant -i 192.168.56.100, provisioning/cluster-configuration.yml
 ```
 
 > Use `vagrant ssh <name>` (e.g., ctrl, node-1) to access individual VMs.
+> 
+#### 3. Create Container Registry Secret
 
-#### 3. Access Kubernetes Dashboard
+To allow Kubernetes to pull images from GitHub Container Registry (GHCR), create a secret with your GitHub credentials. After connecting to the controller VM using `vagrant ssh ctrl`, run the following command: 
 
-1. Open: `https://192.168.56.90/`
-2. Get the token:
-
-   ```bash
-   vagrant ssh ctrl
-   kubectl -n kubernetes-dashboard create token admin-user
-   ```
-
----
-
-### ☕️ Assignment 3 – Kubernetes Deployment & Monitoring
-
-Continue from the previous step after provisioning the cluster.
-
-#### 1. Install Helm Chart [Skip fo now]
-
-> **⚠️ Lemon's note: Not verified, will modify in the future, skip this whole step now!!!**
-
-Copy and deploy the chart:
-
-```bash
-scp -r ./deploy/ vagrant@192.168.56.100:/home/vagrant/
-vagrant ssh ctrl
-helm install release deploy/
-```
-
-> Helm auto-injects values from `values.yaml` into Kubernetes manifests.
-
-#### 2. Create Container Registry Secret
+**Replace the paramater with your own info.**
 
 ```bash
 kubectl create secret docker-registry ghcr-secret \
@@ -109,6 +102,48 @@ kubectl create secret docker-registry ghcr-secret \
 --docker-password=GHCR_PAT \
 --docker-email=you@example.com
 ```
+
+#### 4. Apply the Kubernetes Configuration
+
+Under the `operation/VM` directory, run the following command to apply the Kubernetes configuration:
+
+```bash
+ansible-playbook -u vagrant -i 192.168.56.100, provisioning/cluster-configuration.yml
+```
+
+
+#### 5. Access Kubernetes Dashboard
+
+1. Open: `https://192.168.56.90/` on your host machine.
+2. In the ssh terminal, run this to get the token:
+
+   ```bash
+   kubectl -n kubernetes-dashboard create token admin-user
+   ```
+3. Copy the token and paste it into the dashboard login page, you should be able to see the app and model-service pods running.
+
+---
+
+### ☕️ Assignment 3 – Kubernetes Deployment & Monitoring
+
+#### 1. Install Helm Chart [Skip fo now]
+
+> **⚠️ Lemon's note: Not verified, will modify in the future, skip this whole step now!!!**
+> 
+In the root directory ('operation'), copy the chart:
+```bash
+cd ..
+scp -r ./helm/ vagrant@192.168.56.100:/home/vagrant/
+```
+
+Then deploy the chart:
+
+```bash
+cd VM
+vagrant ssh ctrl
+helm install release helm/
+```
+
 
 #### 3. Validate the Deployment
 
@@ -122,13 +157,13 @@ kubectl get ingress
 
 Install the monitoring stack:
 
-Open a new terminal, use the command to access the VM:
+Open a new terminal, use the command to access the VM using SSH:
 
 ```bash
 ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
 ```
 
-Inside the VM, run
+Inside the ssh terminal, run
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -138,11 +173,15 @@ helm install prometheus prometheus-community/kube-prometheus-stack \
   --create-namespace
 ```
 
-You can check the status of the Prometheus using:
+**After installing Prometheus, you need to reapply the kubernetes configuration again. Use the terminal on the local host and make sure you're under `operation/VM`, run `ansible-playbook -u vagrant -i 192.168.56.100, provisioning/cluster-configuration.yml` again.**
+
+Then you can check the status of the Prometheus using:
 
 ```bash
 kubectl get servicemonitor -n monitoring
 ```
+
+You should see the `team18-app-servicemonitor` listed, indicating that Prometheus is set to scrape metrics from the app services.
 
 ```bash
 # Forward Prometheus
@@ -159,11 +198,7 @@ kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
 * Default credentials: `admin/prom-operator`
 
 > Custom app-specific metrics (counters, gauges) are auto-scraped by Prometheus via `ServiceMonitor`.
-> Grafana dashboards are defined in JSON files (see `grafana/team18-dashboard.json`), import manually through:
-
-##### Grafana Dashboard
-
-To import the custom dashboard:
+> Grafana dashboards are defined in JSON files (see `helm/grafana/team18-dashboard.json`), import manually through:
 
 1. Access Grafana at <http://localhost:3000>
 2. Go to Dashboards > Import
@@ -176,9 +211,10 @@ To import the custom dashboard:
 
 The app exposes Prometheus metrics such as:
 
+**TODO**
 * `app_request_count` (Counter)
-* `prediction_duration_seconds` (Histogram)
-* `user_feedback_score` (Gauge)
+<!-- * `prediction_duration_seconds` (Histogram)
+* `user_feedback_score` (Gauge) -->
 
 A `ServiceMonitor` is used for automatic metric discovery.
 
