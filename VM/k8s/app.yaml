@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: team18-app
-          image: ghcr.io/remla25-team18/app:0.0.11
+          image: ghcr.io/remla25-team18/app:0.0.19
           ports:
             - containerPort: 4200
           env:
@@ -51,7 +51,7 @@ spec:
     spec:
       containers:
         - name: team18-app
-          image: ghcr.io/remla25-team18/app:0.0.17
+          image: ghcr.io/remla25-team18/app:0.0.18
           ports:
             - containerPort: 4200
           env:
