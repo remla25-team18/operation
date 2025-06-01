@@ -148,6 +148,7 @@ helm install release helm/
 #### 3. Validate the Deployment
 
 ```bash
+vagrant ssh ctrl
 kubectl get pods
 kubectl get services
 kubectl get ingress
@@ -182,6 +183,8 @@ kubectl get servicemonitor -n monitoring
 ```
 
 You should see the `team18-app-servicemonitor` listed, indicating that Prometheus is set to scrape metrics from the app services.
+
+Make sure you exit ssh and enter again (using the first command of this forth step), so the changes are reflected, when you do the following commands:
 
 ```bash
 # Forward Prometheus
