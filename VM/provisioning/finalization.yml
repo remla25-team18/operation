@@ -88,6 +88,10 @@
         src: /tmp/istio.tar.gz
         dest: /home/vagrant/
         remote_src: yes
+        remote_src: yes
+        owner: vagrant
+        group: vagrant
+        mode: '0755'
 
     - name: Add istioctl to PATH
       lineinfile:
@@ -99,8 +103,6 @@
     - name: Run istioctl install (demo profile)
       shell: |
         /home/vagrant/istio-1.25.2/bin/istioctl install --set profile=demo -y
-      args:
-        creates: /home/vagrant/istio-1.25.2/manifests
 
     - name: Check Istio version
       shell: |

@@ -229,12 +229,39 @@ A `ServiceMonitor` is used for automatic metric discovery.
 
 ---
 
+### Assignment 5 - Istio Service Mesh
+
+#### 🚦 Rate Limiting via Istio
+
+This project implements request throttling using **Istio’s local rate limiting** feature, enforced at the Istio ingress gateway.
+
+##### ✅ Rate Limiting Details
+
+- **Limit**: 10 requests per minute  
+- **Scope**: Per client connection (typically per IP)  
+- **Status Code on Limit**: `429 Too Many Requests`  
+- **Implementation**: Istio `EnvoyFilter` (configured in `istio-rate-limit.yaml`)
+
+##### 🧪 How to Test
+
+You can test the rate limit feature in a new terminal using `curl` like so:
+
+<!-- This assumes the MetalLB LoadBalancer IP is not changed since the moment of writing this -->
+<!-- This command sends 15 http requests in silent mode, outputting only the HTTP respnonse headers -->
+
+```bash
+for i in {1..15}; do curl -s -o /dev/null -w "%{http_code}\n" http://192.168.56.91/; done
+```
+
+The first 10 requests should return a `200 - OK` response.
+After the 10th request, subsequent responses should return a `429 - Too Many Requests` error.
+
+
 ## 📁 File Structure
 
 To be reorganized.
 
 ---
-
 
 ## 🗓️ Progress Log
 
