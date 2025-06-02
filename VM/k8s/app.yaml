@@ -23,11 +23,16 @@ spec:
           ports:
             - containerPort: 4200
           env:
-            - name: MODEL_HOST
+            - name: DNS
               valueFrom:
                 configMapKeyRef:
                   name: app-config
-                  key: model.host
+                  key: DNS
+            - name: MODEL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: MODEL_PORT
 
       imagePullSecrets:
         - name: ghcr-secret
@@ -55,11 +60,18 @@ spec:
           ports:
             - containerPort: 4200
           env:
-            - name: MODEL_HOST
+          env:
+            - name: DNS
               valueFrom:
                 configMapKeyRef:
                   name: app-config
-                  key: model.host
+                  key: DNS
+            - name: MODEL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: MODEL_PORT
+
 
       imagePullSecrets:
         - name: ghcr-secret
@@ -84,4 +96,6 @@ kind: ConfigMap
 metadata:
   name: app-config
 data:
-  model.host: "http://team18-model-service:5050"
+  # model.host: "http://team18-model-service:5050"
+  DNS: "team18-model-service"
+  MODEL_PORT: "5050"
