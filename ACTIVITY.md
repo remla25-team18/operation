@@ -75,3 +75,21 @@ Approved PR: https://github.com/remla25-team18/model-training/pull/3
 
 
 # Week 6:
+-- Lászlo: --  
+Created PR:
+Approved PR:
+
+-- Lemon: --  
+Created PR:
+Approved PR:
+
+-- Madalena: --  
+Created PR:
+Approved PR: https://github.com/remla25-team18/operation/pull/20
+
+-- Yahor: -- 
+Created PR:
+Approved PR:
+
+# Week 7:
+
