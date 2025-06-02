@@ -85,7 +85,7 @@ Created PR: https://github.com/remla25-team18/operation/pull/21
 Approved PR: https://github.com/remla25-team18/operation/pull/22
 
 -- Madalena: --  
-Created PR:
+Created PR: https://github.com/remla25-team18/model-training/pull/7 (related to A4)
 Approved PR: https://github.com/remla25-team18/operation/pull/20
 
 -- Yahor: -- 
