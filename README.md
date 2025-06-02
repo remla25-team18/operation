@@ -216,6 +216,94 @@ kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
 
 ---
 
+### 🚦 Assignment 5 – Traffic Management
+
+#### 1. Installing Istio and necessary CRDs
+
+This step should be already done by the Ansible playbooks you ran in the previous step. Ensure you have ran the following commands from your host machine:
+
+```bash
+cd VM
+echo Installing Istio and necessary CRDs
+ansible-playbook -u vagrant -i 192.168.56.100, provisioning/finalization.yml
+```
+
+To check that everything is installed correctly, run the following command:
+
+```bash
+vagrant ssh ctrl 
+istioctl version
+kubectl get pods -n istio-system
+```
+You should get this:
+```plaintext
+vagrant@ctrl:~$ istioctl version
+client version: 1.25.2
+control plane version: 1.25.2
+data plane version: 1.25.2 (2 proxies)
+
+vagrant@ctrl:~$ kubectl get pods -n istio-system
+NAME                                   READY   STATUS    RESTARTS   AGE
+istio-egressgateway-8547bd8df7-qs4k4   1/1     Running   0          39m
+istio-ingressgateway-d6c84fd47-dt2m4   1/1     Running   0          39m
+istiod-77c5b4fdc8-lnkrv                1/1     Running   0          39m
+```
+
+#### 2. Deploying the Application with Istio
+This step should also be done by now with the right Ansible playbook executed. Again, ensure you have ran the following commands from your host machine:
+
+```bash
+cd VM
+echo Deploying the application with Istio
+ansible-playbook -u vagrant -i 192.168.56.100, provisioning/cluster-configuration.yml
+```
+
+We deployed 2 versions of the app, `team18-app-v1` and `team18-app-v2` with 80-20 traffic split between them. You can check the status of the pods and services using:
+
+```bash
+vagrant ssh ctrl
+kubectl get pods
+kubectl get services
+```
+You should see both versions of the app running, like this:
+
+```plaintext
+vagrant@ctrl:~$ kubectl get pods
+NAME                                    READY   STATUS    RESTARTS   AGE
+team18-app-v1-db78d66c8-qkqs9           2/2     Running   0          20m
+team18-app-v2-fbf5b5994-xcs5s           2/2     Running   0          20m
+team18-model-service-6bd5979755-7zf8g   1/1     Running   0          4h7m
+
+vagrant@ctrl:~$ kubectl get services
+NAME                   TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+kubernetes             ClusterIP   10.96.0.1      <none>        443/TCP    4h42m
+team18-app             ClusterIP   10.99.168.89   <none>        80/TCP     21m
+team18-model-service   ClusterIP   10.106.15.34   <none>        5050/TCP   4h30m
+```
+
+To verify the custom routing, you can execute the command below. You should see `v1` appear 8 times and `v2` appear 2 times, indicating the 80-20 traffic split.
+
+```bash
+for i in {1..10}; do                                                        
+  curl -s -k http://192.168.56.91/metrics -H "Host: team18.local"
+done
+```
+
+We also implemented sticky sessions for the app, so that users will always be directed to the same version of the app they started with when there is a special header in their request. Check it by running the following commands!
+
+```bash 
+vagrant ssh ctrl
+curl -k http://192.168.56.91/metrics -H "Host: team18.local" -H "experiment: v1"
+curl -k http://192.168.56.92/metrics -H "Host: team18.local" -H "experiment: v2"
+```
+When you do requests to specific versions, you should see the version appear as part of the hist_duration_pred_req metric, like this:
+
+```plaintext
+hist_duration_pred_req{le="0.1", version="v1.0"} 0 # for v1
+```
+
+---
+
 ## 📊 App Monitoring
 
 The app exposes Prometheus metrics such as:
