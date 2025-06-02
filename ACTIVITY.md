@@ -77,8 +77,8 @@ Approved PR: https://github.com/remla25-team18/model-training/pull/3
 
 # Week 6:
 -- Lászlo: --  
-Created PR:
-Approved PR:
+Created PR: https://github.com/remla25-team18/operation/pull/22 (related to A5)
+Approved PR: https://github.com/remla25-team18/model-training/pull/7
 
 -- Lemon: --  
 Created PR: https://github.com/remla25-team18/operation/pull/21
