@@ -10,6 +10,7 @@
         kubectl apply -f /vagrant/k8s/app.yaml
         kubectl apply -f /vagrant/k8s/monitoring.yaml
         kubectl apply -f /vagrant/k8s/ingress.yaml
+        kubectl apply -f /vagrant/k8s/istio-ingress.yaml
 
     # Enabling Prometheus
     # - name: Add Prometheus Community Helm repo
