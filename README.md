@@ -332,7 +332,7 @@ You can test the rate limit feature in a new terminal using `curl` like so:
 <!-- This command sends 15 http requests in silent mode, outputting only the HTTP respnonse headers -->
 
 ```bash
-for i in {1..15}; do curl -s -o /dev/null -w "%{http_code}\n" http://192.168.56.90/; done
+for i in {1..15}; do curl -s -o /dev/null -w "%{http_code}\n" http://192.168.56.91/; done
 ```
 
 The first 10 requests should return a `200 - OK` response.
