@@ -17,6 +17,7 @@ operation: https://github.com/remla25-team18/operation
 - Release A2: https://github.com/remla25-team18/operation/releases/tag/a2
 - Release A3: https://github.com/remla25-team18/operation/releases/tag/a3
 - Release A4: https://github.com/remla25-team18/operation/releases/tag/a4
+- Release A5: https://github.com/remla25-team18/operation/releases/tag/a5
 
 model training: https://github.com/remla25-team18/model-training
 
@@ -24,6 +25,7 @@ model training: https://github.com/remla25-team18/model-training
 - Release A2: https://github.com/remla25-team18/model-training/releases/tag/a2
 - Release A3: https://github.com/remla25-team18/model-training/releases/tag/a3
 - Release A4: https://github.com/remla25-team18/model-training/releases/tag/a4
+- Release A5: https://github.com/remla25-team18/model-training/releases/tag/a5
 
 model service: https://github.com/remla25-team18/model-service
 
@@ -31,6 +33,7 @@ model service: https://github.com/remla25-team18/model-service
 - Release A2: https://github.com/remla25-team18/model-service/releases/tag/a2
 - Release A3: https://github.com/remla25-team18/model-service/releases/tag/a3
 - Release A4: https://github.com/remla25-team18/model-service/releases/tag/a4
+- Release A5: https://github.com/remla25-team18/model-service/releases/tag/a5
 
 lib-ml: https://github.com/remla25-team18/lib-ml
 
@@ -38,6 +41,7 @@ lib-ml: https://github.com/remla25-team18/lib-ml
 - Release A2: https://github.com/remla25-team18/lib-ml/releases/tag/a2
 - Release A3: https://github.com/remla25-team18/lib-ml/releases/tag/a3
 - Release A4: https://github.com/remla25-team18/lib-ml/releases/tag/a4
+- Release A5: https://github.com/remla25-team18/lib-ml/releases/tag/a5
 
 lib-version: https://github.com/remla25-team18/lib-version
 
@@ -45,6 +49,7 @@ lib-version: https://github.com/remla25-team18/lib-version
 - Release A2: https://github.com/remla25-team18/lib-version/releases/tag/a2
 - Release A3: https://github.com/remla25-team18/lib-version/releases/tag/a3
 - Release A4: https://github.com/remla25-team18/lib-version/releases/tag/a4
+- Release A5: https://github.com/remla25-team18/lib-version/releases/tag/a5
 
 app: https://github.com/remla25-team18/app
 
@@ -52,6 +57,7 @@ app: https://github.com/remla25-team18/app
 - Release A2: https://github.com/remla25-team18/app/releases/tag/a2
 - Release A3: https://github.com/remla25-team18/app/releases/tag/a3
 - Release A4: https://github.com/remla25-team18/app/releases/tag/a4
+- Release A5: https://github.com/remla25-team18/app/releases/tag/a5
   
 Note: In our organization there are two other repositories, namely app-frontend and app-service. These repositories are no longer maintained, and are only there for activity tracking reasons. The current project uses the app repository.
 
