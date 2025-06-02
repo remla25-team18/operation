@@ -55,6 +55,16 @@ app: https://github.com/remla25-team18/app
   
 Note: In our organization there are two other repositories, namely app-frontend and app-service. These repositories are no longer maintained, and are only there for activity tracking reasons. The current project uses the app repository.
 
+## Comments for A5:
+
+Git tags for every repo to be reviewed are marked with $a5$
+
+Since we decide the final deployment structure and the data flow still needs to be polished, we chose to skip the documentation for now and only did task 1.1 Implementation of a5, which is the following:
+
+- Traffic Management: 
+- Continuous Experimentation: See `docs/continuous-experimentation.md` for details, so far we achieved sufficient level because only prometheus is used for monitoring and Grafana hasn't been set up yet.
+- Additional Use Case(Rate Limiting):
+
 ## Comments for A4:
 
 Git tags for every repo to be reviewed are marked with $a4$
