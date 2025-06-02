@@ -89,8 +89,8 @@ Created PR:
 Approved PR: https://github.com/remla25-team18/operation/pull/20
 
 -- Yahor: -- 
-Created PR:
-Approved PR:
+Created PR: https://github.com/remla25-team18/operation/pull/24 (related to A5)
+Approved PR: https://github.com/remla25-team18/operation/pull/21
 
 # Week 7:
 
