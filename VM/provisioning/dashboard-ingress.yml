@@ -6,9 +6,10 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
-  ingressClassName: "nginx"
+  ingressClassName: nginx
   rules:
-    - http:
+    - host: team18.k8s.dashboard.local
+      http:
         paths:
           - path: /
             pathType: Prefix
