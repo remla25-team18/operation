@@ -236,23 +236,15 @@ This project implements request throttling using **Istio’s local rate limiting
 - **Status Code on Limit**: `429 Too Many Requests`  
 - **Implementation**: Istio `EnvoyFilter` (configured in `istio-rate-limit.yaml`)
 
-##### 🛠️ Enabling Rate Limiting
-
-To enable rate limiting, apply the provided Envoy filter configuration:
-
-```bash
-kubectl apply -f istio-rate-limit.yaml
-```
-
 ##### 🧪 How to Test
 
 You can test the rate limit feature in a new terminal using `curl` like so:
 
 <!-- This assumes the MetalLB LoadBalancer IP is not changed since the moment of writing this -->
 <!-- This command sends 15 http requests in silent mode, outputting only the HTTP respnonse headers -->
-<!--  -->
+
 ```bash
-for i in {1..15}; do curl -s -o /dev/null -w "%{http_code}\n" http://192.168.56.91/; done
+for i in {1..15}; do curl -s -o /dev/null -w "%{http_code}\n" http://192.168.56.90/; done
 ```
 
 The first 10 requests should return a `200 - OK` response.
