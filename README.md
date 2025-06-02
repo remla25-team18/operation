@@ -114,7 +114,7 @@ ansible-playbook -u vagrant -i 192.168.56.100, provisioning/cluster-configuratio
 
 #### 5. Access Kubernetes Dashboard
 
-1. Open: `https://192.168.56.90/` on your host machine.
+1. Open: [https://192.168.56.90/](https://192.168.56.90/) on your host machine.
 2. In the ssh terminal, run this to get the token:
 
    ```bash
@@ -200,7 +200,13 @@ kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
 * Grafana: [http://localhost:3000](http://localhost:3000)
 * Default credentials: `admin/prom-operator`
 
-> Custom app-specific metrics (counters, gauges) are auto-scraped by Prometheus via `ServiceMonitor`.
+> Custom app-specific metrics (counters, gauges) are auto-scraped by Prometheus via `ServiceMonitor`, you can view different versions of the app by querying `duration_validation_req`, you should see the different versions of the app in the `version` label like:
+> 
+  ```plaintext
+  duration_validation_req{container="team18-app", endpoint="metrics", instance="10.244.2.3:4200", job="team18-app", namespace="default", pod="team18-app-v2-6464889d88-prbqp", service="team18-app", version="v1.0"}	
+  duration_validation_req{container="team18-app", endpoint="metrics", instance="10.244.1.2:4200", job="team18-app", namespace="default", pod="team18-app-v1-65b8cf7b-kfznc", service="team18-app", version="v2.0"}
+  ```
+
 > Grafana dashboards are defined in JSON files (see `helm/grafana/team18-dashboard.json`), import manually through:
 
 1. Access Grafana at <http://localhost:3000>
