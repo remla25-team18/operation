@@ -1,3 +1,4 @@
+```
 Team members may have created and approved more than one pull request per week, but we will only show one pull each member created and approved per week for the sake of simplicity.
 
 # Week 2:
@@ -93,3 +94,4 @@ Approved PR:
 
 # Week 7:
 
+```
