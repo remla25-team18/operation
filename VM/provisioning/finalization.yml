@@ -103,8 +103,6 @@
     - name: Run istioctl install (demo profile)
       shell: |
         /home/vagrant/istio-1.25.2/bin/istioctl install --set profile=demo -y
-      args:
-        creates: /home/vagrant/istio-1.25.2/manifests
 
     - name: Check Istio version
       shell: |

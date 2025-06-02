@@ -214,9 +214,20 @@ kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
 3. Upload `dashboards/team18-dashboard.json`
 4. Click Import
 
+#### 📊 App Monitoring
+
+The app exposes Prometheus metrics such as:
+
+**TODO**
+* `app_request_count` (Counter)
+<!-- * `prediction_duration_seconds` (Histogram)
+* `user_feedback_score` (Gauge) -->
+
+A `ServiceMonitor` is used for automatic metric discovery.
+
 ---
 
-### 🚦 Assignment 5 – Traffic Management
+### :car: Assignment 5 – Traffic Management
 
 #### 1. Installing Istio and necessary CRDs
 
@@ -302,27 +313,37 @@ When you do requests to specific versions, you should see the version appear as 
 hist_duration_pred_req{le="0.1", version="v1.0"} 0 # for v1
 ```
 
----
+#### 3. 🚦 Rate Limiting via Istio
 
-## 📊 App Monitoring
+This project implements request throttling using **Istio’s local rate limiting** feature, enforced at the Istio ingress gateway.
 
-The app exposes Prometheus metrics such as:
+##### ✅ Rate Limiting Details
 
-**TODO**
-* `app_request_count` (Counter)
-<!-- * `prediction_duration_seconds` (Histogram)
-* `user_feedback_score` (Gauge) -->
+- **Limit**: 10 requests per minute  
+- **Scope**: Per client connection (typically per IP)  
+- **Status Code on Limit**: `429 Too Many Requests`  
+- **Implementation**: Istio `EnvoyFilter` (configured in `istio-rate-limit.yaml`)
 
-A `ServiceMonitor` is used for automatic metric discovery.
+##### 🧪 How to Test
 
----
+You can test the rate limit feature in a new terminal using `curl` like so:
+
+<!-- This assumes the MetalLB LoadBalancer IP is not changed since the moment of writing this -->
+<!-- This command sends 15 http requests in silent mode, outputting only the HTTP respnonse headers -->
+
+```bash
+for i in {1..15}; do curl -s -o /dev/null -w "%{http_code}\n" http://192.168.56.90/; done
+```
+
+The first 10 requests should return a `200 - OK` response.
+After the 10th request, subsequent responses should return a `429 - Too Many Requests` error.
+
 
 ## 📁 File Structure
 
 To be reorganized.
 
 ---
-
 
 ## 🗓️ Progress Log
 
@@ -350,6 +371,14 @@ To be reorganized.
 * Project Organization
 * Pipeline Management with DVC
 * Code Quality: Pylint has a non-standard configuration and one custom rule for the ML code smell Randomness Uncontrolled. The project additionally applies flake8 and bandit, which have a non-default configuration. All three linters are automatically run as part of the GitHub workflow
+
+### ✅ Assignment 5
+
+* Istio-based app traffic management.
+* 80-20 traffic split between two app versions.
+* Sticky sessions for user consistency.
+* 2 versions of the app with a shared metric for continuous experimentation.
+* Rate limiting implemented via Istio's local rate limiting feature.
 
 ---
 
