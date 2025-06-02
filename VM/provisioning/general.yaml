@@ -46,8 +46,9 @@
 
     - name: Install runc (container runtime)
       ansible.builtin.apt:
-        name: runc=1.1.12-0ubuntu3.1
+        name: runc=1.1.12-0ubuntu3
         state: present
+        allow_downgrade: yes
 
     - name: Install basic kubernetes tools
       ansible.builtin.apt:

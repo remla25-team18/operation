@@ -1,0 +1,1 @@
+PLACEHOLDER = "This directory contains the code for reading shared folders in a virtual machine environment."

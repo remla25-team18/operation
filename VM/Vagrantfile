@@ -1,33 +1,50 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-WORKER_COUNT = ENV.fetch("WORKER_COUNT", 2).to_i  # Number of worker nodes (default: 2)
-CTRL_MEMORY = ENV.fetch("CTRL_MEMORY", 4096).to_i # Memory size for the controller (default: 4096 MB)
-CTRL_CPUS = ENV.fetch("CTRL_CPUS", 2).to_i        # CPU cores for the controller (default: 2)
-NODE_MEMORY = ENV.fetch("NODE_MEMORY", 6144).to_i # Memory size for each worker node (default: 6144 MB)
-NODE_CPUS = ENV.fetch("NODE_CPUS", 2).to_i  
-ANSIBLE_COMPATIBILITY_MODE = ENV.fetch("ANSIBLE_COMPATIBILITY_MODE", "2.0") # Ansible compatibility mode (default: 2.0)
+WORKER_COUNT = ENV.fetch("WORKER_COUNT", 2).to_i
+CTRL_MEMORY = ENV.fetch("CTRL_MEMORY", 4096).to_i
+CTRL_CPUS = ENV.fetch("CTRL_CPUS", 2).to_i
+NODE_MEMORY = ENV.fetch("NODE_MEMORY", 6144).to_i
+NODE_CPUS = ENV.fetch("NODE_CPUS", 2).to_i
+ANSIBLE_COMPATIBILITY_MODE = ENV.fetch("ANSIBLE_COMPATIBILITY_MODE", "2.0")
 
-# All Vagrant configuration is done below. The "2" in Vagrant.configure
-# configures the configuration version (we support older styles for
-# backwards compatibility). Please don't change it unless you know what
-# you're doing.
+public_key = File.read(File.expand_path("ssh/ansible-provision-key.pub"))
+
+INVENTORY_PATH = "provisioning/inventory.cfg"
+
+# Generate inventory.cfg dynamically
+inventory = "[controller]\nctrl ansible_host=192.168.56.100 ansible_user=vagrant ansible_ssh_private_key_file=./ssh/ansible-provision-key\n\n[nodes]\n"
+(1..WORKER_COUNT).each do |i|
+  inventory += "node-#{ i } ansible_host=192.168.56.10#{i} ansible_user=vagrant ansible_ssh_private_key_file=./ssh/ansible-provision-key\n"
+end
+inventory += "\n[all:vars]\nansible_python_interpreter=/usr/bin/python3\nansible_host_key_checking=False\n"
+
+# Write inventory.cfg to file
+File.open(INVENTORY_PATH, "w") do |file|
+  file.write(inventory)
+end
+
 Vagrant.configure("2") do |config|
-  # The most common configuration options are documented and commented below.
-  # For a complete reference, please see the online documentation at
-  # https://docs.vagrantup.com.
+  # General Vagrant configuration
+  config.ssh.insert_key = false
+  config.vm.synced_folder "./shared_folder", "/mnt/shared", type: "virtualbox"
+  config.vm.box = "bento/ubuntu-24.04"
 
-  # Every Vagrant development environment requires a box. You can search for
-  # boxes at https://vagrantcloud.com/search.
+  # Defining the controller VM
   config.vm.define "ctrl" do |ctrl|
-    ctrl.vm.box = "bento/ubuntu-24.04"
     ctrl.vm.hostname = "ctrl"
     ctrl.vm.network "private_network", ip: "192.168.56.100"
     ctrl.vm.provider "virtualbox" do |vb|
       vb.memory = CTRL_MEMORY
       vb.cpus = CTRL_CPUS
     end
-    ctrl.ssh.insert_key = true
+    ctrl.vm.provision "shell", name: "inject-ssh-key", privileged: false, inline: <<-SHELL
+      mkdir -p /home/vagrant/.ssh
+      echo "#{public_key}" >> /home/vagrant/.ssh/authorized_keys
+      chmod 700 /home/vagrant/.ssh
+      chmod 600 /home/vagrant/.ssh/authorized_keys
+      chown -R vagrant:vagrant /home/vagrant/.ssh/authorized_keys
+    SHELL
   end
 
   (1..WORKER_COUNT).each do |i|
@@ -39,36 +56,26 @@ Vagrant.configure("2") do |config|
         vb.memory = NODE_MEMORY
         vb.cpus = NODE_CPUS
       end
-      node.ssh.insert_key = true
-      node.vm.boot_timeout = 600
+      node.vm.provision "shell", name: "inject-ssh-key", inline: <<-SHELL
+        mkdir -p /home/vagrant/.ssh
+        echo "#{public_key}" > /home/vagrant/.ssh/authorized_keys
+        chmod 600 /home/vagrant/.ssh/authorized_keys
+        chown -R vagrant:vagrant /home/vagrant/.ssh/authorized_keys
+      SHELL
     end
   end
 
-  # # Generate inventory file dynamically
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   echo "[controller]" > provisioning/inventory.cfg
-  #   echo "ctrl ansible_host = 192.168.56.100" >> provisioning/inventory.cfg
-  #   echo "[nodes]" >> provisioning/inventory.cfg
-  #   for i in $(seq 1 #{WORKER_COUNT}); do
-  #     echo "node-\$i ansible_host = 192.168.56.10$i" >> provisioning/inventory.cfg
-  #   done
-  #   SHELL
-  # end
-
-
-  # Start Provisioning
-  config.vm.provision "general", type: "ansible_local" do |ansible|
+  config.vm.provision "general", type: "ansible" do |ansible|
     ansible.playbook = "provisioning/general.yaml"
     ansible.inventory_path = "provisioning/inventory.cfg"
     ansible.extra_vars = {
-        num_workers: WORKER_COUNT
+      num_workers: WORKER_COUNT
     }
     ansible.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
   end
 
-  # Inside ctrl
   config.vm.define "ctrl" do |ctrl|
-    ctrl.vm.provision "ctrl", type: "ansible_local" do |ansible|
+    ctrl.vm.provision "ctrl", type: "ansible" do |ansible|
       ansible.playbook = "provisioning/ctrl.yaml"
       ansible.inventory_path = "provisioning/inventory.cfg"
       ansible.limit = "ctrl"
@@ -76,10 +83,9 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  # Inside each node
   (1..WORKER_COUNT).each do |i|
     config.vm.define "node-#{i}" do |node|
-      node.vm.provision "node", type: "ansible_local" do |ansible|
+      node.vm.provision "node", type: "ansible" do |ansible|
         ansible.playbook = "provisioning/node.yaml"
         ansible.inventory_path = "provisioning/inventory.cfg"
         ansible.limit = "node-#{i}"
@@ -87,71 +93,4 @@ Vagrant.configure("2") do |config|
       end
     end
   end
-
 end
-
-  
-
-
-  
-  # Disable automatic box update checking. If you disable this, then
-  # boxes will only be checked for updates when the user runs
-  # `vagrant box outdated`. This is not recommended.
-  # config.vm.box_check_update = false
-
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine. In the example below,
-  # accessing "localhost:8080" will access port 80 on the guest machine.
-  # NOTE: This will enable public access to the opened port
-  # config.vm.network "forwarded_port", guest: 80, host: 8080
-
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine and only allow access
-  # via 127.0.0.1 to disable public access
-  # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-
-  # Create a private network, which allows host-only access to the machine
-  # using a specific IP.
-  # config.vm.network "private_network", ip: "192.168.33.10"
-
-  # Create a public network, which generally matched to bridged network.
-  # Bridged networks make the machine appear as another physical device on
-  # your network.
-  # config.vm.network "public_network"
-
-  # Share an additional folder to the guest VM. The first argument is
-  # the path on the host to the actual folder. The second argument is
-  # the path on the guest to mount the folder. And the optional third
-  # argument is a set of non-required options.
-  # config.vm.synced_folder "../data", "/vagrant_data"
-
-  # Disable the default share of the current code directory. Doing this
-  # provides improved isolation between the vagrant box and your host
-  # by making sure your Vagrantfile isn't accessible to the vagrant box.
-  # If you use this you may want to enable additional shared subfolders as
-  # shown above.
-  # config.vm.synced_folder ".", "/vagrant", disabled: true
-
-  # Provider-specific configuration so you can fine-tune various
-  # backing providers for Vagrant. These expose provider-specific options.
-  # Example for VirtualBox:
-  #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  #
-  #   # Customize the amount of memory on the VM:
-  #   vb.memory = "1024"
-  # end
-  #
-
-  # View the documentation for the provider you are using for more
-  # information on available options.
-
-  # Enable provisioning with a shell script. Additional provisioners such as
-  # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
-  # documentation for more information about their specific syntax and use.
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   apt-get update
-  #   apt-get install -y apache2
-  # SHELL
