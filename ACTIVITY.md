@@ -81,7 +81,7 @@ Created PR: https://github.com/remla25-team18/operation/pull/22 (related to A5)
 Approved PR: https://github.com/remla25-team18/model-training/pull/7
 
 -- Lemon: --  
-Created PR: https://github.com/remla25-team18/operation/pull/21
+Created PR: https://github.com/remla25-team18/operation/pull/21 (related to A5)
 Approved PR: https://github.com/remla25-team18/operation/pull/22
 
 -- Madalena: --  
@@ -89,8 +89,8 @@ Created PR: https://github.com/remla25-team18/model-training/pull/7 (related to 
 Approved PR: https://github.com/remla25-team18/operation/pull/20
 
 -- Yahor: -- 
-Created PR:
-Approved PR:
+Created PR: https://github.com/remla25-team18/operation/pull/24 (related to A5)
+Approved PR: https://github.com/remla25-team18/operation/pull/21
 
 # Week 7:
 

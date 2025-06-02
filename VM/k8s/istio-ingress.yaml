@@ -1,0 +1,69 @@
+#istio-ingress.yaml
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: team18-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: team18-entry-service
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - team18-gateway
+  http:
+    - match:
+        - headers:
+            experiment:
+              exact: "v2"
+      route:
+        - destination:
+            host: team18-app
+            subset: v2
+    - match:
+        - headers:
+            experiment:
+              exact: "v1"
+      route:
+        - destination:
+            host: team18-app
+            subset: v1
+    - route:
+        - destination:
+            host: team18-app
+            subset: v1
+          weight: 80
+        - destination:
+            host: team18-app
+            subset: v2
+          weight: 20
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: team18-app
+spec:
+  host: team18-app
+  trafficPolicy:
+    loadBalancer:
+      consistentHash:
+        httpHeaderName: experiment
+  subsets:
+    - name: v1
+      labels:
+        version: v1
+    - name: v2
+      labels:
+        version: v2
