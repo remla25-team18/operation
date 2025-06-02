@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 # A Deployment manages a set of Pods to run an application workload
 metadata:
-  name: team18-app-v1
+  name: team18-app-v2
   labels:
     app: team18-app
 spec:
@@ -11,11 +11,12 @@ spec:
   selector:
     matchLabels:
       app: team18-app
+      version: v2
   template: # all pods will be created from this template
     metadata:
       labels:
         app: team18-app
-        version: v1
+        version: v2
     spec:
       containers:
         - name: team18-app
@@ -40,7 +41,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: team18-app-v2
+  name: team18-app-v1
   labels:
     app: team18-app
 spec:
@@ -48,18 +49,18 @@ spec:
   selector:
     matchLabels:
       app: team18-app
+      version: v1
   template: # all pods will be created from this template
     metadata:
       labels:
         app: team18-app
-        version: v2
+        version: v1
     spec:
       containers:
         - name: team18-app
           image: ghcr.io/remla25-team18/app:0.0.18
           ports:
             - containerPort: 4200
-          env:
           env:
             - name: DNS
               valueFrom:
@@ -71,7 +72,6 @@ spec:
                 configMapKeyRef:
                   name: app-config
                   key: MODEL_PORT
-
 
       imagePullSecrets:
         - name: ghcr-secret
