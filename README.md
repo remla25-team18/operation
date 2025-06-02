@@ -366,7 +366,7 @@ To be reorganized.
 
 ### ✅ Assignment 4
 
-* Automated Tests
+* Automated Tests: The tests follow the [ML Test Score](https://research.google/pubs/the-ml-test-score-a-rubric-for-ml-production-readiness-and-technical-debt-reduction/) methodology to measure test adequacy and there is at least one test per category: Feature and Data, Model Development, ML Infrastructure and Monitoring. The model's robustness is tested on semantically equivalent reviews and non-functional requirements, namely memory usage and latency, are tested for prediction.
 * Continuous Training
 * Project Organization
 * Pipeline Management with DVC
