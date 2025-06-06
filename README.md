@@ -126,35 +126,7 @@ ansible-playbook -u vagrant -i 192.168.56.100, provisioning/cluster-configuratio
 
 ### ☕️ Assignment 3 – Kubernetes Deployment & Monitoring
 
-#### 1. Install Helm Chart [Skip fo now]
-
-> **⚠️ Lemon's note: Not verified, will modify in the future, skip this whole step now!!!**
-> 
-In the root directory ('operation'), copy the chart:
-```bash
-cd ..
-scp -r ./helm/ vagrant@192.168.56.100:/home/vagrant/
-```
-
-Then deploy the chart:
-
-```bash
-cd VM
-vagrant ssh ctrl
-helm install release helm/
-```
-
-
-#### 3. Validate the Deployment
-
-```bash
-vagrant ssh ctrl
-kubectl get pods
-kubectl get services
-kubectl get ingress
-```
-
-#### 4. Monitoring Setup (Prometheus + Grafana)
+#### 1. Install Monitoring Dependencies
 
 Install the monitoring stack:
 
@@ -174,9 +146,37 @@ helm install prometheus prometheus-community/kube-prometheus-stack \
   --create-namespace
 ```
 
-**After installing Prometheus, you need to reapply the kubernetes configuration again. Use the terminal on the local host and make sure you're under `operation/VM`, run `ansible-playbook -u vagrant -i 192.168.56.100, provisioning/cluster-configuration.yml` again.**
 
-Then you can check the status of the Prometheus using:
+#### 2. Deploy the Kubernetes Cluster via Helm
+> 
+In the root directory ('operation'), copy the chart:
+```bash
+cd ..
+scp -r ./helm/ vagrant@192.168.56.100:/home/vagrant/
+```
+
+Then, ssh intro `ctrl` and deploy the chart:
+> **Note:** If you already had a `ctrl` terminal running when copying the chart, you may need to reconnect.
+
+```bash
+cd VM
+vagrant ssh ctrl
+helm install release helm/
+```
+
+
+#### 3. Validate the Deployment
+
+```bash
+vagrant ssh ctrl
+kubectl get pods
+kubectl get services
+kubectl get ingress
+```
+
+#### 4. App Monitoring (Prometheus + Grafana)
+
+Now you can check the status of the Prometheus using:
 
 ```bash
 kubectl get servicemonitor -n monitoring
@@ -332,7 +332,9 @@ You can test the rate limit feature in a new terminal using `curl` like so:
 <!-- This command sends 15 http requests in silent mode, outputting only the HTTP respnonse headers -->
 
 ```bash
-for i in {1..15}; do curl -s -o /dev/null -w "%{http_code}\n" http://192.168.56.91/; done
+for i in {1..15}; do
+  curl -s -o /dev/null -w "%{http_code}\n" http://192.168.56.91/
+done
 ```
 
 The first 10 requests should return a `200 - OK` response.
