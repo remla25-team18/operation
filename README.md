@@ -130,15 +130,15 @@ ansible-playbook -u vagrant -i 192.168.56.100, provisioning/cluster-configuratio
 
 #### 1. Install Monitoring Dependencies
 
-Install the monitoring stack:
+First, install the Prometheus monitoring stack using Helm.
 
-Open a new terminal, use the command to access the VM using SSH:
+Open a new terminal and connect to the VM via SSH:
 
 ```bash
 ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
 ```
 
-Inside the ssh terminal, run
+Inside the VM, add the Helm repo and install the monitoring stack:
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -147,27 +147,54 @@ helm install prometheus prometheus-community/kube-prometheus-stack \
   --namespace monitoring \
   --create-namespace
 ```
-
+This will expose Prometheus on port `9090` and Grafana on `3000` locally.
 
 #### 2. Deploy the Kubernetes Cluster via Helm
 > 
-In the root directory ('operation'), copy the chart:
+In the root directory ('operation'), copy the Helm chart into the VM:
 ```bash
 cd ..
 scp -r ./helm/ vagrant@192.168.56.100:/home/vagrant/
 ```
 
-Then, ssh intro `ctrl` and deploy the chart:
-> **Note:** If you already had a `ctrl` terminal running when copying the chart, you may need to reconnect.
-
+Then, SSH into the control plane node and install the chart:
 ```bash
 cd VM
 vagrant ssh ctrl
-helm install release helm/
+helm install team18 ./helm/
 ```
 
+The output should look like this:
+
+```bash
+I0606 15:05:32.820209   37158 warnings.go:110] "Warning: EnvoyFilter exposes internal implementation details that may change at any time. Prefer other APIs if possible, and exercise extreme caution, especially around upgrades."
+NAME: team18
+LAST DEPLOYED: Fri Jun  6 15:05:32 2025
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
+
+#### 🧩 Multiple Installations from the Same Chart
+
+This chart supports multiple independent installations in the same cluster. Each installation is isolated by release name using Helm’s built-in `.Release.Name` variable, which is injected into resource names (e.g., `release1-app`, `release1-app-config`, etc.).
+
+#### 🔧 How to Install
+
+You can install the chart multiple times like this:
+
+```bash
+helm install release1 ./helm/
+helm install release2 ./helm/
+```
+Each release will deploy its own isolated set of resources without naming conflicts.
+
+> **Note:** To prevent Ingress rule collisions, the release name is also included in the Ingress hostname. For example, the default release name uses `team18.local`, while a custom release like `release1` will use `release1.local`.
 
 #### 3. Validate the Deployment
+
+Once deployed, verify that everything is running:
 
 ```bash
 vagrant ssh ctrl
@@ -233,7 +260,7 @@ A `ServiceMonitor` is used for automatic metric discovery.
 
 #### 1. Installing Istio and necessary CRDs
 
-This step should be already done by the Ansible playbooks you ran in the previous step. Ensure you have ran the following commands from your host machine:
+This step should be already done by the Ansible playbooks you ran in the previous step. Ensure you have run the following commands from your host machine:
 
 ```bash
 cd VM
@@ -389,5 +416,4 @@ To be reorganized.
 ## 🧠 Notes
 
 * Do **not** store secrets in source files. Use Kubernetes `Secrets`.
-* Helm charts should support custom values and be re-installable.
 * Use `--kubeconfig` or set `KUBECONFIG` to interact with your cluster from host.
