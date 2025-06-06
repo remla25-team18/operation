@@ -105,6 +105,8 @@ kubectl create secret docker-registry ghcr-secret \
 
 #### 4. Apply the Kubernetes Configuration
 
+> **Note**: Alternatively, you can skip to the [Helm Deployment steps](#️-assignment-3--kubernetes-deployment--monitoring) now.
+
 Under the `operation/VM` directory, run the following command to apply the Kubernetes configuration:
 
 ```bash
