@@ -2,11 +2,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ printf "%s-app-%s" .Values.releaseNamePrefix $version }}
+  name: {{ printf "%s-app-%s" $.Values.releaseNamePrefix $version }}
   labels:
     app: {{ printf "%s-app" $.Values.releaseNamePrefix }}
 spec:
-  replicas: {{ .Values.app.replicaCount }}
+  replicas: {{ $.Values.app.replicaCount }}
   selector:
     matchLabels:
       app: {{ printf "%s-app" $.Values.releaseNamePrefix }}
@@ -20,7 +20,7 @@ spec:
       containers:
         - name: {{ printf "%s-app" $.Values.releaseNamePrefix }}
           image: {{ printf "%s:%s" $.Values.app.image.repository $cfg.tag }}
-          imagePullPolicy: {{ .Values.app.image.pullPolicy | quote }}
+          imagePullPolicy: {{ $.Values.app.image.pullPolicy | quote }}
           ports:
             - containerPort: {{ $.Values.app.containerPort }}
           env:
