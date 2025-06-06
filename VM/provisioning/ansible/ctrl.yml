@@ -7,6 +7,7 @@
     kube_node_name: ctrl
     kube_pod_network_cidr: 10.244.0.0/16
     kube_config_path: /etc/kubernetes/admin.conf
+    manifest_base: /vagrant/provisioning/manifests
 
   tasks:
     - name: Check if K8s cluster is already initialized
@@ -64,35 +65,34 @@
       when: not kube_config.stat.exists
 
     - name: Apply Flannel CNI with --iface=eth1
-      command: kubectl apply -f /vagrant/provisioning/kube-flannel.yml
+      command: kubectl apply -f {{ manifest_base }}/cni/kube-flannel.yml
       environment:
         KUBECONFIG: "{{ kube_config_path }}"
       when: not kube_config.stat.exists
 
-# Step 16
 - name: Helm
   hosts: ctrl
   become: yes
 
   tasks:
-  - name: Install Helm (if not already installed)
-    shell: |
-      if ! command -v helm >/dev/null 2>&1; then
-        curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-        sudo apt-get install apt-transport-https --yes
-        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-        sudo apt-get update
-        sudo apt-get install -y helm
-      fi
-    args:
-      executable: /bin/bash
+    - name: Install Helm (if not already installed)
+      shell: |
+        if ! command -v helm >/dev/null 2>&1; then
+          curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+          sudo apt-get install apt-transport-https --yes
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+          sudo apt-get update
+          sudo apt-get install -y helm
+        fi
+      args:
+        executable: /bin/bash
 
-  - name: Check if helm-diff plugin is already installed
-    command: helm plugin list
-    register: helm_plugins
-    changed_when: false
-    failed_when: false
+    - name: Check if helm-diff plugin is already installed
+      command: helm plugin list
+      register: helm_plugins
+      changed_when: false
+      failed_when: false
 
-  - name: Install helm diff plugin if not already installed
-    command: helm plugin install https://github.com/databus23/helm-diff
-    when: helm_plugins.stdout is not search("diff")
+    - name: Install helm diff plugin if not already installed
+      command: helm plugin install https://github.com/databus23/helm-diff
+      when: helm_plugins.stdout is not search("diff")

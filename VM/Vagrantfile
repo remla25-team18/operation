@@ -45,6 +45,12 @@ Vagrant.configure("2") do |config|
       chmod 600 /home/vagrant/.ssh/authorized_keys
       chown -R vagrant:vagrant /home/vagrant/.ssh/authorized_keys
     SHELL
+    ctrl.vm.provision "ctrl", type: "ansible" do |ansible|
+      ansible.playbook = "provisioning/ansible/ctrl.yml"
+      ansible.inventory_path = "provisioning/inventory.cfg"
+      ansible.limit = "ctrl"
+      ansible.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
+    end
   end
 
   (1..WORKER_COUNT).each do |i|
@@ -62,35 +68,21 @@ Vagrant.configure("2") do |config|
         chmod 600 /home/vagrant/.ssh/authorized_keys
         chown -R vagrant:vagrant /home/vagrant/.ssh/authorized_keys
       SHELL
-    end
-  end
-
-  config.vm.provision "general", type: "ansible" do |ansible|
-    ansible.playbook = "provisioning/general.yaml"
-    ansible.inventory_path = "provisioning/inventory.cfg"
-    ansible.extra_vars = {
-      num_workers: WORKER_COUNT
-    }
-    ansible.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
-  end
-
-  config.vm.define "ctrl" do |ctrl|
-    ctrl.vm.provision "ctrl", type: "ansible" do |ansible|
-      ansible.playbook = "provisioning/ctrl.yaml"
-      ansible.inventory_path = "provisioning/inventory.cfg"
-      ansible.limit = "ctrl"
-      ansible.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
-    end
-  end
-
-  (1..WORKER_COUNT).each do |i|
-    config.vm.define "node-#{i}" do |node|
       node.vm.provision "node", type: "ansible" do |ansible|
-        ansible.playbook = "provisioning/node.yaml"
+        ansible.playbook = "provisioning/ansible/node.yml"
         ansible.inventory_path = "provisioning/inventory.cfg"
         ansible.limit = "node-#{i}"
         ansible.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
       end
     end
+  end
+
+  config.vm.provision "general", type: "ansible" do |ansible|
+    ansible.playbook = "provisioning/ansible/general.yml"
+    ansible.inventory_path = "provisioning/inventory.cfg"
+    ansible.extra_vars = {
+      num_workers: WORKER_COUNT
+    }
+    ansible.compatibility_mode = ANSIBLE_COMPATIBILITY_MODE
   end
 end

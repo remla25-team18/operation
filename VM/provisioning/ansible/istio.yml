@@ -1,0 +1,39 @@
+- name: Install Istio
+  hosts: 192.168.56.100
+  become: yes    
+  tasks:
+    # Step 23: Install Istio
+    - name: Download Istio 1.25.2
+      get_url:
+        url: "https://github.com/istio/istio/releases/download/1.25.2/istio-1.25.2-linux-{{ ansible_architecture | regex_replace('aarch64', 'arm64') | regex_replace('x86_64', 'amd64') }}.tar.gz"
+        dest: /tmp/istio.tar.gz
+        mode: '0644'
+
+    - name: Print installed architecture
+      debug:
+        msg: "Installed architecture: {{ ansible_architecture }}"
+
+    - name: Extract Istio
+      ansible.builtin.unarchive:
+        src: /tmp/istio.tar.gz
+        dest: /home/vagrant/
+        remote_src: yes
+        owner: vagrant
+        group: vagrant
+        mode: '0755'
+
+    - name: Add istioctl to PATH
+      lineinfile:
+        path: /home/vagrant/.bashrc
+        line: 'export PATH=$PATH:/home/vagrant/istio-1.25.2/bin'
+        insertafter: EOF
+        state: present
+
+    - name: Run istioctl install (demo profile)
+      shell: |
+        /home/vagrant/istio-1.25.2/bin/istioctl install --set profile=demo -y
+
+    - name: Check Istio version
+      shell: |
+        export PATH=$PATH:/home/vagrant/istio-1.25.2/bin
+        istioctl version
