@@ -3,14 +3,21 @@
 releaseNamePrefix: team18
 
 app:
-  replicaCount: 1
   image:
     repository: ghcr.io/remla25-team18/app
-    tag: "0.0.7"
     pullPolicy: IfNotPresent
+  imagePullSecret: ghcr-secret
+  containerPort: 4200
+  servicePort: 80
+  replicaCount: 1
   env:
     MODEL_SERVICE_URL: team18-model-service
-    MODEL_SERVICE_PORT: "5050"
+    MODEL_SERVICE_PORT: 5050
+  versions:
+    v1:
+      tag: "0.0.18"
+    v2:
+      tag: "0.0.19"
 
 model:
   replicaCount: 1
