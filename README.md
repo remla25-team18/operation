@@ -197,7 +197,6 @@ Each release will deploy its own isolated set of resources without naming confli
 Once deployed, verify that everything is running:
 
 ```bash
-vagrant ssh ctrl
 kubectl get pods
 kubectl get services
 kubectl get ingress
