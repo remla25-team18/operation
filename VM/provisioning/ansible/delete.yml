@@ -5,5 +5,5 @@
 
   - name: Delete Kubernetes yml files
     shell: |
-      kubectl delete -f /vagrant/k8s/ingress.yaml
+      kubectl delete -f /vagrant/ansible/finalization.yaml
     ignore_errors: yes
