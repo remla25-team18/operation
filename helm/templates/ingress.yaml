@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ printf "%s-ingress" .Values.releaseNamePrefix }}
+  name: {{ printf "%s-ingress" .Release.Name }}
   namespace: {{ .Values.ingress.namespace }}
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: {{ .Values.ingress.rewriteTarget }}
@@ -9,13 +9,13 @@ spec:
   ingressClassName: {{ .Values.ingress.className }}
   rules:
     - host: {{ .Values.ingress.host }}
-    - host: {{ printf "%s.%s" .Values.releaseNamePrefix .Values.ingress.domain }}  # e.g., team18.local
+    - host: {{ printf "%s.%s" .Release.Name .Values.ingress.domain }}  # e.g., team18.local
       http:
         paths:
           - path: {{ .Values.ingress.path }}
             pathType: {{ .Values.ingress.pathType }}
             backend:
               service:
-                name: {{ printf "%s-app" .Values.releaseNamePrefix }}
+                name: {{ printf "%s-app" .Release.Name }}
                 port:
                   number: {{ .Values.app.servicePort }}

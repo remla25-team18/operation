@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ printf "%s-model-service" .Values.releaseNamePrefix }}
+  name: {{ printf "%s-model-service" .Release.Name }}
   labels:
-    app: {{ printf "%s-model-service" .Values.releaseNamePrefix }}
+    app: {{ printf "%s-model-service" .Release.Name }}
 spec:
   replicas: {{ .Values.model.replicaCount }}
   selector:
     matchLabels:
-      app: {{ printf "%s-model-service" .Values.releaseNamePrefix }}
+      app: {{ printf "%s-model-service" .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ printf "%s-model-service" .Values.releaseNamePrefix }}
+        app: {{ printf "%s-model-service" .Release.Name }}
     spec:
       containers:
-        - name: {{ printf "%s-model-service" .Values.releaseNamePrefix }}
+        - name: {{ printf "%s-model-service" .Release.Name }}
           image: {{ printf "%s:%s" .Values.model.image.repository .Values.model.image.tag }}
           imagePullPolicy: {{ .Values.model.image.pullPolicy | quote }}
           ports:
@@ -26,11 +26,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ printf "%s-model-service" .Values.releaseNamePrefix }}
+  name: {{ printf "%s-model-service" .Release.Name }}
 spec:
   type: ClusterIP
   selector:
-    app: {{ printf "%s-model-service" .Values.releaseNamePrefix }}
+    app: {{ printf "%s-model-service" .Release.Name }}
   ports:
     - port: {{ .Values.model.servicePort }}
       targetPort: {{ .Values.model.servicePort }}

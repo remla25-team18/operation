@@ -1,14 +1,14 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ printf "%s-app-servicemonitor" .Values.releaseNamePrefix }}
+  name: {{ printf "%s-app-servicemonitor" .Release.Name }}
   namespace: monitoring
   labels:
     release: {{ .Values.monitoring.releaseLabel }}
 spec:
   selector:
     matchLabels:
-      app: {{ printf "%s-app" .Values.releaseNamePrefix }}
+      app: {{ printf "%s-app" .Release.Name }}
   namespaceSelector:
     matchNames:
       - {{ .Values.monitoring.namespace }}

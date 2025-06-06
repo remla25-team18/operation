@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: {{ printf "%s-%s" .Values.releaseNamePrefix .Values.istio.gatewayName }}
+  name: {{ printf "%s-%s" .Release.Name .Values.istio.gatewayName }}
 spec:
   selector:
     istio: ingressgateway
@@ -18,12 +18,12 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: {{ printf "%s-%s" .Values.releaseNamePrefix .Values.istio.virtualServiceName }}
+  name: {{ printf "%s-%s" .Release.Name .Values.istio.virtualServiceName }}
 spec:
   hosts:
     - "*"
   gateways:
-    - {{ printf "%s-%s" .Values.releaseNamePrefix .Values.istio.gatewayName }}
+    - {{ printf "%s-%s" .Release.Name .Values.istio.gatewayName }}
   http:
     - match:
         - headers:
@@ -31,7 +31,7 @@ spec:
               exact: "v2"
       route:
         - destination:
-            host: {{ printf "%s-%s" .Values.releaseNamePrefix .Values.istio.host }}
+            host: {{ printf "%s-%s" .Release.Name .Values.istio.host }}
             subset: v2
     - match:
         - headers:
@@ -39,12 +39,12 @@ spec:
               exact: "v1"
       route:
         - destination:
-            host: {{ printf "%s-%s" .Values.releaseNamePrefix .Values.istio.host }}
+            host: {{ printf "%s-%s" .Release.Name .Values.istio.host }}
             subset: v1
     - route:
 {{- range .Values.istio.subsets }}
         - destination:
-            host: {{ printf "%s-%s" $.Values.releaseNamePrefix $.Values.istio.host }}
+            host: {{ printf "%s-%s" $.Release.Name $.Values.istio.host }}
             subset: {{ .name }}
           weight: {{ .weight }}
 {{- end }}
@@ -52,9 +52,9 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: {{ printf "%s-%s" .Values.releaseNamePrefix .Values.istio.host }}
+  name: {{ printf "%s-%s" .Release.Name .Values.istio.host }}
 spec:
-  host: {{ printf "%s-%s" .Values.releaseNamePrefix .Values.istio.host }}
+  host: {{ printf "%s-%s" .Release.Name .Values.istio.host }}
   trafficPolicy:
     loadBalancer:
       consistentHash:
