@@ -1,36 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .Values.releaseNamePrefix }}-model-service"
+  name: {{ printf "%s-model-service" .Values.releaseNamePrefix }}
   labels:
-    app: "{{ .Values.releaseNamePrefix }}-model-service"
+    app: {{ printf "%s-model-service" .Values.releaseNamePrefix }}
 spec:
   replicas: {{ .Values.model.replicaCount }}
   selector:
     matchLabels:
-      app: "{{ .Values.releaseNamePrefix }}-model-service"
+      app: {{ printf "%s-model-service" .Values.releaseNamePrefix }}
   template:
     metadata:
       labels:
-        app: "{{ .Values.releaseNamePrefix }}-model-service"
+        app: {{ printf "%s-model-service" .Values.releaseNamePrefix }}
     spec:
       containers:
-        - name: "team18-model-service"
-          imagePullPolicy: "{{ .Values.model.image.pullPolicy }}"
-          image: "{{ .Values.model.image.repository }}:{{ .Values.model.image.tag }}"
+        - name: {{ printf "%s-model-service" .Values.releaseNamePrefix }}
+          image: {{ printf "%s:%s" .Values.model.image.repository .Values.model.image.tag }}
+          imagePullPolicy: {{ .Values.model.image.pullPolicy | quote }}
           ports:
             - containerPort: {{ .Values.model.servicePort }}
       imagePullSecrets:
-        - name: "ghcr-secret"
+        - name: {{ .Values.app.imagePullSecret | quote }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: "{{ .Values.releaseNamePrefix }}-model-service"
+  name: {{ printf "%s-model-service" .Values.releaseNamePrefix }}
 spec:
   type: ClusterIP
+  selector:
+    app: {{ printf "%s-model-service" .Values.releaseNamePrefix }}
   ports:
     - port: {{ .Values.model.servicePort }}
       targetPort: {{ .Values.model.servicePort }}
-  selector:
-    app: "{{ .Values.releaseNamePrefix }}-model-service"
