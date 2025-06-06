@@ -27,6 +27,14 @@ model:
     pullPolicy: Always
   servicePort: 5050
 
+ingress:
+  className: nginx
+  host: team18.local
+  path: /
+  pathType: Prefix
+  rewriteTarget: /
+  namespace: default
+
 monitoring:
   namespace: default
   releaseLabel: prometheus
