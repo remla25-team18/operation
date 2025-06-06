@@ -27,12 +27,12 @@ spec:
             - name: DNS
               valueFrom:
                 configMapKeyRef:
-                  name: app-config
+                  name: {{ printf "%s-app-config" $.Values.releaseNamePrefix }}
                   key: DNS
             - name: MODEL_PORT
               valueFrom:
                 configMapKeyRef:
-                  name: app-config
+                  name: {{ printf "%s-app-config" $.Values.releaseNamePrefix }}
                   key: MODEL_PORT
       imagePullSecrets:
         - name: {{ $.Values.app.imagePullSecret | quote }}
@@ -56,7 +56,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: app-config
+  name: {{ printf "%s-app-config" .Values.releaseNamePrefix }}
 data:
   DNS: {{ .Values.app.env.MODEL_SERVICE_URL | quote }}
   MODEL_PORT: {{ .Values.app.env.MODEL_SERVICE_PORT | quote }}

@@ -34,7 +34,7 @@ model:
 
 ingress:
   className: nginx
-  host: team18.local
+  domain: local
   path: /
   pathType: Prefix
   rewriteTarget: /
