@@ -1,14 +1,18 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: team18-app-servicemonitor
+  name: {{ printf "%s-app-servicemonitor" .Release.Name }}
+  namespace: monitoring
   labels:
-    release: prometheus-operator
+    release: {{ .Values.monitoring.releaseLabel }}
 spec:
   selector:
     matchLabels:
-      app: team18-app
+      app: {{ printf "%s-app" .Release.Name }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Values.monitoring.namespace }}
   endpoints:
-  - port: metrics
-    path: /metrics
-    interval: 15s
+    - port: {{ .Values.monitoring.metrics.portName }}
+      path: {{ .Values.monitoring.metrics.path }}
+      interval: {{ .Values.monitoring.metrics.interval }}
