@@ -93,7 +93,7 @@ ansible-playbook -u vagrant -i 192.168.56.100, provisioning/finalization.yml
 
 To allow Kubernetes to pull images from GitHub Container Registry (GHCR), create a secret with your GitHub credentials. After connecting to the controller VM using `vagrant ssh ctrl`, run the following command: 
 
-**Replace the paramater with your own info.**
+**Replace the parameter with your own info.**
 
 ```bash
 kubectl create secret docker-registry ghcr-secret \
