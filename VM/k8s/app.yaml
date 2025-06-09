@@ -99,3 +99,10 @@ data:
   # model.host: "http://team18-model-service:5050"
   DNS: "team18-model-service"
   MODEL_PORT: "5050"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secret
+data:
+  secret-key: UkVNTEEtYXBwLXNlY3JldC1rZXk=
