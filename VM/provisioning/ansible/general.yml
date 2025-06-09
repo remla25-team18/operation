@@ -1,6 +1,8 @@
 - name: Basic setup for all nodes
   hosts: all
-  become: yes # execute the commands with elevated privileges
+  become: yes
+  vars:
+    manifest_base: /vagrant/provisioning/manifests
   tasks:
     - name: Set up multiple authorized keys
       ansible.posix.authorized_key:
@@ -8,18 +10,18 @@
         state: present
         key: "{{ lookup('file', item) }}"
       loop:
-        - "ssh-keys/lemon.pub"
-        - "ssh-keys/madalena.pub"
-        - "ssh-keys/laszlo.pub"
-        - "ssh-keys/yahor.pub"
+        - "../ssh-keys/lemon.pub"
+        - "../ssh-keys/madalena.pub"
+        - "../ssh-keys/laszlo.pub"
+        - "../ssh-keys/yahor.pub"
 
     - name: Update apt package index
-      apt: update_cache=yes # sudo apt update
+      apt: update_cache=yes
 
     - name: Install basic tools
-      apt: # manage packages
+      apt:
         name: ["curl", "wget", "apt-transport-https"]
-        state: present # Ensures the package is installed.
+        state: present
 
     - name: Add signing key
       ansible.builtin.apt_key:
@@ -36,21 +38,22 @@
       ansible.builtin.apt:
         update_cache: yes
 
-    # do "vagrant ssh ctrl" for example
-    # and check versions with "apt-cache policy containerd"
-    # so that the version to be installed is the same as the one in the apt-cache policy
     - name: Install containerd
       ansible.builtin.apt:
         name: containerd=1.7.24-0ubuntu1~24.04.2
         state: present
 
-    - name: Install runc (container runtime)
+    - name: Install runc
       ansible.builtin.apt:
         name: runc=1.1.12-0ubuntu3
         state: present
         allow_downgrade: yes
 
-    - name: Install basic kubernetes tools
+    
+    # do "vagrant ssh ctrl" for example
+    # and check versions with "apt-cache policy containerd"
+    # so that the version to be installed is the same as the one in the apt-cache policy
+    - name: Install Kubernetes tools
       ansible.builtin.apt:
         name:
           - kubeadm=1.32.4-1.1
@@ -58,16 +61,15 @@
           - kubectl=1.32.4-1.1
         state: present
 
-    # configure containerd
-    - name: Ensure etc/containerd exits
+    - name: Ensure containerd config dir exists
       ansible.builtin.file:
         path: /etc/containerd
         state: directory
 
-    - name: Get default containerd configuration
+    - name: Generate default containerd config
       ansible.builtin.shell: containerd config default > /etc/containerd/config.toml
       args:
-        creates: /etc/containerd/config.toml # only created the first time around, after that just line tweaks
+        creates: /etc/containerd/config.toml
 
     # do "vagrant ssh ctrl" for example
     # and check the content of the file with "cat /etc/containerd/config.toml"
@@ -101,7 +103,7 @@
         state: restarted
         enabled: yes
 
-    - name: Auto start kubelet service with system boots
+    - name: Enable kubelet on boot
       ansible.builtin.service:
         name: kubelet
         enabled: yes
@@ -112,26 +114,26 @@
         swapoff -a
         sed -i '/ swap / s/^/#/' /etc/fstab
 
-    - name: Create module folder
+    - name: Create module config dir
       file:
         path: /etc/modules-load.d
         state: directory
-        mode: "0755" # authorization for directory
+        mode: "0755"
 
-    - name: Copy kernel modules
+    - name: Copy kernel module config
       copy:
         dest: /etc/modules-load.d/k8s.conf
         content: |
           overlay
           br_netfilter
-        mode: "0644" # authorization for file
+        mode: "0644"
 
-    - name: Load module
+    - name: Load br_netfilter module
       modprobe:
         name: br_netfilter
         state: present
 
-    - name: Configure sysctl
+    - name: Configure sysctl for k8s
       copy:
         dest: /etc/sysctl.d/99-kubernetes.conf
         content: |
@@ -139,10 +141,13 @@
           net.ipv4.ip_forward                 = 1
           net.bridge.bridge-nf-call-ip6tables = 1
       notify: reload sysctl
+      
+    - name: Apply sysctl config immediately
+      command: sysctl --system
 
     - name: Manage /etc/hosts with Jinja2
       ansible.builtin.template:
-        src: templates/hosts.j2
+        src: ../templates/hosts.j2
         dest: /etc/hosts
         owner: root
         group: root

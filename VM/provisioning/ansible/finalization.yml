@@ -1,17 +1,19 @@
 - name: Finalization Step for ctrl Node
   hosts: 192.168.56.100
   become: yes
+  vars:
+    manifest_base: /vagrant/provisioning/manifests
   tasks:
 
     # Step 20: MetalLB Installation
     - name: Install MetalLB native manifest
-      command: kubectl apply -f /vagrant/provisioning/metallb-native-0.14.9.yml
+      command: kubectl apply -f {{ manifest_base }}/metallb/metallb-native-0.14.9.yml
 
     - name: Wait for MetalLB controller to be ready
       shell: >
-        kubectl wait -n metallb-system 
-        -l app=metallb,component=controller 
-        --for=condition=ready pod 
+        kubectl wait -n metallb-system \
+        -l app=metallb,component=controller \
+        --for=condition=ready pod \
         --timeout=60s
       register: wait_metallb
       retries: 5
@@ -19,10 +21,10 @@
       until: wait_metallb.rc == 0
 
     - name: Add IP address pool if not already applied
-      command: kubectl apply -f /vagrant/provisioning/ipaddresspool.yml
+      command: kubectl apply -f {{ manifest_base }}/metallb/ipaddresspool.yml
 
     - name: Add Layer 2 advertisement if not already applied
-      command: kubectl apply -f /vagrant/provisioning/l2advertisement.yml
+      command: kubectl apply -f {{ manifest_base }}/metallb/l2advertisement.yml
 
     # Step 21: Nginx Ingress
     - name: Add ingress-nginx Helm repo and update cache
@@ -58,43 +60,7 @@
         create_namespace: true
 
     - name: Apply admin-user ServiceAccount and ClusterRoleBinding
-      command: kubectl apply -f /vagrant/provisioning/dashboard-admin.yml
+      command: kubectl apply -f /vagrant/provisioning/manifests/dashboard/dashboard-admin.yml
 
     - name: Apply Ingress for Kubernetes Dashboard
-      command: kubectl apply -f /vagrant/provisioning/dashboard-ingress.yml
-      
-    # Step 23: Install Istio
-    - name: Download Istio 1.25.2
-      get_url:
-        url: "https://github.com/istio/istio/releases/download/1.25.2/istio-1.25.2-linux-{{ ansible_architecture | regex_replace('aarch64', 'arm64') | regex_replace('x86_64', 'amd64') }}.tar.gz"
-        dest: /tmp/istio.tar.gz
-        mode: '0644'
-
-    - name: Print installed architecture
-      debug:
-        msg: "Installed architecture: {{ ansible_architecture }}"
-
-    - name: Extract Istio
-      ansible.builtin.unarchive:
-        src: /tmp/istio.tar.gz
-        dest: /home/vagrant/
-        remote_src: yes
-        owner: vagrant
-        group: vagrant
-        mode: '0755'
-
-    - name: Add istioctl to PATH
-      lineinfile:
-        path: /home/vagrant/.bashrc
-        line: 'export PATH=$PATH:/home/vagrant/istio-1.25.2/bin'
-        insertafter: EOF
-        state: present
-
-    - name: Run istioctl install (demo profile)
-      shell: |
-        /home/vagrant/istio-1.25.2/bin/istioctl install --set profile=demo -y
-
-    - name: Check Istio version
-      shell: |
-        export PATH=$PATH:/home/vagrant/istio-1.25.2/bin
-        istioctl version
+      command: kubectl apply -f /vagrant/provisioning/manifests/dashboard/dashboard-ingress.yml
