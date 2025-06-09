@@ -58,7 +58,7 @@ Vagrant.configure("2") do |config|
       end
       node.vm.provision "shell", name: "inject-ssh-key", inline: <<-SHELL
         mkdir -p /home/vagrant/.ssh
-        echo "#{public_key}" > /home/vagrant/.ssh/authorized_keys
+        echo "#{public_key}" >> /home/vagrant/.ssh/authorized_keys
         chmod 600 /home/vagrant/.ssh/authorized_keys
         chown -R vagrant:vagrant /home/vagrant/.ssh/authorized_keys
       SHELL
