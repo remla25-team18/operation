@@ -103,7 +103,21 @@ kubectl create secret docker-registry ghcr-secret \
 --docker-email=you@example.com
 ```
 
-#### 4. Apply the Kubernetes Configuration
+#### 4. Add Hostnames to `/etc/hosts`
+To access the application and dashboard via friendly domain names, run the following command in your terminal:
+
+```bash
+echo "192.168.56.90 team18.local team18.k8s.dashboard.local" | sudo tee -a /etc/hosts > /dev/null
+```
+
+To verify, try these:
+```bash
+ping team18.local
+ping team18.k8s.dashboard.local
+```
+
+
+#### 5. Apply the Kubernetes Configuration
 
 Under the `operation/VM` directory, run the following command to apply the Kubernetes configuration:
 
@@ -118,9 +132,9 @@ The above command will at first create a self-signed certificate for the cluster
 Try `curl -k https://team18.local` to check if the cluster is up, running and the certificate is valid.
 
 
-#### 5. Access Kubernetes Dashboard
+#### 6. Access Kubernetes Dashboard
 
-1. Open: [https://192.168.56.90/](https://192.168.56.90/) on your host machine.
+1. Open: [https://team18.k8s.dashboard.local](https://https://team18.k8s.dashboard.local/) on your host machine.
 2. In the ssh terminal, run this to get the token:
 
    ```bash
