@@ -12,6 +12,7 @@
         kubectl apply -f /vagrant/k8s/ingress.yaml
         kubectl apply -f /vagrant/k8s/istio-rate-limit.yaml
         kubectl apply -f /vagrant/k8s/istio-ingress.yaml
+        kubectl apply -f /vagrant/k8s/istio-fixed-ip.yaml
 
     # Enabling Prometheus
     # - name: Add Prometheus Community Helm repo
