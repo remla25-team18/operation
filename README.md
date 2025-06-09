@@ -196,23 +196,30 @@ helm install prometheus prometheus-community/kube-prometheus-stack \
   --create-namespace
 ```
 
-**After installing Prometheus, you need to reapply the kubernetes configuration again. Use the terminal on the local host and make sure you're under `operation/VM`, run `ansible-playbook -u vagrant -i 192.168.56.100, provisioning/cluster-configuration.yml` again.**
+**After installing Prometheus, you need to reapply the kubernetes configuration again. Exit out of the ssh terminal and run 
+```bash
+ansible-playbook -u vagrant -i 192.168.56.100, provisioning/ansible/cluster.yml
+```
 
-Then you can check the status of the Prometheus using:
+You can then check the status of the Prometheus using:
 
 ```bash
+ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
 kubectl get servicemonitor -n monitoring
 ```
 
 You should see the `team18-app-servicemonitor` listed, indicating that Prometheus is set to scrape metrics from the app services.
 
-Make sure you exit ssh and enter again (using the first command of this forth step), so the changes are reflected, when you do the following commands:
-
+To access prometheus run:
 ```bash
 # Forward Prometheus
 kubectl port-forward svc/prometheus-kube-prometheus-prometheus -n monitoring 9090:9090
+```
 
-# In a separate terminal (or backgrounded process)
+To access grafana, run the following commands in a separate terminal:
+```bash
+cd operation/VM
+ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
 kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
 ```
 
@@ -232,8 +239,8 @@ kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
 > Grafana dashboards are defined in JSON files (see `helm/grafana/team18-dashboard.json`), import manually through:
 
 1. Access Grafana at <http://localhost:3000>
-2. Go to Dashboards > Import
-3. Upload `dashboards/team18-dashboard.json`
+2. Go to Dashboards > New > Import
+3. Upload `helm/grafana/team18-dashboard.json`
 4. Click Import
 
 #### 📊 App Monitoring
