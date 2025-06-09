@@ -20,6 +20,9 @@ spec:
     spec:
       containers:
         - name: team18-app
+          volumeMounts:
+            - mountPath: /mnt/app_volume_v2/
+              name: app-volume-v2
           image: ghcr.io/remla25-team18/app:0.0.19
           ports:
             - containerPort: 4200
@@ -34,6 +37,10 @@ spec:
                 configMapKeyRef:
                   name: app-config
                   key: MODEL_PORT
+      volumes:
+        - name: app-volume-v2
+          hostPath:
+            path: /mnt/shared/volumes/app_volume_v2/
 
       imagePullSecrets:
         - name: ghcr-secret
@@ -58,6 +65,9 @@ spec:
     spec:
       containers:
         - name: team18-app
+          volumeMounts:
+            - mountPath: /mnt/app_volume_v1/
+              name: app-volume-v1
           image: ghcr.io/remla25-team18/app:0.0.18
           ports:
             - containerPort: 4200
@@ -72,6 +82,10 @@ spec:
                 configMapKeyRef:
                   name: app-config
                   key: MODEL_PORT
+      volumes:
+        - name: app-volume-v1
+          hostPath:
+            path: /mnt/shared/volumes/app_volume_v1/
 
       imagePullSecrets:
         - name: ghcr-secret
