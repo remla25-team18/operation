@@ -79,7 +79,6 @@
         src: /tmp/istio.tar.gz
         dest: /home/vagrant/
         remote_src: yes
-        remote_src: yes
         owner: vagrant
         group: vagrant
         mode: '0755'
