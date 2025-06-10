@@ -41,16 +41,17 @@ In Prometheus, you can query the metric `duration_validation_req` to compare the
 
 ![Prometheus Query](../assets/Prometheus.png)
 
-In Grafana, ...
+Grafana provides two key visualizations. At the top is the average duration of prediction corrections per condition, being v1.0 correspondant to Condition A and v2.0 to Condition B. At the bottom, there is a time series of the prediction corrections made. 
 
-**TODO**
+![Grafana](../assets/Grafana.png)
 
 ## 5. Conclusion
 
-**TODO**
+This experiment helps us determine if the color of the predition assessment buttons affects user interaction speed.
 
-The experiment will help us determine if the color of the buttons affects user interaction speed. By analyzing the collected metrics, we can validate or refute our hypothesis.
+The criteria used to access this is the `duration_validation_req` metric. It measures the time it takes a user to assess the predition received and classify if the predition was correct or not.
 
-criteria:
-
-dashboard support:
+With the support of the grafana dashboard, the hypothesis can be proven if:
+- The average duration of prediction corrections from Condition A is smaller than Condition B, on the top graph;
+- The yellow line, corresponding to Condition A, is mostly below of the green line, corresponding to Condition B.
+Otherwise, the hypothesis is refuted.
