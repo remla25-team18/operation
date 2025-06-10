@@ -99,7 +99,7 @@ Created PR: https://github.com/remla25-team18/operation/pull/26 (related to A3)
 Approved PR: https://github.com/remla25-team18/model-service/pull/9
 
 -- Lemon: --  
-Created PR: https://github.com/remla25-team18/operation/pull/27 (Related to A2)
+Created PR: https://github.com/remla25-team18/operation/pull/27 (related to A2)
 Approved PR: 
 
 -- Madalena: --  
