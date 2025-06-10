@@ -1,29 +1,62 @@
+{{- range $version, $cfg := .Values.app.versions }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .Values.releaseNamePrefix }}-app"
+  name: {{ printf "%s-app-%s" $.Release.Name $version }}
   labels:
-    app: "{{ .Values.releaseNamePrefix }}-app"
+    app: {{ printf "%s-app" $.Release.Name }}
 spec:
-  replicas: {{ .Values.app.replicaCount }}
+  replicas: {{ $.Values.app.replicaCount }}
   selector:
     matchLabels:
-      app: "{{ .Values.releaseNamePrefix }}-app"
+      app: {{ printf "%s-app" $.Release.Name }}
+      version: {{ $version }}
   template:
     metadata:
       labels:
-        app: "{{ .Values.releaseNamePrefix }}-app"
+        app: {{ printf "%s-app" $.Release.Name }}
+        version: {{ $version }}
     spec:
       containers:
-        - name: "team18-app"
-          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
-          imagePullPolicy: "{{ .Values.app.image.pullPolicy }}"
+        - name: {{ printf "%s-app" $.Release.Name }}
+          image: {{ printf "%s:%s" $.Values.app.image.repository $cfg.tag }}
+          imagePullPolicy: {{ $.Values.app.image.pullPolicy | quote }}
           ports:
-            - containerPort: 8080
+            - containerPort: {{ $.Values.app.containerPort }}
           env:
-            - name: MODEL_SERVICE_URL
-              value: "{{ .Values.app.env.MODEL_SERVICE_URL }}"
-            - name: MODEL_SERVICE_PORT
-              value: "{{ .Values.app.env.MODEL_SERVICE_PORT }}"
+            - name: DNS
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ printf "%s-app-config" $.Release.Name }}
+                  key: DNS
+            - name: MODEL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ printf "%s-app-config" $.Release.Name }}
+                  key: MODEL_PORT
       imagePullSecrets:
-        - name: "ghcr-secret"
+        - name: {{ $.Values.app.imagePullSecret | quote }}
+---
+{{- end}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-app" $.Release.Name }}
+  labels:
+    app: {{ printf "%s-app" $.Release.Name }}
+spec:
+  selector:
+    app: {{ printf "%s-app" $.Release.Name }}
+  ports:
+    - name: metrics
+      protocol: TCP
+      port: {{ $.Values.app.servicePort }}
+      targetPort: {{ $.Values.app.containerPort }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-app-config" .Release.Name }}
+data:
+  DNS: {{ .Values.app.env.MODEL_SERVICE_URL | quote }}
+  MODEL_PORT: {{ .Values.app.env.MODEL_SERVICE_PORT | quote }}

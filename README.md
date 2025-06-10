@@ -15,7 +15,11 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
       - [3. Apply the Kubernetes Configuration](#3-apply-the-kubernetes-configuration)
       - [4. Access Kubernetes Dashboard](#4-access-kubernetes-dashboard)
     - [☕️ Assignment 3 – Kubernetes Deployment \& Monitoring](#️-assignment-3--kubernetes-deployment--monitoring)
-      - [1. Install Helm Chart \[Skip fo now\]](#1-install-helm-chart-skip-fo-now)
+      - [1. Install Helm Chart](#1-install-dependencies)
+      - [2. Deploy the Kubernetes Cluster via Helm](#2-deploy-the-kubernetes-cluster-via-helm)
+        - [🧩 Multiple Installations from the Same Chart](#-multiple-installations-from-the-same-chart)
+        - [🔧 How to Install](#-how-to-install)
+        - [🗑️ How to Uninstall](#-how-to-uninstall)
       - [3. Validate the Deployment](#3-validate-the-deployment)
       - [4. Monitoring Setup (Prometheus + Grafana)](#4-monitoring-setup-prometheus--grafana)
         - [Visit in host machine](#visit-in-host-machine)
@@ -92,7 +96,7 @@ vagrant up --no-provision
 time vagrant provision
 ```
 
-You will see the time it takes to provision the VMs, which is around 5 minutes, the log will belike this:
+You will see the time it takes to provision the VMs, which is around 5 minutes, the log will be like this:
 
 ```plaintext
 vagrant provision  12.56s user 6.53s system 8% cpu 3:42.87 total
@@ -113,7 +117,7 @@ kubectl create secret docker-registry ghcr-secret \
 --docker-email=you@example.com
 ```
 
-#### 4. Add Hostnames to `/etc/hosts`
+#### 3. Add Hostnames to `/etc/hosts`
 To access the application and dashboard via friendly domain names, run the following command in your terminal:
 
 ```bash
@@ -127,7 +131,8 @@ ping team18.k8s.dashboard.local
 ```
 
 
-#### 5. Apply the Kubernetes Configuration
+#### 4. Apply the Kubernetes Configuration
+> **Note**: Alternatively, you can skip to the [Helm Deployment steps](#1-install-dependencies) now.
 
 Now go back to your host machine, under the `operation/VM` directory. The below command will at first create a self-signed certificate for the cluster, then it will apply the Kubernetes configuration using Ansible.
 
@@ -155,7 +160,7 @@ By default, it will run all the playbooks, which is recommended for the first ti
 Try `curl -k https://team18.local` to check if the cluster is up, running and the certificate is valid.
 
 
-#### 6. Access Kubernetes Dashboard
+#### 5. Access Kubernetes Dashboard
 
 1. Open: [https://team18.k8s.dashboard.local](https://https://team18.k8s.dashboard.local/) on your host machine.
 2. In the ssh terminal, run this to get the token:
@@ -169,45 +174,23 @@ Try `curl -k https://team18.local` to check if the cluster is up, running and th
 
 ### ☕️ Assignment 3 – Kubernetes Deployment & Monitoring
 
-#### 1. Install Helm Chart [Skip fo now]
+#### 1. Install Dependencies
 
-> **⚠️ Lemon's note: Not verified, will modify in the future, skip this whole step now!!!**
-> 
-In the root directory ('operation'), copy the chart:
-```bash
-cd ..
-scp -r ./helm/ vagrant@192.168.56.100:/home/vagrant/
-```
-
-Then deploy the chart:
+First, install MetalLB & Istio on the cluster. Do this by running playbook option 4 (`Provisioning without Cluster Configuration`) from the `VM` directory:
 
 ```bash
-cd VM
-vagrant ssh ctrl
-helm install release helm/
+bash run_playbook.sh
 ```
 
+Then, install the Prometheus monitoring stack using Helm.
 
-#### 3. Validate the Deployment
-
-```bash
-vagrant ssh ctrl
-kubectl get pods
-kubectl get services
-kubectl get ingress
-```
-
-#### 4. Monitoring Setup (Prometheus + Grafana)
-
-Install the monitoring stack:
-
-Open a new terminal, use the command to access the VM using SSH:
+Open a new terminal and connect to the VM via SSH:
 
 ```bash
 ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
 ```
 
-Inside the ssh terminal, run
+Inside the VM, add the Helm repo and install the monitoring stack:
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -216,13 +199,72 @@ helm install prometheus prometheus-community/kube-prometheus-stack \
   --namespace monitoring \
   --create-namespace
 ```
+This will expose Prometheus on port `9090` and Grafana on `3000` locally.
 
-**After installing Prometheus, you need to reapply the kubernetes configuration again. Exit out of the ssh terminal and run 
+#### 2. Deploy the Kubernetes Cluster via Helm
+> 
+In the root directory ('operation'), copy the Helm chart into the VM:
 ```bash
-ansible-playbook -u vagrant -i 192.168.56.100, provisioning/ansible/cluster.yml
+scp -r ./helm/ vagrant@192.168.56.100:/home/vagrant/
 ```
 
-You can then check the status of the Prometheus using:
+Then, SSH into the control plane node and install the chart:
+```bash
+cd VM
+vagrant ssh ctrl
+helm install team18 ./helm/
+```
+
+The output should look like this:
+
+```bash
+I0606 15:05:32.820209   37158 warnings.go:110] "Warning: EnvoyFilter exposes internal implementation details that may change at any time. Prefer other APIs if possible, and exercise extreme caution, especially around upgrades."
+NAME: team18
+LAST DEPLOYED: Fri Jun  6 15:05:32 2025
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
+
+#### 🧩 Multiple Installations from the Same Chart
+
+This chart supports multiple independent installations in the same cluster. Each installation is isolated by release name using Helm’s built-in `.Release.Name` variable, which is injected into resource names (e.g., `release1-app`, `release1-app-config`, etc.).
+
+#### 🔧 How to Install
+
+You can install the chart multiple times like this:
+
+```bash
+helm install release1 ./helm/
+helm install release2 ./helm/
+```
+Each release will deploy its own isolated set of resources without naming conflicts.
+
+> **Note:** To prevent Ingress rule collisions, the release name is also included in the Ingress hostname. For example, the default release name uses `team18.local`, while a custom release like `release1` will use `release1.local`.
+
+#### 🗑️ How to Uninstall
+To uninstall a release, simply run `helm uninstall <release-name>`. For example:
+
+```bash
+helm uninstall team18
+helm uninstall release1
+helm uninstall release2
+```
+
+#### 3. Validate the Deployment
+
+Once deployed, verify that everything is running:
+
+```bash
+kubectl get pods
+kubectl get services
+kubectl get ingress
+```
+
+#### 4. App Monitoring (Prometheus + Grafana)
+
+Now you can check the status of the Prometheus using:
 
 ```bash
 ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
@@ -248,7 +290,7 @@ kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
 
 * Prometheus: [http://localhost:9090](http://localhost:9090)
 * Grafana: [http://localhost:3000](http://localhost:3000)
-* Default credentials: `admin/prom-operator`
+* Grafana default credentials: `admin/prom-operator`
 
 > Custom app-specific metrics (counters, gauges) are auto-scraped by Prometheus via `ServiceMonitor`, you can view different versions of the app by querying `duration_validation_req`, you should see the different versions of the app in the `version` label like:
 > 
@@ -281,7 +323,7 @@ A `ServiceMonitor` is used for automatic metric discovery.
 
 #### 1. Installing Istio and necessary CRDs
 
-This step should be already done by the Ansible playbooks you ran in the previous step. Ensure you have ran the following commands from your host machine:
+This step should be already done by the Ansible playbooks you ran in the previous step. Ensure you have run the following commands from your host machine:
 
 ```bash
 cd VM
@@ -382,7 +424,9 @@ You can test the rate limit feature in a new terminal using `curl` like so:
 <!-- This command sends 15 http requests in silent mode, outputting only the HTTP respnonse headers -->
 
 ```bash
-for i in {1..15}; do curl -s -o /dev/null -w "%{http_code}\n" http://192.168.56.91/; done
+for i in {1..15}; do
+  curl -s -o /dev/null -w "%{http_code}\n" http://192.168.56.91/
+done
 ```
 
 The first 10 requests should return a `200 - OK` response.
@@ -435,5 +479,4 @@ To be reorganized.
 ## 🧠 Notes
 
 * Do **not** store secrets in source files. Use Kubernetes `Secrets`.
-* Helm charts should support custom values and be re-installable.
 * Use `--kubeconfig` or set `KUBECONFIG` to interact with your cluster from host.
