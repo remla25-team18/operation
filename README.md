@@ -92,7 +92,7 @@ vagrant up --no-provision
 time vagrant provision
 ```
 
-You will see the time it takes to provision the VMs, which is around 5 minutes, the log will belike this:
+You will see the time it takes to provision the VMs, which is around 5 minutes, the log will be like this:
 
 ```plaintext
 vagrant provision  12.56s user 6.53s system 8% cpu 3:42.87 total
@@ -150,9 +150,15 @@ By default, it will run all the playbooks, which is recommended for the first ti
 
 ### ☕️ Assignment 3 – Kubernetes Deployment & Monitoring
 
-#### 1. Install Monitoring Dependencies
+#### 1. Install Dependencies
 
-First, install the Prometheus monitoring stack using Helm.
+First, install MetalLB & Istio on the cluster. Do this by running playbook 2 (`Finalization`) and 3 (`Istio Installation`)via
+
+```bash
+bash run_playbook.sh
+```
+
+Then, install the Prometheus monitoring stack using Helm.
 
 Open a new terminal and connect to the VM via SSH:
 
@@ -175,7 +181,6 @@ This will expose Prometheus on port `9090` and Grafana on `3000` locally.
 > 
 In the root directory ('operation'), copy the Helm chart into the VM:
 ```bash
-cd ..
 scp -r ./helm/ vagrant@192.168.56.100:/home/vagrant/
 ```
 
