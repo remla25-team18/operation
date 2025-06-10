@@ -1,28 +1,92 @@
 # This files stores the variables used in the Helm chart for deploying the application and its components.
 
-releaseNamePrefix: team18
-
 app:
-  replicaCount: 1
   image:
     repository: ghcr.io/remla25-team18/app
-    tag: "0.0.7"
     pullPolicy: IfNotPresent
+
+  imagePullSecret: ghcr-secret
+  containerPort: 4200
+  servicePort: 80
+  replicaCount: 1
+
   env:
     MODEL_SERVICE_URL: team18-model-service
-    MODEL_SERVICE_PORT: "5050"
+    MODEL_SERVICE_PORT: 5050
+
+  versions:
+    v1:
+      tag: 0.0.18
+    v2:
+      tag: 0.0.19
 
 model:
   replicaCount: 1
+
   image:
     repository: ghcr.io/remla25-team18/model-service
-    tag: "1.0.2"
+    tag: 1.0.3
     pullPolicy: Always
+
   servicePort: 5050
 
+ingress:
+  className: nginx
+  domain: local
+  path: /
+  pathType: Prefix
+  rewriteTarget: /
+  namespace: default
+
 monitoring:
-  enabled: true
-  appService:
-    nodePort: 30001
-    port: 9090
-    targetPort: 9090
+  namespace: default
+  releaseLabel: prometheus
+
+  metrics:
+    portName: metrics
+    path: /metrics
+    interval: 15s
+
+istio:
+  gatewayName: team18-gateway
+  virtualServiceName: team18-entry-service
+  host: team18-app
+  httpHeaderName: experiment
+
+  server:
+    port: 80
+    name: http
+    protocol: HTTP
+    hosts:
+      - "*"
+
+  subsets:
+    - name: v1
+      version: v1
+      weight: 80
+    - name: v2
+      version: v2
+      weight: 20
+
+rateLimit:
+  name: ingressgateway-rate-limit
+  namespace: istio-system
+  selector:
+    istio: ingressgateway
+  portNumber: 8080
+  statPrefix: http_local_rate_limiter
+  maxTokens: 10
+  tokensPerFill: 10
+  fillInterval: 60s
+
+  runtimeKeys:
+    enabled: local_rate_limit_enabled
+    enforced: local_rate_limit_enforced
+
+  defaultValue:
+    numerator: 100
+    denominator: HUNDRED
+
+  responseHeader:
+    key: x-local-rate-limit
+    value: "true"
