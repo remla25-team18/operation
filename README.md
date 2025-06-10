@@ -119,7 +119,7 @@ kubectl create secret docker-registry ghcr-secret \
 
 #### 3. Apply the Kubernetes Configuration
 
-> **Note**: Alternatively, you can skip to the [Helm Deployment steps](#1-install-monitoring-dependencies) now.
+> **Note**: Alternatively, you can skip to the [Helm Deployment steps](#1-install-dependencies) now.
 
 Now go back to your host machine, under the `operation/VM` directory, run the following command to apply the Kubernetes configuration:
 
