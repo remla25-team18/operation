@@ -15,7 +15,11 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
       - [3. Apply the Kubernetes Configuration](#3-apply-the-kubernetes-configuration)
       - [4. Access Kubernetes Dashboard](#4-access-kubernetes-dashboard)
     - [☕️ Assignment 3 – Kubernetes Deployment \& Monitoring](#️-assignment-3--kubernetes-deployment--monitoring)
-      - [1. Install Helm Chart \[Skip fo now\]](#1-install-helm-chart-skip-fo-now)
+      - [1. Install Helm Chart](#1-install-dependencies)
+      - [2. Deploy the Kubernetes Cluster via Helm](#2-deploy-the-kubernetes-cluster-via-helm)
+        - [🧩 Multiple Installations from the Same Chart](#-multiple-installations-from-the-same-chart)
+        - [🔧 How to Install](#-how-to-install)
+        - [🗑️ How to Uninstall](#-how-to-uninstall)
       - [3. Validate the Deployment](#3-validate-the-deployment)
       - [4. Monitoring Setup (Prometheus + Grafana)](#4-monitoring-setup-prometheus--grafana)
         - [Visit in host machine](#visit-in-host-machine)
@@ -152,7 +156,7 @@ By default, it will run all the playbooks, which is recommended for the first ti
 
 #### 1. Install Dependencies
 
-First, install MetalLB & Istio on the cluster. Do this by running playbook 2 (`Finalization`) and 3 (`Istio Installation`)via
+First, install MetalLB & Istio on the cluster. Do this by running playbook option 4 (`Provisioning without Cluster Configuration`) from the `VM` directory:
 
 ```bash
 bash run_playbook.sh
@@ -219,6 +223,15 @@ Each release will deploy its own isolated set of resources without naming confli
 
 > **Note:** To prevent Ingress rule collisions, the release name is also included in the Ingress hostname. For example, the default release name uses `team18.local`, while a custom release like `release1` will use `release1.local`.
 
+#### 🗑️ How to Uninstall
+To uninstall a release, simply run `helm uninstall <release-name>`. For example:
+
+```bash
+helm uninstall team18
+helm uninstall release1
+helm uninstall release2
+```
+
 #### 3. Validate the Deployment
 
 Once deployed, verify that everything is running:
@@ -257,7 +270,7 @@ kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
 
 * Prometheus: [http://localhost:9090](http://localhost:9090)
 * Grafana: [http://localhost:3000](http://localhost:3000)
-* Default credentials: `admin/prom-operator`
+* Grafana default credentials: `admin/prom-operator`
 
 > Custom app-specific metrics (counters, gauges) are auto-scraped by Prometheus via `ServiceMonitor`, you can view different versions of the app by querying `duration_validation_req`, you should see the different versions of the app in the `version` label like:
 > 
