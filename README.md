@@ -183,6 +183,7 @@ Install the monitoring stack:
 Open a new terminal, use the command to access the VM using SSH:
 
 ```bash
+cd operation/VM
 ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
 ```
 
@@ -257,6 +258,15 @@ A `ServiceMonitor` is used for automatic metric discovery.
 ---
 
 ### :car: Assignment 5 – Traffic Management
+
+
+#### Continuous Experimentation
+
+Add `192.168.56.90 team18.local` at the end of your local `etc/hosts` file, for the app to be accessible in https://team18.local/.
+
+Please refer to `docs/continuous-experimentation.md` for the documentation about the experiment.
+
+#### Traffic Management
 
 #### 1. Installing Istio and necessary CRDs
 

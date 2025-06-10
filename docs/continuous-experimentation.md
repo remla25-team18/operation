@@ -33,7 +33,7 @@ This is a falsifiable hypothesis and can be tested using collected interaction t
   - Version B: Yellow/Yellow buttons
 - Each version runs in a separate Kubernetes deployment.
 - Both versions expose an HTTP endpoint `/metrics`.
-- The metric used to test the hypothesis is `duration_validation_req`, which measures the time it takes for the user to correct the predition. This is timed from the moment the model predition is presented until the moment the user clicks the one of the prediction correction buttons (True or False).
+- The metric used to test the hypothesis is `duration_validation_req`, which measures the time it takes for the user to correct the predition. This is timed from the moment the model predition is presented back until the moment the user clicks the one of the prediction correction buttons (True or False).
 
 ## 4. Monitoring and Visualization
 
