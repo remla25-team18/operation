@@ -12,18 +12,18 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
     - [⚙️ Assignment 2 – Provisioning Kubernetes Cluster (Vagrant + Ansible)](#️-assignment-2--provisioning-kubernetes-cluster-vagrant--ansible)
       - [1. Boot the Virtual Machines](#1-boot-the-virtual-machines)
       - [2. Create Container Registry Secret](#2-create-container-registry-secret)
-      - [3. Add Hostnames to /etc/hosts](#3-add-hostnames-to-etchosts)
+      - [3. Add Hostnames to `/etc/hosts`](#3-add-hostnames-to-etchosts)
       - [4. Create a self-signed certificate for the cluster](#4-create-a-self-signed-certificate-for-the-cluster)
       - [5. Apply Kubernetes Configuration](#5-apply-kubernetes-configuration)
       - [6. Access Kubernetes Dashboard](#6-access-kubernetes-dashboard)
     - [☕️ Assignment 3 – Kubernetes Deployment \& Monitoring](#️-assignment-3--kubernetes-deployment--monitoring)
-      - [1. Install Helm Chart](#1-install-dependencies)
+      - [1. Install Dependencies](#1-install-dependencies)
       - [2. Deploy the Kubernetes Cluster via Helm](#2-deploy-the-kubernetes-cluster-via-helm)
-        - [🧩 Multiple Installations from the Same Chart](#-multiple-installations-from-the-same-chart)
-        - [🔧 How to Install](#-how-to-install)
-        - [🗑️ How to Uninstall](#-how-to-uninstall)
+      - [🧩 Multiple Installations from the Same Chart](#-multiple-installations-from-the-same-chart)
+      - [🔧 How to Install](#-how-to-install)
+      - [🗑️ How to Uninstall](#️-how-to-uninstall)
       - [3. Validate the Deployment](#3-validate-the-deployment)
-      - [4. Monitoring Setup (Prometheus + Grafana)](#4-monitoring-setup-prometheus--grafana)
+      - [4. App Monitoring (Prometheus + Grafana)](#4-app-monitoring-prometheus--grafana)
         - [Visit in host machine](#visit-in-host-machine)
       - [📊 App Monitoring](#-app-monitoring)
     - [:car: Assignment 5 – Traffic Management](#car-assignment-5--traffic-management)
@@ -168,7 +168,7 @@ Try `curl -k https://team18.local` to check if the cluster is up, running and th
 
 #### 6. Access Kubernetes Dashboard
 
-1. Open: [https://team18.k8s.dashboard.local](https://https://team18.k8s.dashboard.local/) on your host machine.
+1. Open: [https://team18.k8s.dashboard.local](https://team18.k8s.dashboard.local/) on your host machine.
 2. In the ssh terminal, run this to get the token:
 
    ```bash
