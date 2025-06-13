@@ -44,11 +44,11 @@ spec:
         - destination:
             host: team18-app
             subset: v1
-          weight: 80
+          weight: 90
         - destination:
             host: team18-app
             subset: v2
-          weight: 20
+          weight: 10
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
