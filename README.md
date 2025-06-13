@@ -12,9 +12,9 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
     - [⚙️ Assignment 2 – Provisioning Kubernetes Cluster (Vagrant + Ansible)](#️-assignment-2--provisioning-kubernetes-cluster-vagrant--ansible)
       - [1. Boot the Virtual Machines](#1-boot-the-virtual-machines)
       - [2. Create Container Registry Secret](#2-create-container-registry-secret)
-      - [3. Add Hostnames to `/etc/hosts`](#3-add-hostnames-to-etchosts)
-      - [4. Create a self-signed certificate for the cluster](#4-create-a-self-signed-certificate-for-the-cluster)
-      - [5. Apply Kubernetes Configuration](#5-apply-kubernetes-configuration)
+      - [3. Create a self-signed certificate for the cluster](#3-create-a-self-signed-certificate-for-the-cluster)
+      - [4. Apply Kubernetes Configuration](#4-apply-kubernetes-configuration)
+      - [5. Add Hostnames to `/etc/hosts`](#5-add-hostnames-to-etchosts)
       - [6. Access Kubernetes Dashboard](#6-access-kubernetes-dashboard)
     - [☕️ Assignment 3 – Kubernetes Deployment \& Monitoring](#️-assignment-3--kubernetes-deployment--monitoring)
       - [1. Install Dependencies](#1-install-dependencies)
@@ -119,20 +119,7 @@ kubectl create secret docker-registry ghcr-secret \
 --docker-email=you@example.com
 ```
 
-#### 3. Add Hostnames to `/etc/hosts`
-To access the application and dashboard via friendly domain names, run the following command in your terminal:
-
-```bash
-echo "192.168.56.90 team18.local team18.k8s.dashboard.local" | sudo tee -a /etc/hosts > /dev/null
-```
-
-To verify, try these commands:
-```bash
-ping team18.local
-ping team18.k8s.dashboard.local
-```
-
-#### 4. Create a self-signed certificate for the cluster
+#### 3. Create a self-signed certificate for the cluster
 
 Now go back to your host machine, under the `operation/VM` directory. The below command will at first create a self-signed certificate for the cluster.
 
@@ -141,7 +128,7 @@ chmod +x create-certificate.sh
 ./create-certificate.sh
 ```
 
-#### 5. Apply Kubernetes Configuration
+#### 4. Apply Kubernetes Configuration
 > **Note**: Alternatively, you can skip to the [Helm Deployment steps](#1-install-dependencies) now.
 
 Under the `operation/VM` directory, run the command bellow. It will apply the Kubernetes configuration using Ansible.
@@ -165,6 +152,19 @@ By default, it will run all the playbooks, which is recommended for the first ti
 
 Try `curl -k https://team18.local` to check if the cluster is up, running and the certificate is valid.
 
+
+#### 5. Add Hostnames to `/etc/hosts`
+To access the application and dashboard via friendly domain names, run the following command in your terminal:
+
+```bash
+echo "192.168.56.90 team18.local team18.k8s.dashboard.local" | sudo tee -a /etc/hosts > /dev/null
+```
+
+To verify, try these commands:
+```bash
+ping team18.local
+ping team18.k8s.dashboard.local
+```
 
 #### 6. Access Kubernetes Dashboard
 
