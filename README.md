@@ -180,7 +180,7 @@ kubectl get ingress
 
 Install the monitoring stack:
 
-In the `VM` directory, Use the command to access the VM using SSH:
+In the `VM` directory, use the command to access the VM using SSH:
 
 ```bash
 ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
