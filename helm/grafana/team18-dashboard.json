@@ -35,11 +35,11 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "duration_validation_req",
+            "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
-            "drawStyle": "points",
+            "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": {
@@ -49,8 +49,8 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 3,
-            "pointSize": 10,
+            "lineWidth": 1,
+            "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -86,7 +86,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 8,
+      "id": 9,
       "options": {
         "legend": {
           "calcs": [],
@@ -103,27 +103,14 @@
       "pluginVersion": "12.0.1",
       "targets": [
         {
-          "editorMode": "code",
-          "expr": "duration_validation_req{job=\"team18-app\", version=\"v1.0\"}\nand on(version) \nsum by (version) (delta(duration_validation_req{job=\"team18-app\", version=\"v1.0\"}[30s]) != 0)",
-          "legendFormat": "Condition A",
+          "editorMode": "builder",
+          "expr": "",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "duration_validation_req{job=\"team18-app\", version=\"v2.0\"}\nand on(version) \nsum by (version) (delta(duration_validation_req{job=\"team18-app\", version=\"v2.0\"}[30s]) != 0)",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "Condition B",
-          "range": true,
-          "refId": "B"
         }
       ],
-      "title": "Validation Duration per Request",
+      "title": "New panel",
       "type": "timeseries"
     },
     {
@@ -185,10 +172,10 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "count_reqs{job=\"team18-app\"}",
+          "expr": "sum(count_reqs{job=\"team18-app\"})",
           "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "legendFormat": "__auto",
+          "includeNullMetadata": false,
+          "legendFormat": "Prediction Request Count",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -200,12 +187,12 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "count_preds{job=\"team18-app\"}",
+          "expr": "sum(count_preds{job=\"team18-app\"})",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "__auto",
+          "legendFormat": "Prediction Assessment Request Count",
           "range": true,
           "refId": "B",
           "useBackend": false
@@ -217,12 +204,12 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "count_correct_preds{job=\"team18-app\"}",
+          "expr": "sum(count_correct_preds{job=\"team18-app\"})",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "__auto",
+          "legendFormat": "Correct Prediction Count",
           "range": true,
           "refId": "C",
           "useBackend": false
@@ -234,12 +221,12 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "count_incorrect_preds{job=\"team18-app\"}",
+          "expr": "sum(count_incorrect_preds{job=\"team18-app\"})",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "__auto",
+          "legendFormat": "Incorrect Prediction Count",
           "range": true,
           "refId": "D",
           "useBackend": false
@@ -257,7 +244,40 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "duration_validation_req",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "points",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 3,
+            "pointSize": 8,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
           "thresholds": {
@@ -273,7 +293,20 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "custom.pointSize",
+                "value": 15
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -281,44 +314,48 @@
         "x": 0,
         "y": 8
       },
-      "id": 7,
+      "id": 8,
       "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
       },
       "pluginVersion": "12.0.1",
       "targets": [
+        {
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "(duration_validation_req{job=\"team18-app\", version=\"v1.0\"}\n  and on(version)\n  (\n    duration_validation_req{job=\"team18-app\", version=\"v1.0\"}\n    != duration_validation_req{job=\"team18-app\", version=\"v1.0\"} offset 20s\n  )\n)\nor\n(\n  duration_validation_req{job=\"team18-app\", version=\"v1.0\"}\n  unless duration_validation_req{job=\"team18-app\", version=\"v1.0\"} offset 20s\n)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Condition A",
+          "range": true,
+          "refId": "A"
+        },
         {
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "avg by(version) (duration_validation_req{job=\"team18-app\"})",
-          "fullMetaSearch": false,
+          "editorMode": "code",
+          "expr": "(duration_validation_req{job=\"team18-app\", version=\"v2.0\"}\n  and on(version)\n  (\n    duration_validation_req{job=\"team18-app\", version=\"v2.0\"}\n    != duration_validation_req{job=\"team18-app\", version=\"v2.0\"} offset 20s\n  )\n)\nor\n(\n  duration_validation_req{job=\"team18-app\", version=\"v2.0\"}\n  unless duration_validation_req{job=\"team18-app\", version=\"v2.0\"} offset 20s\n)",
           "hide": false,
-          "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "__auto",
+          "legendFormat": "Condition B",
           "range": true,
-          "refId": "B",
-          "useBackend": false
+          "refId": "B"
         }
       ],
-      "title": "Average Prediction Correction Duration",
-      "type": "gauge"
+      "title": "Validation Duration per Request",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -373,33 +410,16 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "duration_pred_req{job=\"team18-app\"}",
+          "expr": "avg(duration_pred_req{job=\"team18-app\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "__auto",
+          "legendFormat": "Condition A",
           "range": true,
           "refId": "A",
           "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "duration_validation_req{job=\"team18-app\"}",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "B",
-          "useBackend": false
         }
       ],
-      "title": "Gauge panel",
+      "title": "Average Duration of Model Prediction",
       "type": "gauge"
     },
     {
@@ -410,40 +430,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "duration_validation_req",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "mode": "thresholds"
           },
           "mappings": [],
           "thresholds": {
@@ -467,31 +454,39 @@
         "x": 0,
         "y": 16
       },
-      "id": 5,
+      "id": 7,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
         },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
       },
       "pluginVersion": "12.0.1",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "disableTextWrap": false,
           "editorMode": "builder",
           "expr": "duration_validation_req{job=\"team18-app\", version=\"v1.0\"}",
           "fullMetaSearch": false,
+          "hide": false,
           "includeNullMetadata": true,
+          "instant": false,
           "legendFormat": "Condition A",
           "range": true,
-          "refId": "A",
+          "refId": "B",
           "useBackend": false
         },
         {
@@ -508,12 +503,12 @@
           "instant": false,
           "legendFormat": "Condition B",
           "range": true,
-          "refId": "B",
+          "refId": "A",
           "useBackend": false
         }
       ],
-      "title": "Prediction Correction Duration Time Series",
-      "type": "timeseries"
+      "title": "Average Prediction Correction Duration",
+      "type": "gauge"
     },
     {
       "datasource": {
@@ -607,7 +602,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "duration_validation_req",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -657,6 +652,119 @@
         "w": 12,
         "x": 0,
         "y": 24
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.1",
+      "targets": [
+        {
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "duration_validation_req{job=\"team18-app\", version=\"v1.0\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "legendFormat": "Condition A",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "duration_validation_req{job=\"team18-app\", version=\"v2.0\"}",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "Condition B",
+          "range": true,
+          "refId": "B",
+          "useBackend": false
+        }
+      ],
+      "title": "Prediction Correction Duration Time Series",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 32
       },
       "id": 3,
       "options": {
@@ -721,5 +829,5 @@
   "timezone": "browser",
   "title": "team18",
   "uid": "14c1a1ab-fb75-44f2-88fa-43db1a77c27c",
-  "version": 5
+  "version": 4
 }

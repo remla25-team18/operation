@@ -115,7 +115,7 @@ kubectl create secret docker-registry ghcr-secret \
 
 #### 3. Apply the Kubernetes Configuration
 
-Now go back to your host machine, under the `operation/VM` directory, run the following command to apply the Kubernetes configuration:
+Exit out of the ssh terminal and, under the `operation/VM` directory, run the following command to apply the Kubernetes configuration:
 
 ```bash
 bash run_playbook.sh
@@ -180,10 +180,9 @@ kubectl get ingress
 
 Install the monitoring stack:
 
-Open a new terminal, use the command to access the VM using SSH:
+In the `VM` directory, Use the command to access the VM using SSH:
 
 ```bash
-cd operation/VM
 ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
 ```
 
@@ -217,7 +216,7 @@ To access prometheus run:
 kubectl port-forward svc/prometheus-kube-prometheus-prometheus -n monitoring 9090:9090
 ```
 
-To access grafana, run the following commands in a separate terminal:
+To access grafana, run the following commands in a **separate terminal**:
 ```bash
 cd operation/VM
 ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
