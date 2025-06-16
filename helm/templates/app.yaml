@@ -24,16 +24,10 @@ spec:
           ports:
             - containerPort: {{ $.Values.app.containerPort }}
           env:
-            - name: DNS
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ printf "%s-app-config" $.Release.Name }}
-                  key: DNS
-            - name: MODEL_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ printf "%s-app-config" $.Release.Name }}
-                  key: MODEL_PORT
+            - name: MODEL_SERVICE_HOST
+              value: {{ $.Values.model.serviceName | quote }}
+            - name: MODEL_SERVICE_PORT
+              value: {{ $.Values.model.servicePort | quote }}
       imagePullSecrets:
         - name: {{ $.Values.app.imagePullSecret | quote }}
 ---
