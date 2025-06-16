@@ -121,8 +121,8 @@ Created PR: https://github.com/remla25-team18/operation/pull/30 (related to A3)
 Approved PR: https://github.com/remla25-team18/operation/pull/28
 
 -- Madalena: --  
-Created PR: 
-Approved PR:
+Created PR: https://github.com/remla25-team18/app/pull/11 (related to A3 and A5)
+Approved PR: https://github.com/remla25-team18/app/pull/10
 
 -- Yahor: -- 
 Created PR: 
