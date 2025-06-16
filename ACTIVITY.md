@@ -113,7 +113,7 @@ Approved PR: https://github.com/remla25-team18/operation/pull/26
 
 # Week 8:
 -- Lászlo: --  
-Created PR: https://github.com/remla25-team18/lib-ml/pull/11
+Created PR: https://github.com/remla25-team18/lib-ml/pull/11 (related to A1)
 Approved PR: 
 
 -- Lemon: --  
