@@ -124,8 +124,8 @@ Approved PR: https://github.com/remla25-team18/operation/pull/28
 Created PR: https://github.com/remla25-team18/app/pull/11 (related to A3 and A5)
 Approved PR: https://github.com/remla25-team18/app/pull/10
 
--- Yahor: -- 
-Created PR: 
-Approved PR: 
+-- Yahor: --
+Created PR: https://github.com/remla25-team18/operation/pull/31 (realted to A3)
+Approved PR: https://github.com/remla25-team18/app/pull/11
 
 ```
