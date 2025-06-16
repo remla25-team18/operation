@@ -12,16 +12,18 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
     - [⚙️ Assignment 2 – Provisioning Kubernetes Cluster (Vagrant + Ansible)](#️-assignment-2--provisioning-kubernetes-cluster-vagrant--ansible)
       - [1. Boot the Virtual Machines](#1-boot-the-virtual-machines)
       - [2. Create Container Registry Secret](#2-create-container-registry-secret)
-      - [3. Apply the Kubernetes Configuration](#3-apply-the-kubernetes-configuration)
-      - [4. Access Kubernetes Dashboard](#4-access-kubernetes-dashboard)
+      - [3. Create a self-signed certificate for the cluster](#3-create-a-self-signed-certificate-for-the-cluster)
+      - [4. Apply Kubernetes Configuration](#4-apply-kubernetes-configuration)
+      - [5. Add Hostnames to `/etc/hosts`](#5-add-hostnames-to-etchosts)
+      - [6. Access Kubernetes Dashboard](#6-access-kubernetes-dashboard)
     - [☕️ Assignment 3 – Kubernetes Deployment \& Monitoring](#️-assignment-3--kubernetes-deployment--monitoring)
-      - [1. Install Helm Chart](#1-install-dependencies)
+      - [1. Install Dependencies](#1-install-dependencies)
       - [2. Deploy the Kubernetes Cluster via Helm](#2-deploy-the-kubernetes-cluster-via-helm)
-        - [🧩 Multiple Installations from the Same Chart](#-multiple-installations-from-the-same-chart)
-        - [🔧 How to Install](#-how-to-install)
-        - [🗑️ How to Uninstall](#-how-to-uninstall)
+      - [🧩 Multiple Installations from the Same Chart](#-multiple-installations-from-the-same-chart)
+      - [🔧 How to Install](#-how-to-install)
+      - [🗑️ How to Uninstall](#️-how-to-uninstall)
       - [3. Validate the Deployment](#3-validate-the-deployment)
-      - [4. Monitoring Setup (Prometheus + Grafana)](#4-monitoring-setup-prometheus--grafana)
+      - [4. App Monitoring (Prometheus + Grafana)](#4-app-monitoring-prometheus--grafana)
         - [Visit in host machine](#visit-in-host-machine)
       - [📊 App Monitoring](#-app-monitoring)
     - [:car: Assignment 5 – Traffic Management](#car-assignment-5--traffic-management)
@@ -107,7 +109,7 @@ vagrant provision  12.56s user 6.53s system 8% cpu 3:42.87 total
 
 To allow Kubernetes to pull images from GitHub Container Registry (GHCR), create a secret with your GitHub credentials. After connecting to the controller VM using `vagrant ssh ctrl`, run the following command: 
 
-**Replace the paramater with your own info.**
+**Replace the parameter with your own info.**
 
 ```bash
 kubectl create secret docker-registry ghcr-secret \
@@ -117,11 +119,19 @@ kubectl create secret docker-registry ghcr-secret \
 --docker-email=you@example.com
 ```
 
-#### 3. Apply the Kubernetes Configuration
+#### 3. Create a self-signed certificate for the cluster
 
+Now go back to your host machine, under the `operation/VM` directory. The below command will at first create a self-signed certificate for the cluster.
+
+```bash
+chmod +x create-certificate.sh
+./create-certificate.sh
+```
+
+#### 4. Apply Kubernetes Configuration
 > **Note**: Alternatively, you can skip to the [Helm Deployment steps](#1-install-dependencies) now.
 
-Now go back to your host machine, under the `operation/VM` directory, run the following command to apply the Kubernetes configuration:
+Under the `operation/VM` directory, run the command bellow. It will apply the Kubernetes configuration using Ansible.
 
 ```bash
 bash run_playbook.sh
@@ -129,20 +139,36 @@ bash run_playbook.sh
 
 You will see the following tips:
 ```plaintext
-VM % bash run_playbook.sh 
+VM:bash run_playbook.sh
 Choose a playbook to run:
 1) Cluster Configuration
 2) Finalization
 3) Istio Installation
-Enter choice [1-3] (leave empty for full provisioning): 
+4) Provisioning without Cluster Configuration
+Enter choice [1-4] (leave empty for full provisioning, any other character to abort): 
 ```
 
 By default, it will run all the playbooks, which is recommended for the first time. If you want to run only one of them, you can enter the number corresponding to the playbook you want to run. After this step, you should have a fully functional Kubernetes cluster with the necessary configurations applied.
 
+Try `curl -k https://team18.local` to check if the cluster is up, running and the certificate is valid.
 
-#### 4. Access Kubernetes Dashboard
 
-1. Open: [https://192.168.56.90/](https://192.168.56.90/) on your host machine.
+#### 5. Add Hostnames to `/etc/hosts`
+To access the application and dashboard via friendly domain names, run the following command in your terminal:
+
+```bash
+echo "192.168.56.90 team18.local team18.k8s.dashboard.local" | sudo tee -a /etc/hosts > /dev/null
+```
+
+To verify, try these commands:
+```bash
+ping team18.local
+ping team18.k8s.dashboard.local
+```
+
+#### 6. Access Kubernetes Dashboard
+
+1. Open: [https://team18.k8s.dashboard.local](https://team18.k8s.dashboard.local/) on your host machine.
 2. In the ssh terminal, run this to get the token:
 
    ```bash
@@ -449,7 +475,7 @@ To be reorganized.
 ### ✅ Assignment 5
 
 * Istio-based app traffic management.
-* 80-20 traffic split between two app versions.
+* 90-10 traffic split between two app versions.
 * Sticky sessions for user consistency.
 * 2 versions of the app with a shared metric for continuous experimentation.
 * Rate limiting implemented via Istio's local rate limiting feature.

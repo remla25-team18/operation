@@ -12,6 +12,18 @@
         kubectl apply -f /vagrant/k8s/ingress.yaml
         kubectl apply -f /vagrant/k8s/istio-rate-limit.yaml
         kubectl apply -f /vagrant/k8s/istio-ingress.yaml
+        kubectl apply -f /vagrant/k8s/istio-fixed-ip.yaml
+
+    - name: Ensure team18-tls secret exists (recreate if needed)
+      shell: |
+        if kubectl get secret team18-tls &>/dev/null; then
+          kubectl delete secret team18-tls
+        fi
+        kubectl create secret tls team18-tls \
+          --cert=/vagrant/tls/tls.crt \
+          --key=/vagrant/tls/tls.key
+      args:
+        executable: /bin/bash
 
     # Enabling Prometheus
     # - name: Add Prometheus Community Helm repo
