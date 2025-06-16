@@ -117,8 +117,8 @@ Created PR:
 Approved PR: 
 
 -- Lemon: --  
-Created PR: 
-Approved PR: 
+Created PR: https://github.com/remla25-team18/operation/pull/30 (related to A3)
+Approved PR: https://github.com/remla25-team18/operation/pull/28
 
 -- Madalena: --  
 Created PR: 
