@@ -8,7 +8,9 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
   - [📚 Table of Contents](#-table-of-contents)
   - [📌 Overview of Components](#-overview-of-components)
   - [🚀 Running the Application](#-running-the-application)
-    - [🔪 Assignment 1 – Local Development with Docker Compose](#-assignment-1--local-development-with-docker-compose)
+    - [🔪 Assignment 1](#-assignment-1)
+      - [Local Development with Docker Compose](#local-development-with-docker-compose)
+      - [Using Docker Secrets in Swarm(Optional)](#using-docker-secrets-in-swarmoptional)
     - [⚙️ Assignment 2 – Provisioning Kubernetes Cluster (Vagrant + Ansible)](#️-assignment-2--provisioning-kubernetes-cluster-vagrant--ansible)
       - [1. Boot the Virtual Machines](#1-boot-the-virtual-machines)
       - [2. Create Container Registry Secret](#2-create-container-registry-secret)
@@ -34,7 +36,7 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
         - [🧪 How to Test](#-how-to-test)
   - [📁 File Structure](#-file-structure)
   - [🗓️ Progress Log](#️-progress-log)
-    - [✅ Assignment 1](#-assignment-1)
+    - [✅ Assignment 1](#-assignment-1-1)
     - [✅ Assignment 2](#-assignment-2)
     - [✅ Assignment 3](#-assignment-3)
     - [✅ Assignment 4](#-assignment-4)
@@ -58,14 +60,15 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
 
 ## 🚀 Running the Application
 
-### 🔪 Assignment 1 – Local Development with Docker Compose
+### 🔪 Assignment 1
+#### Local Development with Docker Compose
 
-1. Navigate to the `operation` repository and run the following commands to start the Docker Compose setup:
+1. Make sure you're inside the `operation` repository and run the following commands to start the Docker Compose setup:
 
    ```bash
-   cd operation
    docker-compose up
    ```
+   If you see an error of *unsupported external secret api_key*, ignore it as it is related to Docker Swarm secrets which are used in later setup.
 
 2. Open the app through the web at:  [http://127.0.0.1:4200](http://127.0.0.1:4200)
 
@@ -76,6 +79,46 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
    ```
 
 > Docker Compose launches the entire stack: frontend, app backend, and model-service.
+
+#### Using Docker Secrets in Swarm(Optional)
+Docker secrets are used to securely manage sensitive configuration such as API keys.
+
+1. Make sure Docker Swarm is initialized:
+
+    ```bash
+    docker swarm init
+    ```
+
+2. Create a Secret
+
+    ```bash
+    echo "your-api-key-value" | docker secret create api_key -
+    ```
+
+3. Deploy the Stack
+    Secrets are referenced in docker-stack.yml. Deploy with exporting the environment variables first and then running the stack:
+
+    ```bash
+    set -o allexport
+    source .env
+    set +o allexport
+
+    docker stack deploy -c docker-compose.yml mystack
+
+    ```
+
+4. Clean Up
+
+    To remove the stack:
+    ```bash
+    docker stack rm mystack
+    ```
+
+    To leave Swarm:
+    ```bash
+    docker swarm leave --force
+    ```
+> Docker Swarm provides native clustering and orchestration, allowing users to securely deploy, scale, and manage multi-container applications across multiple hosts with built-in load balancing and secret management.
 
 ---
 

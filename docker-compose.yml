@@ -6,12 +6,15 @@ services:
     depends_on:
       - model-service
     ports:
-      - "${APP_PORT}:${APP_PORT}"
+      - target: ${APP_PORT}
+        published: ${APP_PORT}
+        protocol: tcp
+        mode: host
     environment:
       - DNS=model-service
       - MODEL_PORT=${MODEL_PORT}
-    networks:
-      - app-network
+    secrets:
+      - api_key
 
   model-service:
     container_name: model_service_container
@@ -21,9 +24,7 @@ services:
       - MODEL_SERVICE_PORT=${MODEL_PORT}
     expose:
       - "${MODEL_PORT}" # Internal only
-    networks:
-      - app-network
 
-networks:
-  app-network:
-    driver: bridge
+secrets:
+  api_key:
+    file: ./secrets/api_key
