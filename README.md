@@ -60,16 +60,20 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
 
 ### 🔪 Assignment 1 – Local Development with Docker Compose
 
-1. Navigate to the `operation` repository:
+1. Navigate to the `operation` repository and run the following commands to start the Docker Compose setup:
 
    ```bash
    cd operation
    docker-compose up
    ```
 
-2. Open the app:
+2. Open the app through the web at:  [http://127.0.0.1:4200](http://127.0.0.1:4200)
 
-   [http://127.0.0.1:4200](http://127.0.0.1:4200)
+3. When you're done testing, stop the containers:
+
+   ```bash
+   docker-compose down
+   ```
 
 > Docker Compose launches the entire stack: frontend, app backend, and model-service.
 
