@@ -1,26 +1,26 @@
 services:
   app:
-    image: ghcr.io/remla25-team18/app:0.0.19
     container_name: app_container
+    image: ${APP_NAME}:${APP_VERSION}
     restart: unless-stopped # Restart Policy: Restart unless explicitly stopped (best for development/production)
-    ports:
-      - "4200:4200"
     depends_on:
       - model-service
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
     environment:
       - DNS=model-service
-      - MODEL_PORT=5050
+      - MODEL_PORT=${MODEL_PORT}
     networks:
       - app-network
 
   model-service:
     container_name: model_service_container
-    image: ghcr.io/remla25-team18/model-service:1.0.3
+    image: ${MODEL_NAME}:${MODEL_VERSION}
     restart: unless-stopped
     environment:
-      - MODEL_SERVICE_PORT=5050
+      - MODEL_SERVICE_PORT=${MODEL_PORT}
     expose:
-      - "5050" # Internal only
+      - "${MODEL_PORT}" # Internal only
     networks:
       - app-network
 
