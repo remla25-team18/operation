@@ -11,7 +11,7 @@ Microservices (do our own high level architecture diagram of the components and 
 
 Kubernetes deployment: controller VM (ip), two worker nodes VMs (ip) -> provisioned using vagrant and ansible
 
-Istio service mesh (traffic management)
+Helm
 
 Continuous monitoring
 - prometheus: scrape metrics
@@ -24,6 +24,10 @@ Continuous monitoring
 
 Incoming requests (http) -> istio ingress gateway
 
+Istio ingress gateway provides traffic management for applications running within the istio mesh, routes incoming traffic to the appropriate services based on the incoming request.
+
+ingress gateway == load balancer that handles incoming HTTPS traffic to the mesh 
+
 -> virtual service + destination rule (traffic routing - standard 90/10 split) + sticky sessions:
 
 a) 90% v1 -> app version 1
@@ -32,7 +36,8 @@ b) 10% v2 -> app version 2
 
 -> model communication: REST to model service, which responds with prediction to app
 
-Mention continuous experimentation or rate limiting where?
+Mention continuous experimentation and 
+Envoy Filter - Rate limititing (there can be more than 10 requests per minute)
 
 
 ## Repository Links
