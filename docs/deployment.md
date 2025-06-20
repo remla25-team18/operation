@@ -7,37 +7,55 @@ Deployment structure
 - Visualization (with all deployed resources and their connections -> entities, their types and relations should be clear)
 - Provide understanding of general setup
 
-Microservices (do our own high level architecture diagram of the components and how they communicate with each other)
+Microservices architecture
+Kubernetes deployment using Helm: controller VM (ip), two worker nodes VMs (ip) -> provisioned using vagrant and ansible
 
-Kubernetes deployment: controller VM (ip), two worker nodes VMs (ip) -> provisioned using vagrant and ansible
+<div align="center"> 
 
-Helm
+![Deployment Structure](../assets/DeploymentStructure.jpg)  
+**Figure 1: Deployment Structure**
 
-Continuous monitoring
-- prometheus: scrape metrics
-- grafana: visualization
+</div> 
+
+Our kubernetes cluster is composed of:
+
+Istio Ingress Layer
+- Istio ingress gateway: Provides an entry point to the application running in the istio mesh.
+- Istio virtual service: Routes incoming traffic to the services based on the incoming request.
+
+App Layer
+- App service: 
+- App pods (v1 and v2): 
+
+Model Service Layer
+- Model service:
+- Model pod:
+
+Monitoring Layer
+- Kubernetes dashboard: Provides an overview of the cluster resources.
+- Prometheus: Scrape metrics from the application, through a service monitor.
+- Grafana: Provides real-time visualization of the metrics collected by Prometheus.
 
 
 ## Data Flow
 - Flow of requests in the cluster (including dynamic traffic routing in experiment, 90/10 split)
 - Provide understanding of experimental design
 
-Incoming requests (http) -> istio ingress gateway
+### Dynamic Traffic Routing
+<div align="center">
 
-Istio ingress gateway provides traffic management for applications running within the istio mesh, routes incoming traffic to the appropriate services based on the incoming request.
+![Traffic Management](../assets/TrafficManagement.jpg)  
+**Figure 2: Traffic Management**
 
-ingress gateway == load balancer that handles incoming HTTPS traffic to the mesh 
+</div> 
 
--> virtual service + destination rule (traffic routing - standard 90/10 split) + sticky sessions:
+In our experiment, dynamic traffic routing is achieved using:
+- Istio ingress gateway: load balancer that handles incoming HTTPS traffic (request) to the mesh.
+- Rate limiting: there cannot be more than 10 requests per minute, through an Envoy filter.
+- Istio virtual service: with a destination rule, traffic is split 90% to app version 1 and 10% to app version 2, and uses sticky sessions to ensure the versions are consistent.
+- Model communication: http post request to get the review sentiment prediction.
 
-a) 90% v1 -> app version 1
-
-b) 10% v2 -> app version 2
-
--> model communication: REST to model service, which responds with prediction to app
-
-Mention continuous experimentation and 
-Envoy Filter - Rate limititing (there can be more than 10 requests per minute)
+For more details regarding continuous experimentation, please refer to `continuous-experimentation.md`.
 
 
 ## Repository Links
