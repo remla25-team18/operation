@@ -1,14 +1,9 @@
-# Deplyment Documentation
+# Deployment Documentation
 
-This file aims to conceptially document the final deployment of REMLA's group 18 review sentiment analysis system, in terms of the deployment structure and data flow. After studying the documentation, an outsiders (e.g. a new team member) should have sufficient understanding of the overall design to contribute in a design discussion.
+This file aims to conceptially document the final deployment of REMLA's group 18 review sentiment analysis system, in terms of the deployment structure and data flow. After studying the documentation, an outsider (e.g. a new team member) should have sufficient understanding of the overall design to contribute in a design discussion.
 
 ## Deployment Structure
-Deployment structure 
-- Visualization (with all deployed resources and their connections -> entities, their types and relations should be clear)
-- Provide understanding of general setup
-
-Microservices architecture
-Kubernetes deployment using Helm: controller VM (ip), two worker nodes VMs (ip) -> provisioned using vagrant and ansible
+Our application follows a microservices architecture, deployed on Kubernetes using Helm. An Istio service mesh is employed to handle communication between microservices and providing traffic management.
 
 <div align="center"> 
 
@@ -17,19 +12,19 @@ Kubernetes deployment using Helm: controller VM (ip), two worker nodes VMs (ip) 
 
 </div> 
 
-Our kubernetes cluster is composed of:
+As shown in Figure 1, our kubernetes cluster is composed of:
 
 Istio Ingress Layer
 - Istio ingress gateway: Provides an entry point to the application running in the istio mesh.
 - Istio virtual service: Routes incoming traffic to the services based on the incoming request.
 
 App Layer
-- App service: 
-- App pods (v1 and v2): 
+- App service: Routes the requests to the pods.
+- App pods (v1 and v2): Invokes the different versions of app docker images.
 
 Model Service Layer
-- Model service:
-- Model pod:
+- Model service: Routes the requests to the pods.
+- Model pod: Invokes the different versions of app docker images.
 
 Monitoring Layer
 - Kubernetes dashboard: Provides an overview of the cluster resources.
@@ -38,24 +33,30 @@ Monitoring Layer
 
 
 ## Data Flow
-- Flow of requests in the cluster (including dynamic traffic routing in experiment, 90/10 split)
-- Provide understanding of experimental design
+
+<div align="center">
+
+![Data Flow](../assets/)  
+**Figure 2: Data Flow**
+
+</div> 
+
 
 ### Dynamic Traffic Routing
 <div align="center">
 
 ![Traffic Management](../assets/TrafficManagement.jpg)  
-**Figure 2: Traffic Management**
+**Figure 3: Dynamic Traffic Routing**
 
 </div> 
 
 In our experiment, dynamic traffic routing is achieved using:
-- Istio ingress gateway: load balancer that handles incoming HTTPS traffic (request) to the mesh.
-- Rate limiting: there cannot be more than 10 requests per minute, through an Envoy filter.
-- Istio virtual service: with a destination rule, traffic is split 90% to app version 1 and 10% to app version 2, and uses sticky sessions to ensure the versions are consistent.
-- Model communication: http post request to get the review sentiment prediction.
+- Istio ingress gateway: load balancer that handles incoming HTTPS traffic (requests) to the mesh.
+- Rate limiting: an Envoy filter limits the amount of requests per minute to 10.
+- Istio virtual service: with a destination rule, traffic is split 90% going to app version 1 and 10% to app version 2. Sticky sessions are used to ensure the versions are consistent.
+- Model communication: an HTTP POST request gets the review sentiment prediction.
 
-For more details regarding continuous experimentation, please refer to `continuous-experimentation.md`.
+For details regarding continuous experimentation, please refer to `continuous-experimentation.md`.
 
 
 ## Repository Links
