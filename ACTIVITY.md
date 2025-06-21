@@ -182,3 +182,29 @@ Approved PR: https://github.com/remla25-team18/app/pull/10
 Created PR: https://github.com/remla25-team18/operation/pull/31 (realted to A3)
 
 Approved PR: https://github.com/remla25-team18/app/pull/11
+
+
+# Week 8:
+-- Lászlo: --  
+
+Created PR: 
+
+Approved PR: 
+
+-- Lemon: --  
+
+Created PR: 
+
+Approved PR: 
+
+-- Madalena: --  
+
+Created PR: 
+
+Approved PR: https://github.com/remla25-team18/operation/pull/32
+
+-- Yahor: --
+
+Created PR: 
+
+Approved PR: 
