@@ -16,9 +16,9 @@ app:
 
   versions:
     v1:
-      tag: 0.0.18
+      tag: 0.0.16
     v2:
-      tag: 0.0.19
+      tag: 0.0.11
 
 model:
   replicaCount: 1
@@ -27,7 +27,7 @@ model:
     repository: ghcr.io/remla25-team18/model-service
     tag: 1.0.3
     pullPolicy: Always
-
+  serviceName: team18-model-service
   servicePort: 5050
 
 ingress:
@@ -63,10 +63,10 @@ istio:
   subsets:
     - name: v1
       version: v1
-      weight: 80
+      weight: 90
     - name: v2
       version: v2
-      weight: 20
+      weight: 10
 
 rateLimit:
   name: ingressgateway-rate-limit

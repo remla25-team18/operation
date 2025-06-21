@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ printf "%s-model-service" .Release.Name }}
+  name: {{ .Values.model.serviceName }}
   labels:
     app: {{ printf "%s-model-service" .Release.Name }}
 spec:
@@ -20,17 +20,26 @@ spec:
           imagePullPolicy: {{ .Values.model.image.pullPolicy | quote }}
           ports:
             - containerPort: {{ .Values.model.servicePort }}
+          env:
+            - name: MODEL_SERVICE_HOST
+              value: {{ printf "%s-model-service" .Release.Name }}
+            - name: MODEL_SERVICE_PORT
+              value: {{ .Values.model.servicePort | quote }}
       imagePullSecrets:
         - name: {{ .Values.app.imagePullSecret | quote }}
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ printf "%s-model-service" .Release.Name }}
+  name: {{ .Values.model.serviceName }}
+  labels:
+    app: {{ printf "%s-model-service" .Release.Name }}
 spec:
   type: ClusterIP
   selector:
     app: {{ printf "%s-model-service" .Release.Name }}
   ports:
-    - port: {{ .Values.model.servicePort }}
+    - name: http
+      port: {{ .Values.model.servicePort }}
       targetPort: {{ .Values.model.servicePort }}
