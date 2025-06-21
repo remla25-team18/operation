@@ -47,6 +47,9 @@ monitoring:
     path: /metrics
     interval: 15s
 
+grafana:
+  enabled: true
+
 istio:
   gatewayName: team18-gateway
   virtualServiceName: team18-entry-service
