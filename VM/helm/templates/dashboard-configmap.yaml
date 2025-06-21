@@ -1,0 +1,11 @@
+{{- if .Values.grafana.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-team18
+  labels:
+    grafana_dashboard: "1"
+data:
+  team18-dashboard.json: |
+{{ .Files.Get "grafana/team18-dashboard.json" | indent 4 }}
+{{- end }}
