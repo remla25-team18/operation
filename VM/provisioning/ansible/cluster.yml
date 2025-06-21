@@ -25,6 +25,9 @@
       args:
         executable: /bin/bash
 
+    - name: Auto load Grafana
+      shell: kubectl apply -f /vagrant/k8s/dashboard-configmap.yaml
+
     # Enabling Prometheus
     # - name: Add Prometheus Community Helm repo
     #   ansible.builtin.shell: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
