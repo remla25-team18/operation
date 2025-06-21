@@ -28,6 +28,7 @@ Vagrant.configure("2") do |config|
   # General Vagrant configuration
   config.ssh.insert_key = false
   config.vm.synced_folder "./shared_folder", "/mnt/shared", type: "virtualbox"
+  config.vm.synced_folder "./helm", "/home/vagrant/helm"
   config.vm.box = "bento/ubuntu-24.04"
 
   # Defining the controller VM

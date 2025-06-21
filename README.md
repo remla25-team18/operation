@@ -26,7 +26,6 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
       - [🗑️ How to Uninstall](#️-how-to-uninstall)
       - [3. Validate the Deployment](#3-validate-the-deployment)
       - [4. App Monitoring (Prometheus + Grafana)](#4-app-monitoring-prometheus--grafana)
-        - [Visit in host machine](#visit-in-host-machine)
       - [📊 App Monitoring](#-app-monitoring)
     - [:car: Assignment 5 – Traffic Management](#car-assignment-5--traffic-management)
       - [1. Installing Istio and necessary CRDs](#1-installing-istio-and-necessary-crds)
@@ -255,16 +254,9 @@ helm install prometheus prometheus-community/kube-prometheus-stack \
 This will expose Prometheus on port `9090` and Grafana on `3000` locally.
 
 #### 2. Deploy the Kubernetes Cluster via Helm
-> 
-In the root directory ('operation'), copy the Helm chart into the VM:
-```bash
-scp -r ./helm/ vagrant@192.168.56.100:/home/vagrant/
-```
+Now, you can deploy the application using Helm. Continue in the VM terminal:
 
-Then, SSH into the control plane node and install the chart:
 ```bash
-cd VM
-vagrant ssh ctrl
 helm install team18 ./helm/
 ```
 
@@ -320,26 +312,23 @@ kubectl get ingress
 Now you can check the status of the Prometheus using:
 
 ```bash
-ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
 kubectl get servicemonitor -n monitoring
 ```
 
-You should see the `team18-app-servicemonitor` listed, indicating that Prometheus is set to scrape metrics from the app services.
+You should see the `team18-app-servicemonitor` listed(perhaps as the last one in the list), indicating that Prometheus is set to scrape metrics from the app services.
 
-To access prometheus run:
+To access Prometheus/Grafana, run:
+
+> Note: We recommend only running the Grafana there. If you want to run Prometheus, you need to do so by running the following commands in another VM terminal using the same SSH tunnel as `ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100`.
+> 
 ```bash
 # Forward Prometheus
 kubectl port-forward svc/prometheus-kube-prometheus-prometheus -n monitoring 9090:9090
-```
 
-To access grafana, run the following commands in a separate terminal:
-```bash
-cd operation/VM
-ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
+# Forward Grafana
 kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
 ```
-
-##### Visit in host machine
+Then open your browser and visit the following URLs:
 
 * Prometheus: [http://localhost:9090](http://localhost:9090)
 * Grafana: [http://localhost:3000](http://localhost:3000)
