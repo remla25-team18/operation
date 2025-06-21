@@ -73,6 +73,42 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
 
 > Docker Compose launches the entire stack: frontend, app backend, and model-service.
 
+#### 🔄 Automatic Versioning and Releases
+
+This repository uses [GitVersion](https://gitversion.net/) together with GitHub Actions to automatically handle semantic versioning and release tagging. 
+
+Here's roughly how it works:
+
+1. The Release workflow runs automatically on every push to the main branch (except when pushed by github-actions[bot] itself).
+
+2. GitVersion computes the next version based on commit history, branch configuration, and optionally special commit messages.
+
+3. The computed version is:
+    - Stored in a VERSION file (for visibility and allowing version-awareness)
+
+    - Used to tag the repository with a GitHub Release
+
+    - Automatically generates release notes
+
+4. After releasing, the workflow bumps the next-version in GitVersion.yml to prepare for the next cycle.
+
+##### 📌 Default Behavior
+
+By default, pushes to main increment the patch version (e.g. 0.2.7 becomes 0.2.8), as configured in GitVersion.yml.
+
+If you want to manually control the version bump (for features or breaking changes), you can include special markers in your commit messages:
+
+##### 📝 How to Control Version Bumps
+
+Use the following +semver: tags in your commit messages to instruct GitVersion:
+| Marker           | Result                        | Example Commit Message                                      |
+|------------------|-------------------------------|-------------------------------------------------------------|
+| `+semver: patch` | Increment patch (x.y.z+1)     | `Fix null pointer in parser [+semver: patch]`              |
+| `+semver: minor` | Increment minor (x.y+1.0)     | `Add new user settings feature [+semver: minor]`           |
+| `+semver: major` | Increment major (x+1.0.0)     | `Refactor API breaking compatibility [+semver: major]`     |
+
+These markers can be placed anywhere in the commit message, and they take precedence over the default Patch increment.
+
 ---
 
 ### ⚙️ Assignment 2 – Provisioning Kubernetes Cluster (Vagrant + Ansible)
