@@ -199,7 +199,7 @@ Approved PR:
 
 -- Madalena: --  
 
-Created PR: 
+Created PR: https://github.com/remla25-team18/operation/pull/37 (related to A5)
 
 Approved PR: https://github.com/remla25-team18/operation/pull/32
 
