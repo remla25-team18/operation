@@ -47,7 +47,7 @@ In our experiment, dynamic traffic routing is achieved using:
 - Istio ingress gateway: load balancer that handles incoming HTTPS traffic (requests) to the mesh.
 - Rate limiting: an Envoy filter limits the amount of requests per minute to 10.
 - Istio virtual service: with a destination rule, traffic is split 90% going to app version 1 and 10% to app version 2. Sticky sessions are used to ensure the versions are consistent.
-- App-Model communication: an HTTP POST request is sent from the app to model service to get a prediction for the user comment sentiment .
+- App-Model communication: an HTTP POST request is sent from the app to model service to get a prediction for the user comment sentiment.
 
 The flow of traffic can be conceptually visualized in the following diagram:
 
