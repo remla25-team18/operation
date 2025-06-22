@@ -50,7 +50,7 @@ spec:
 
 The Kubernetes controller continuously monitors these metrics through Prometheus and adjusts the pod count in real time. This logic would be templated inside our existing Helm chart so that deployment stays reproducible.
 
-Circuit breaking is a pattern for creating resilient microservice applications [^2]. To incorporate circuit breaking, an Istio’s `DestinationRule` needs to be configured. Circuit breakers limit the number of concurrent connections and pending requests to model service pods, and eject unhealthy instances temporarily. This protects the app from instability caused by a failing or overloaded model service (or the other way around), enhancing overall system robustness.
+Circuit breaking is a pattern for creating resilient microservice applications. To incorporate circuit breaking, an Istio’s `DestinationRule` needs to be configured. Circuit breakers limit the number of concurrent connections and pending requests to model service pods, and eject unhealthy instances temporarily. This protects the app from instability caused by a failing or overloaded model service (or the other way around), enhancing overall system robustness.
 
 Together, these extensions will improve resource efficiency and operational reliability, directly improving the deployment process and system behavior in production.
 
