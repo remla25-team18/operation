@@ -19,8 +19,10 @@ Horizontal Pod Autoscaling automatically adjusts the number of pod replicas in a
 Whenever traffic spikes, additional pods are created to handle the load, while during idle times, the number of pods decreases to minimize resource wastage and reduce costs. By integrating autoscaling into the Helm charts, the deployment process remains consistent and reproducible.
 
 To implement Horizontal Pod Autoscaling, we would configure the Kubernetes autoscaling API (`autoscaling/v2`) to automatically adjust replica count for `app` and `model-service` deployments. To configure the scaling, we would define a `HoizontalPodAutscaler` with a `scaleTargetRef` spec to 1) explicitly target the deployments we want to scale; 2) specify the metrics we want to monitor for scaling decisions and 3) set the threshold metric values for scaling actions. For example, if CPU usage exceeds 50%, the system will gradually scale out until the target is met according to the rule:
+
 $$
-desiredReplicas = \lceil currentReplicas × \frac{currentMetricValue}{desiredMetricValue} \rceil
+desiredReplicas = \lceil currentReplicas × \frac{currentMetricValue}
+{desiredMetricValue} \rceil
 $$
 
 An example configuration for the `HorizontalPodAutoscaler` targeting the `app-v1` deployment is as follows:
