@@ -1,6 +1,6 @@
 # Extension Proposal: Autoscaling and Circuit Breaking
 
-## Introduction and Critical Reflection
+## Critical Reflection
 
 Our project is a sentiment analysis application that operates within a Kubernetes cluster. The system is managed using Helm for deployments and utilizes Istio (version 1.25.2) for traffic routing, rate limiting, sticky sessions, and monitoring through Prometheus and Grafana.
 
