@@ -23,8 +23,8 @@ App Layer
 - App pods (v1 and v2): Invokes the different versions of app docker images.
 
 Model Service Layer
-- Model service: Routes the requests to the pods.
-- Model pod: Invokes the different versions of app docker images.
+- Model service: Routes the requests to the pod.
+- Model pod: Invokes the model docker image.
 
 Monitoring Layer
 - Kubernetes dashboard: Provides an overview of the cluster resources.
@@ -34,19 +34,12 @@ Monitoring Layer
 
 ## Data Flow
 
+The data flow of an incoming request is represented in the following sequence diagram:
+
 <div align="center">
 
-![Data Flow](../assets/)  
+![Data Flow](../assets/DataFlow.jpg)  
 **Figure 2: Data Flow**
-
-</div> 
-
-
-### Dynamic Traffic Routing
-<div align="center">
-
-![Traffic Management](../assets/TrafficManagement.jpg)  
-**Figure 3: Dynamic Traffic Routing**
 
 </div> 
 
@@ -55,14 +48,11 @@ In our experiment, dynamic traffic routing is achieved using:
 - Rate limiting: an Envoy filter limits the amount of requests per minute to 10.
 - Istio virtual service: with a destination rule, traffic is split 90% going to app version 1 and 10% to app version 2. Sticky sessions are used to ensure the versions are consistent.
 - Model communication: an HTTP POST request gets the review sentiment prediction.
+This can be visualized in the diagram below:
 
-For details regarding continuous experimentation, please refer to `continuous-experimentation.md`.
+<div align="center">
 
+![Traffic Management](../assets/TrafficManagement.jpg)  
+**Figure 3: Dynamic Traffic Routing**
 
-## Repository Links
-- operation: https://github.com/remla25-team18/operation
-- app: https://github.com/remla25-team18/app
-- model-service: https://github.com/remla25-team18/model-service
-- model-training: https://github.com/remla25-team18/model-training
-- lib-ml: https://github.com/remla25-team18/lib-ml
-- lib-version: https://github.com/remla25-team18/lib-version
+</div> 
