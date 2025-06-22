@@ -23,12 +23,13 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
       - [2. Deploy the Kubernetes Cluster via Helm](#2-deploy-the-kubernetes-cluster-via-helm)
       - [🧩 Multiple Installations from the Same Chart](#-multiple-installations-from-the-same-chart)
       - [🔧 How to Install](#-how-to-install)
-      - [🗑️ How to Uninstall](#️-how-to-uninstall)
+      - [How to update the release](#how-to-update-the-release)
+      - [How to Uninstall](#how-to-uninstall)
       - [3. Validate the Deployment](#3-validate-the-deployment)
       - [4. App Monitoring (Prometheus + Grafana)](#4-app-monitoring-prometheus--grafana)
-        - [Visit in host machine](#visit-in-host-machine)
-      - [📊 App Monitoring](#-app-monitoring)
     - [:car: Assignment 5 – Traffic Management](#car-assignment-5--traffic-management)
+      - [Continuous Experimentation](#continuous-experimentation)
+      - [Traffic Management](#traffic-management)
       - [1. Installing Istio and necessary CRDs](#1-installing-istio-and-necessary-crds)
       - [2. Deploying the Application with Istio](#2-deploying-the-application-with-istio)
       - [3. 🚦 Rate Limiting via Istio](#3--rate-limiting-via-istio)
@@ -255,16 +256,9 @@ helm install prometheus prometheus-community/kube-prometheus-stack \
 This will expose Prometheus on port `9090` and Grafana on `3000` locally.
 
 #### 2. Deploy the Kubernetes Cluster via Helm
-> 
-In the root directory ('operation'), copy the Helm chart into the VM:
-```bash
-scp -r ./helm/ vagrant@192.168.56.100:/home/vagrant/
-```
+Now, you can deploy the application using Helm. Continue in the VM terminal:
 
-Then, SSH into the control plane node and install the chart:
 ```bash
-cd VM
-vagrant ssh ctrl
 helm install team18 ./helm/
 ```
 
@@ -296,7 +290,14 @@ Each release will deploy its own isolated set of resources without naming confli
 
 > **Note:** To prevent Ingress rule collisions, the release name is also included in the Ingress hostname. For example, the default release name uses `team18.local`, while a custom release like `release1` will use `release1.local`.
 
-#### 🗑️ How to Uninstall
+#### How to update the release
+To update the release, you can use the `helm upgrade` command. For example, if you want to update `team18` with new changes in the Helm chart:
+
+```bash
+helm upgrade team18 ./helm/
+```
+
+#### How to Uninstall
 To uninstall a release, simply run `helm uninstall <release-name>`. For example:
 
 ```bash
@@ -320,17 +321,18 @@ kubectl get ingress
 Now you can check the status of the Prometheus using:
 
 ```bash
-ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
 kubectl get servicemonitor -n monitoring
 ```
 
-You should see the `team18-app-servicemonitor` listed, indicating that Prometheus is set to scrape metrics from the app services.
+You should see the `team18-app-servicemonitor` listed (perhaps as the last one in the list). This indicates that Prometheus is set to scrape metrics from the app services.
 
-To access prometheus run:
+To access Prometheus/Grafana, run:
+
+> Note: We recommend **only run the Grafana** there. If you want to run Prometheus, you need to do so by opening another VM terminal using the same command as `ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100`.
+
 ```bash
 # Forward Prometheus
 kubectl port-forward svc/prometheus-kube-prometheus-prometheus -n monitoring 9090:9090
-```
 
 To access grafana, run the following commands in a **separate terminal**:
 ```bash
@@ -338,12 +340,15 @@ cd operation/VM
 ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
 kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
 ```
-
-##### Visit in host machine
+Then open your browser and visit the following URLs:
 
 * Prometheus: [http://localhost:9090](http://localhost:9090)
 * Grafana: [http://localhost:3000](http://localhost:3000)
 * Grafana default credentials: `admin/prom-operator`
+
+Now you should see the dashboard called **team18** automatically loaded in Grafana, which contains the following panels. 
+
+TODO: Add more panels to the dashboard.
 
 > Custom app-specific metrics (counters, gauges) are auto-scraped by Prometheus via `ServiceMonitor`, you can view different versions of the app by querying `duration_validation_req`, you should see the different versions of the app in the `version` label like:
 > 
@@ -351,24 +356,6 @@ kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
   duration_validation_req{container="team18-app", endpoint="metrics", instance="10.244.2.3:4200", job="team18-app", namespace="default", pod="team18-app-v2-6464889d88-prbqp", service="team18-app", version="v1.0"}	
   duration_validation_req{container="team18-app", endpoint="metrics", instance="10.244.1.2:4200", job="team18-app", namespace="default", pod="team18-app-v1-65b8cf7b-kfznc", service="team18-app", version="v2.0"}
   ```
-
-> Grafana dashboards are defined in JSON files (see `helm/grafana/team18-dashboard.json`), import manually through:
-
-1. Access Grafana at <http://localhost:3000>
-2. Go to Dashboards > New > Import
-3. Upload `helm/grafana/team18-dashboard.json`
-4. Click Import
-
-#### 📊 App Monitoring
-
-The app exposes Prometheus metrics such as:
-
-**TODO**
-* `app_request_count` (Counter)
-<!-- * `prediction_duration_seconds` (Histogram)
-* `user_feedback_score` (Gauge) -->
-
-A `ServiceMonitor` is used for automatic metric discovery.
 
 ---
 
