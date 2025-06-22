@@ -8,16 +8,24 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
   - [📚 Table of Contents](#-table-of-contents)
   - [📌 Overview of Components](#-overview-of-components)
   - [🚀 Running the Application](#-running-the-application)
-    - [🔪 Assignment 1 – Local Development with Docker Compose](#-assignment-1--local-development-with-docker-compose)
+    - [🔪 Assignment 1](#-assignment-1)
+      - [Local Development with Docker Compose](#local-development-with-docker-compose)
+      - [Using Docker Secrets in Swarm(Optional)](#using-docker-secrets-in-swarmoptional)
     - [⚙️ Assignment 2 – Provisioning Kubernetes Cluster (Vagrant + Ansible)](#️-assignment-2--provisioning-kubernetes-cluster-vagrant--ansible)
       - [1. Boot the Virtual Machines](#1-boot-the-virtual-machines)
       - [2. Create Container Registry Secret](#2-create-container-registry-secret)
-      - [3. Apply the Kubernetes Configuration](#3-apply-the-kubernetes-configuration)
-      - [4. Access Kubernetes Dashboard](#4-access-kubernetes-dashboard)
+      - [3. Create a self-signed certificate for the cluster](#3-create-a-self-signed-certificate-for-the-cluster)
+      - [4. Apply Kubernetes Configuration](#4-apply-kubernetes-configuration)
+      - [5. Add Hostnames to `/etc/hosts`](#5-add-hostnames-to-etchosts)
+      - [6. Access Kubernetes Dashboard](#6-access-kubernetes-dashboard)
     - [☕️ Assignment 3 – Kubernetes Deployment \& Monitoring](#️-assignment-3--kubernetes-deployment--monitoring)
-      - [1. Install Helm Chart \[Skip fo now\]](#1-install-helm-chart-skip-fo-now)
+      - [1. Install Dependencies](#1-install-dependencies)
+      - [2. Deploy the Kubernetes Cluster via Helm](#2-deploy-the-kubernetes-cluster-via-helm)
+      - [🧩 Multiple Installations from the Same Chart](#-multiple-installations-from-the-same-chart)
+      - [🔧 How to Install](#-how-to-install)
+      - [🗑️ How to Uninstall](#️-how-to-uninstall)
       - [3. Validate the Deployment](#3-validate-the-deployment)
-      - [4. Monitoring Setup (Prometheus + Grafana)](#4-monitoring-setup-prometheus--grafana)
+      - [4. App Monitoring (Prometheus + Grafana)](#4-app-monitoring-prometheus--grafana)
         - [Visit in host machine](#visit-in-host-machine)
       - [📊 App Monitoring](#-app-monitoring)
     - [:car: Assignment 5 – Traffic Management](#car-assignment-5--traffic-management)
@@ -28,7 +36,7 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
         - [🧪 How to Test](#-how-to-test)
   - [📁 File Structure](#-file-structure)
   - [🗓️ Progress Log](#️-progress-log)
-    - [✅ Assignment 1](#-assignment-1)
+    - [✅ Assignment 1](#-assignment-1-1)
     - [✅ Assignment 2](#-assignment-2)
     - [✅ Assignment 3](#-assignment-3)
     - [✅ Assignment 4](#-assignment-4)
@@ -52,20 +60,65 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
 
 ## 🚀 Running the Application
 
-### 🔪 Assignment 1 – Local Development with Docker Compose
+### 🔪 Assignment 1
+#### Local Development with Docker Compose
 
-1. Navigate to the `operation` repository:
+1. Make sure you're inside the `operation` repository and run the following commands to start the Docker Compose setup:
 
    ```bash
-   cd operation
    docker-compose up
    ```
+   If you see an error of *unsupported external secret api_key*, ignore it as it is related to Docker Swarm secrets which are used in later setup.
 
-2. Open the app:
+2. Open the app through the web at:  [http://127.0.0.1:4200](http://127.0.0.1:4200)
 
-   [http://127.0.0.1:4200](http://127.0.0.1:4200)
+3. When you're done testing, stop the containers:
+
+   ```bash
+   docker-compose down
+   ```
 
 > Docker Compose launches the entire stack: frontend, app backend, and model-service.
+
+#### Using Docker Secrets in Swarm(Optional)
+Docker secrets are used to securely manage sensitive configuration such as API keys.
+
+1. Make sure Docker Swarm is initialized:
+
+    ```bash
+    docker swarm init
+    ```
+
+2. Create a Secret
+
+    ```bash
+    echo "your-api-key-value" | docker secret create api_key -
+    ```
+
+3. Deploy the Stack
+    Secrets are referenced in docker-stack.yml. Deploy with exporting the environment variables first and then running the stack:
+
+    ```bash
+    set -o allexport
+    source .env
+    set +o allexport
+
+    docker stack deploy -c docker-compose.yml mystack
+
+    ```
+
+4. Clean Up
+
+    To remove the stack:
+    ```bash
+    docker stack rm mystack
+    ```
+
+    To leave Swarm:
+    ```bash
+    docker swarm leave --force
+    ```
+> Docker Swarm provides native clustering and orchestration, allowing users to securely deploy, scale, and manage multi-container applications across multiple hosts with built-in load balancing and secret management.
 
 ---
 
@@ -92,7 +145,7 @@ vagrant up --no-provision
 time vagrant provision
 ```
 
-You will see the time it takes to provision the VMs, which is around 5 minutes, the log will belike this:
+You will see the time it takes to provision the VMs, which is around 5 minutes, the log will be like this:
 
 ```plaintext
 vagrant provision  12.56s user 6.53s system 8% cpu 3:42.87 total
@@ -103,7 +156,7 @@ vagrant provision  12.56s user 6.53s system 8% cpu 3:42.87 total
 
 To allow Kubernetes to pull images from GitHub Container Registry (GHCR), create a secret with your GitHub credentials. After connecting to the controller VM using `vagrant ssh ctrl`, run the following command: 
 
-**Replace the paramater with your own info.**
+**Replace the parameter with your own info.**
 
 ```bash
 kubectl create secret docker-registry ghcr-secret \
@@ -113,9 +166,19 @@ kubectl create secret docker-registry ghcr-secret \
 --docker-email=you@example.com
 ```
 
-#### 3. Apply the Kubernetes Configuration
+#### 3. Create a self-signed certificate for the cluster
 
-Exit out of the ssh terminal and, under the `operation/VM` directory, run the following command to apply the Kubernetes configuration:
+Now go back to your host machine, under the `operation/VM` directory. The below command will at first create a self-signed certificate for the cluster.
+
+```bash
+chmod +x create-certificate.sh
+./create-certificate.sh
+```
+
+#### 4. Apply Kubernetes Configuration
+> **Note**: Alternatively, you can skip to the [Helm Deployment steps](#1-install-dependencies) now.
+
+Under the `operation/VM` directory, run the command bellow. It will apply the Kubernetes configuration using Ansible.
 
 ```bash
 bash run_playbook.sh
@@ -123,20 +186,36 @@ bash run_playbook.sh
 
 You will see the following tips:
 ```plaintext
-VM % bash run_playbook.sh 
+VM:bash run_playbook.sh
 Choose a playbook to run:
 1) Cluster Configuration
 2) Finalization
 3) Istio Installation
-Enter choice [1-3] (leave empty for full provisioning): 
+4) Provisioning without Cluster Configuration
+Enter choice [1-4] (leave empty for full provisioning, any other character to abort): 
 ```
 
 By default, it will run all the playbooks, which is recommended for the first time. If you want to run only one of them, you can enter the number corresponding to the playbook you want to run. After this step, you should have a fully functional Kubernetes cluster with the necessary configurations applied.
 
+Try `curl -k https://team18.local` to check if the cluster is up, running and the certificate is valid.
 
-#### 4. Access Kubernetes Dashboard
 
-1. Open: [https://192.168.56.90/](https://192.168.56.90/) on your host machine.
+#### 5. Add Hostnames to `/etc/hosts`
+To access the application and dashboard via friendly domain names, run the following command in your terminal:
+
+```bash
+echo "192.168.56.90 team18.local team18.k8s.dashboard.local" | sudo tee -a /etc/hosts > /dev/null
+```
+
+To verify, try these commands:
+```bash
+ping team18.local
+ping team18.k8s.dashboard.local
+```
+
+#### 6. Access Kubernetes Dashboard
+
+1. Open: [https://team18.k8s.dashboard.local](https://team18.k8s.dashboard.local/) on your host machine.
 2. In the ssh terminal, run this to get the token:
 
    ```bash
@@ -148,45 +227,23 @@ By default, it will run all the playbooks, which is recommended for the first ti
 
 ### ☕️ Assignment 3 – Kubernetes Deployment & Monitoring
 
-#### 1. Install Helm Chart [Skip fo now]
+#### 1. Install Dependencies
 
-> **⚠️ Lemon's note: Not verified, will modify in the future, skip this whole step now!!!**
-> 
-In the root directory ('operation'), copy the chart:
-```bash
-cd ..
-scp -r ./helm/ vagrant@192.168.56.100:/home/vagrant/
-```
-
-Then deploy the chart:
+First, install MetalLB & Istio on the cluster. Do this by running playbook option 4 (`Provisioning without Cluster Configuration`) from the `VM` directory:
 
 ```bash
-cd VM
-vagrant ssh ctrl
-helm install release helm/
+bash run_playbook.sh
 ```
 
+Then, install the Prometheus monitoring stack using Helm.
 
-#### 3. Validate the Deployment
-
-```bash
-vagrant ssh ctrl
-kubectl get pods
-kubectl get services
-kubectl get ingress
-```
-
-#### 4. Monitoring Setup (Prometheus + Grafana)
-
-Install the monitoring stack:
-
-In the `VM` directory, use the command to access the VM using SSH:
+Open a new terminal and connect to the VM via SSH:
 
 ```bash
 ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
 ```
 
-Inside the ssh terminal, run
+Inside the VM, add the Helm repo and install the monitoring stack:
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -195,13 +252,72 @@ helm install prometheus prometheus-community/kube-prometheus-stack \
   --namespace monitoring \
   --create-namespace
 ```
+This will expose Prometheus on port `9090` and Grafana on `3000` locally.
 
-**After installing Prometheus, you need to reapply the kubernetes configuration again. Exit out of the ssh terminal and run 
+#### 2. Deploy the Kubernetes Cluster via Helm
+> 
+In the root directory ('operation'), copy the Helm chart into the VM:
 ```bash
-ansible-playbook -u vagrant -i 192.168.56.100, provisioning/ansible/cluster.yml
+scp -r ./helm/ vagrant@192.168.56.100:/home/vagrant/
 ```
 
-You can then check the status of the Prometheus using:
+Then, SSH into the control plane node and install the chart:
+```bash
+cd VM
+vagrant ssh ctrl
+helm install team18 ./helm/
+```
+
+The output should look like this:
+
+```bash
+I0606 15:05:32.820209   37158 warnings.go:110] "Warning: EnvoyFilter exposes internal implementation details that may change at any time. Prefer other APIs if possible, and exercise extreme caution, especially around upgrades."
+NAME: team18
+LAST DEPLOYED: Fri Jun  6 15:05:32 2025
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
+
+#### 🧩 Multiple Installations from the Same Chart
+
+This chart supports multiple independent installations in the same cluster. Each installation is isolated by release name using Helm’s built-in `.Release.Name` variable, which is injected into resource names (e.g., `release1-app`, `release1-app-config`, etc.).
+
+#### 🔧 How to Install
+
+You can install the chart multiple times like this:
+
+```bash
+helm install release1 ./helm/
+helm install release2 ./helm/
+```
+Each release will deploy its own isolated set of resources without naming conflicts.
+
+> **Note:** To prevent Ingress rule collisions, the release name is also included in the Ingress hostname. For example, the default release name uses `team18.local`, while a custom release like `release1` will use `release1.local`.
+
+#### 🗑️ How to Uninstall
+To uninstall a release, simply run `helm uninstall <release-name>`. For example:
+
+```bash
+helm uninstall team18
+helm uninstall release1
+helm uninstall release2
+```
+
+#### 3. Validate the Deployment
+
+Once deployed, verify that everything is running:
+
+```bash
+kubectl get pods
+kubectl get services
+kubectl get ingress
+```
+
+#### 4. App Monitoring (Prometheus + Grafana)
+
+Now you can check the status of the Prometheus using:
 
 ```bash
 ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
@@ -227,7 +343,7 @@ kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
 
 * Prometheus: [http://localhost:9090](http://localhost:9090)
 * Grafana: [http://localhost:3000](http://localhost:3000)
-* Default credentials: `admin/prom-operator`
+* Grafana default credentials: `admin/prom-operator`
 
 > Custom app-specific metrics (counters, gauges) are auto-scraped by Prometheus via `ServiceMonitor`, you can view different versions of the app by querying `duration_validation_req`, you should see the different versions of the app in the `version` label like:
 > 
@@ -269,7 +385,7 @@ Please refer to `docs/continuous-experimentation.md` for the documentation about
 
 #### 1. Installing Istio and necessary CRDs
 
-This step should be already done by the Ansible playbooks you ran in the previous step. Ensure you have ran the following commands from your host machine:
+This step should be already done by the Ansible playbooks you ran in the previous step. Ensure you have run the following commands from your host machine:
 
 ```bash
 cd VM
@@ -370,7 +486,9 @@ You can test the rate limit feature in a new terminal using `curl` like so:
 <!-- This command sends 15 http requests in silent mode, outputting only the HTTP respnonse headers -->
 
 ```bash
-for i in {1..15}; do curl -s -o /dev/null -w "%{http_code}\n" http://192.168.56.91/; done
+for i in {1..15}; do
+  curl -s -o /dev/null -w "%{http_code}\n" http://192.168.56.91/
+done
 ```
 
 The first 10 requests should return a `200 - OK` response.
@@ -413,7 +531,7 @@ To be reorganized.
 ### ✅ Assignment 5
 
 * Istio-based app traffic management.
-* 80-20 traffic split between two app versions.
+* 90-10 traffic split between two app versions.
 * Sticky sessions for user consistency.
 * 2 versions of the app with a shared metric for continuous experimentation.
 * Rate limiting implemented via Istio's local rate limiting feature.
@@ -423,5 +541,4 @@ To be reorganized.
 ## 🧠 Notes
 
 * Do **not** store secrets in source files. Use Kubernetes `Secrets`.
-* Helm charts should support custom values and be re-installable.
 * Use `--kubeconfig` or set `KUBECONFIG` to interact with your cluster from host.

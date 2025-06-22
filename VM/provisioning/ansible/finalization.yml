@@ -27,15 +27,15 @@
       command: kubectl apply -f {{ manifest_base }}/metallb/l2advertisement.yml
 
     # Step 21: Nginx Ingress
-    - name: Add ingress-nginx repo
-      command: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-
-    - name: Update helm repo
-      command: helm repo update
-
-    - name: Install ingress-nginx with helm
-      kubernetes.core.helm:
+    - name: Add ingress-nginx Helm repo and update cache
+      kubernetes.core.helm_repository:
         name: ingress-nginx
+        url: https://kubernetes.github.io/ingress-nginx
+        state: present
+
+    - name: Install ingress-nginx with Helm
+      kubernetes.core.helm:
+        release_name: ingress-nginx
         chart_ref: ingress-nginx/ingress-nginx
         namespace: ingress-nginx
         create_namespace: true
@@ -43,7 +43,9 @@
           controller:
             service:
               loadBalancerIP: 192.168.56.90
-
+        state: present
+        wait: true
+  
     # Step 22: Kubernetes Dashboard
     - name: Add Kubernetes Dashboard Helm repository
       kubernetes.core.helm_repository:
@@ -57,19 +59,8 @@
         namespace: kubernetes-dashboard
         create_namespace: true
 
-    - name: Wait for ingress-nginx admission webhook to be ready
-      shell: >
-        kubectl wait --namespace ingress-nginx
-        --for=condition=ready pod
-        --selector=app.kubernetes.io/component=controller
-        --timeout=90s
-      register: wait_webhook
-      retries: 5
-      delay: 10
-      until: wait_webhook.rc == 0
-
-    - name: Create admin user account for Dashboard
-      command: kubectl apply -f {{ manifest_base }}/dashboard/dashboard-admin.yml
+    - name: Apply admin-user ServiceAccount and ClusterRoleBinding
+      command: kubectl apply -f /vagrant/provisioning/manifests/dashboard/dashboard-admin.yml
 
     - name: Apply Ingress for Kubernetes Dashboard
-      command: kubectl apply -f {{ manifest_base }}/dashboard/dashboard-ingress.yml
+      command: kubectl apply -f /vagrant/provisioning/manifests/dashboard/dashboard-ingress.yml

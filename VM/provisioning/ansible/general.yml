@@ -76,25 +76,25 @@
     - name: Disable AppArmor
       ansible.builtin.lineinfile:
         path: /etc/containerd/config.toml
-        regexp: '^\s*disable_apparmor'
-        line: "disable_apparmor = true"
-        state: present
+        regexp: '^(\s*)disable_apparmor\s*='
+        line: '\1disable_apparmor = true'
+        backrefs: yes
         backup: yes
 
     - name: Update sandbox image version
       ansible.builtin.lineinfile:
         path: /etc/containerd/config.toml
-        regexp: '^\s*sandbox_image'
-        line: 'sandbox_image = "registry.k8s.io/pause:3.10"'
-        state: present
+        regexp: '^(\s*)sandbox_image\s*='
+        line: '\1sandbox_image = "registry.k8s.io/pause:3.10"'
+        backrefs: yes
         backup: yes
 
     - name: Setup systemd cgroup
       ansible.builtin.lineinfile:
         path: /etc/containerd/config.toml
-        regexp: '^\s*SystemdCgroup'
-        line: "SystemdCgroup = true"
-        state: present
+        regexp: '^(\s*)SystemdCgroup\s*='
+        line: '\1SystemdCgroup = true'
+        backrefs: yes
         backup: yes
 
     - name: Restart containerd service

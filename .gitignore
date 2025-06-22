@@ -105,7 +105,6 @@ celerybeat-schedule
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/
@@ -131,3 +130,4 @@ dmypy.json
 
 tmp/
 ssh/
+tls/
