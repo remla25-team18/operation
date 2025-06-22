@@ -6,7 +6,7 @@ Our project is a sentiment analysis application that operates within a Kubernete
 
 If our deployment were to be used in production, one of the challenges it would face is the lack of adaptive scaling and resilience mechanisms. We identify this challenge as a critical release-engineering related shortcoming in our current setup.
 
-There are two notable effects of the shortcoming. First, resource utilization is inefficient since pods maintain a fixed replica count irrespective of the actual load. This results in unnecessary computational expenses during periods of low or no traffic. Second, the system's resilience suffers because without appropriate mechanisms, a failing model service can cause cascading failures that negatively impact the web app and overall system performance. Such instability and inefficient resource allocation compromise both user experience and cost-effectiveness, especially under fluctuating demand. This issue is closely related to the deployment and release engineering practices, as it affects how the system scales and maintains stability in production environments.
+There are two notable effects of the shortcoming. First, resource utilization is inefficient since pods maintain a fixed replica count irrespective of the actual load. This results in unnecessary computational expenses during periods of low or no traffic, and possible overload during the peak hours. Second, the system's resilience suffers because without appropriate mechanisms, a failing model service can cause cascading failures that negatively impact the web app and overall system performance. Such instability and inefficient resource allocation compromise both user experience and cost-effectiveness, especially under fluctuating demand. This issue is closely related to the deployment and release engineering practices, as it affects how the system scales and maintains stability in production environments.
 
 ## Proposed Extension
 
@@ -94,7 +94,7 @@ Once the proposed extension is implemented, it is important to validate that it 
 
 During the baseline phase, various system metrics need to be collected under various controlled load conditions (i.e. deployment CPU utilization, number of active pods, request latency, error rates, etc.).  
 
-During the improvement phase, the metrics such as CPU utilization, etc. need to be recorded over an extended period, capturing both peak and idle traffic patterns. The experiment should focus on observing how pod replica counts dynamically adjust, whether CPU utilization stabilizes near target thresholds, and if request latency and error rates improve, especially during traffic spikes (to check if circuit breaking starts to take effect). Additional observations may include the occurrence of circuit breaker events and their effect on system stability.
+During the improvement phase, the same metrics such as CPU utilization, etc. need to be recorded over an extended period, capturing both peak and idle traffic patterns. The experiment should focus on observing how pod replica counts dynamically adjust, whether CPU utilization stabilizes near target thresholds, and if request latency and error rates improve, especially during traffic spikes (to check if circuit breaking starts to take effect). Additional observations may include the occurrence of circuit breaker events and their effect on system stability.
 
 By comparing the metrics before and after the extension, the benefits of autoscaling in cost optimization and circuit breaking in system robustness can be objectively assessed.
 
