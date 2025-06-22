@@ -1,6 +1,6 @@
 # Deployment Documentation
 
-This file aims to conceptially document the final deployment of REMLA's group 18 review sentiment analysis system, in terms of the deployment structure and data flow. After studying the documentation, an outsider (e.g. a new team member) should have sufficient understanding of the overall design to contribute in a design discussion.
+This file aims to conceptually document the final deployment of REMLA's group 18 review sentiment analysis system, in terms of the deployment structure and data flow. After studying the documentation, an outsider (e.g. a new team member) should have sufficient understanding of the overall design to contribute in a design discussion.
 
 ## Deployment Structure
 Our application follows a microservices architecture, deployed on Kubernetes using Helm. An Istio service mesh is employed to handle communication between microservices and providing traffic management.
@@ -20,7 +20,7 @@ Istio Ingress Layer
 
 App Layer
 - App service: Routes the requests to the pods.
-- App pods (v1 and v2): Invokes the different versions of app docker images.
+- App pods (v1 and v2): Invoke the different versions of app docker images.
 
 Model Service Layer
 - Model service: Routes the requests to the pod.
@@ -47,8 +47,9 @@ In our experiment, dynamic traffic routing is achieved using:
 - Istio ingress gateway: load balancer that handles incoming HTTPS traffic (requests) to the mesh.
 - Rate limiting: an Envoy filter limits the amount of requests per minute to 10.
 - Istio virtual service: with a destination rule, traffic is split 90% going to app version 1 and 10% to app version 2. Sticky sessions are used to ensure the versions are consistent.
-- Model communication: an HTTP POST request gets the review sentiment prediction.
-This can be visualized in the diagram below:
+- App-Model communication: an HTTP POST request is sent from the app to model service to get a prediction for the user comment sentiment .
+
+The flow of traffic can be conceptually visualized in the following diagram:
 
 <div align="center">
 
