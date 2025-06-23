@@ -24,7 +24,13 @@ services:
       - MODEL_SERVICE_PORT=${MODEL_PORT}
     expose:
       - "${MODEL_PORT}" # Internal only
+    volumes:
+      # Mount into container where model-service expects 'tmp/'
+      - model_cache:/app/tmp
 
 secrets:
   api_key:
     file: ./secrets/api_key
+
+volumes:
+  model_cache:
