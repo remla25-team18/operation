@@ -39,11 +39,11 @@ This is a falsifiable hypothesis and can be tested using collected interaction t
 
 In Prometheus, you can query the metric `duration_validation_req` to compare the two versions. The `version` label will indicate which version of the app the metric belongs to.
 
-![Prometheus Query](../assets/Prometheus.png)
+![Prometheus Query](../assets/Prometheus.jpeg)
 
 Grafana provides two key visualizations. At the top is the average duration of prediction corrections per condition, being v1.0 correspondant to Condition A and v2.0 to Condition B. At the bottom, there is a time series of the prediction corrections made. 
 
-![Grafana](../assets/Grafana.png)
+![Grafana](../assets/Grafana.jpeg)
 
 ## 5. Conclusion
 
