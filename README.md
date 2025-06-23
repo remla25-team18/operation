@@ -177,9 +177,7 @@ chmod +x create-certificate.sh
 ```
 
 #### 4. Apply Kubernetes Configuration
-> **Note**: Alternatively, you can skip to the [Helm Deployment steps](#1-install-dependencies) now.
-
-Under the `operation/VM` directory, run the command bellow. It will apply the Kubernetes configuration using Ansible.
+Under the `operation/VM` directory, run the command below. It will apply the Kubernetes configuration using Ansible.
 
 ```bash
 bash run_playbook.sh
@@ -187,19 +185,15 @@ bash run_playbook.sh
 
 You will see the following tips:
 ```plaintext
-VM:bash run_playbook.sh
 Choose a playbook to run:
+[Press enter] Full provisioning
 1) Cluster Configuration
 2) Finalization
 3) Istio Installation
-4) Provisioning without Cluster Configuration
-Enter choice [1-4] (leave empty for full provisioning, any other character to abort): 
+Press enter or choose [1-3] (any other character to abort):
 ```
 
-By default, it will run all the playbooks, which is recommended for the first time. If you want to run only one of them, you can enter the number corresponding to the playbook you want to run. After this step, you should have a fully functional Kubernetes cluster with the necessary configurations applied.
-
-Try `curl -k https://team18.local` to check if the cluster is up, running and the certificate is valid.
-
+By default (if you just press enter), it will run the full provisioning (finalization and istio) which is recommended for the first time. If you want to run only one of them, you can enter the number corresponding to the playbook you want to run. 
 
 #### 5. Add Hostnames to `/etc/hosts`
 To access the application and dashboard via friendly domain names, run the following command in your terminal:
@@ -217,7 +211,7 @@ ping team18.k8s.dashboard.local
 #### 6. Access Kubernetes Dashboard
 
 1. Open: [https://team18.k8s.dashboard.local](https://team18.k8s.dashboard.local/) on your host machine.
-2. In the ssh terminal, run this to get the token:
+2. In the ssh terminal of ctrl, run this to get the token:
 
    ```bash
    kubectl -n kubernetes-dashboard create token admin-user
@@ -228,34 +222,39 @@ ping team18.k8s.dashboard.local
 
 ### ☕️ Assignment 3 – Kubernetes Deployment & Monitoring
 
-#### 1. Install Dependencies
+This can be done two ways:
+- Method A) Using Ansible Playbook: in which case, proceed with the instructions that follow.
+- Method B) Using Helm: skip to the "Using Helm" section ############################################################################################################
 
-First, install MetalLB & Istio on the cluster. Do this by running playbook option 4 (`Provisioning without Cluster Configuration`) from the `VM` directory:
+### Kubernetes Deployment
+
+#### Using Ansible Playbook
+
+Under the `operation/VM` directory, run the command below, choosing the option `1` to apply the cluster configuration.
 
 ```bash
 bash run_playbook.sh
 ```
 
-Then, install the Prometheus monitoring stack using Helm.
-
-Open a new terminal and connect to the VM via SSH:
-
-```bash
-ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
+You will see the following tips:
+```plaintext
+Choose a playbook to run:
+[Press enter] Full provisioning
+1) Cluster Configuration
+2) Finalization
+3) Istio Installation
+Press enter or choose [1-3] (any other character to abort):
 ```
 
-Inside the VM, add the Helm repo and install the monitoring stack:
+After this step, you should have a fully functional Kubernetes cluster with the necessary configurations applied.
 
-```bash
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo update
-helm install prometheus prometheus-community/kube-prometheus-stack \
-  --namespace monitoring \
-  --create-namespace
-```
-This will expose Prometheus on port `9090` and Grafana on `3000` locally.
+Try `curl -k https://team18.local` to check if the cluster is up, running and the certificate is valid.
 
-#### 2. Deploy the Kubernetes Cluster via Helm
+Skip to #### App Monitoring (Prometheus + Grafana) #############################################################################################################
+
+#### Using Helm
+
+#### 1. Deploy the Kubernetes Cluster via Helm
 Now, you can deploy the application using Helm. Continue in the VM terminal:
 
 ```bash
@@ -274,11 +273,11 @@ REVISION: 1
 TEST SUITE: None
 ```
 
-#### 🧩 Multiple Installations from the Same Chart
+#### 🧩 Multiple Installations from the Same Chart (Optional)
 
 This chart supports multiple independent installations in the same cluster. Each installation is isolated by release name using Helm’s built-in `.Release.Name` variable, which is injected into resource names (e.g., `release1-app`, `release1-app-config`, etc.).
 
-#### 🔧 How to Install
+##### How to Install 
 
 You can install the chart multiple times like this:
 
@@ -290,23 +289,15 @@ Each release will deploy its own isolated set of resources without naming confli
 
 > **Note:** To prevent Ingress rule collisions, the release name is also included in the Ingress hostname. For example, the default release name uses `team18.local`, while a custom release like `release1` will use `release1.local`.
 
-#### How to update the release
-To update the release, you can use the `helm upgrade` command. For example, if you want to update `team18` with new changes in the Helm chart:
-
-```bash
-helm upgrade team18 ./helm/
-```
-
-#### How to Uninstall
+##### How to Uninstall
 To uninstall a release, simply run `helm uninstall <release-name>`. For example:
 
 ```bash
-helm uninstall team18
 helm uninstall release1
 helm uninstall release2
 ```
 
-#### 3. Validate the Deployment
+#### 2. Validate the Deployment
 
 Once deployed, verify that everything is running:
 
@@ -316,7 +307,13 @@ kubectl get services
 kubectl get ingress
 ```
 
-#### 4. App Monitoring (Prometheus + Grafana)
+### App Monitoring (Prometheus + Grafana)
+
+Open a new terminal and connect to the VM via SSH:
+
+```bash
+ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
+```
 
 Now you can check the status of the Prometheus using:
 
@@ -326,25 +323,23 @@ kubectl get servicemonitor -n monitoring
 
 You should see the `team18-app-servicemonitor` listed (perhaps as the last one in the list). This indicates that Prometheus is set to scrape metrics from the app services.
 
-To access Prometheus/Grafana, run:
-
-> Note: We recommend **only run the Grafana** there. If you want to run Prometheus, you need to do so by opening another VM terminal using the same command as `ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100`.
-
+To access Prometheus, run:
 ```bash
-# Forward Prometheus
 kubectl port-forward svc/prometheus-kube-prometheus-prometheus -n monitoring 9090:9090
+```
 
-To access grafana, run the following commands in a **separate terminal**:
+To access Grafana, run, in a **separate terminal**:
 ```bash
 cd operation/VM
 ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
 kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
 ```
+
 Then open your browser and visit the following URLs:
 
 * Prometheus: [http://localhost:9090](http://localhost:9090)
 * Grafana: [http://localhost:3000](http://localhost:3000)
-* Grafana default credentials: `admin/prom-operator`
+  * Use the default grafana credentials: user `admin` and password `prom-operator`.
 
 Now you should see the dashboard called **team18** automatically loaded in Grafana, which contains the following panels. 
 
