@@ -333,6 +333,7 @@ To access Prometheus/Grafana, run:
 ```bash
 # Forward Prometheus
 kubectl port-forward svc/prometheus-kube-prometheus-prometheus -n monitoring 9090:9090
+```
 
 To access grafana, run the following commands in a **separate terminal**:
 ```bash
