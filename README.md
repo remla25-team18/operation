@@ -141,7 +141,11 @@ Here's roughly how it works:
 
 ##### 📌 Default Behavior
 
-By default, pushes to main increment the patch version (e.g. 0.2.7 becomes 0.2.8), as configured in GitVersion.yml.
+##### 📌 Default Behavior
+
+By default, pushes to main increment the patch version (e.g. 0.2.7 becomes 0.2.8), and the next version is set as a **pre-release** (e.g. `0.2.9-pre`) as configured in `GitVersion.yml`. This helps indicate that the current state is still under development.
+
+If you want to make a **stable release**, simply edit `GitVersion.yml` and remove the `-pre` suffix from the `next-version` field before merging or pushing to main. This will cause the next release to be tagged as a stable version (e.g. `0.2.9`).
 
 If you want to manually control the version bump (for features or breaking changes), you can include special markers in your commit messages:
 
