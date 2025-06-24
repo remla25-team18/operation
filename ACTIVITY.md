@@ -205,6 +205,6 @@ Approved PR: https://github.com/remla25-team18/operation/pull/32
 
 -- Yahor: --
 
-Created PR: 
+Created PR: https://github.com/remla25-team18/operation/pull/36 (related to A5)
 
-Approved PR: 
+Approved PR: https://github.com/remla25-team18/operation/pull/37
