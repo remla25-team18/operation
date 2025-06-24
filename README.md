@@ -121,6 +121,46 @@ Docker secrets are used to securely manage sensitive configuration such as API k
     ```
 > Docker Swarm provides native clustering and orchestration, allowing users to securely deploy, scale, and manage multi-container applications across multiple hosts with built-in load balancing and secret management.
 
+#### 🔄 Automatic Versioning and Releases
+
+This repository uses [GitVersion](https://gitversion.net/) together with GitHub Actions to automatically handle semantic versioning and release tagging. 
+
+Here's roughly how it works:
+
+1. The Release workflow runs automatically on every push to the main branch (except when pushed by github-actions[bot] itself).
+
+2. GitVersion computes the next version based on commit history, branch configuration, and optionally special commit messages.
+
+3. The computed version is:
+    - Stored in a VERSION file (for visibility and allowing version-awareness)
+
+    - Used to tag the repository with a GitHub Release
+
+    - Automatically generates release notes
+
+4. After releasing, the workflow bumps the next-version in GitVersion.yml to prepare for the next cycle.
+
+##### 📌 Default Behavior
+
+##### 📌 Default Behavior
+
+By default, pushes to main increment the patch version (e.g. 0.2.7 becomes 0.2.8), and the next version is set as a **pre-release** (e.g. `0.2.9-pre`) as configured in `GitVersion.yml`. This helps indicate that the current state is still under development.
+
+If you want to make a **stable release**, simply edit `GitVersion.yml` and remove the `-pre` suffix from the `next-version` field before merging or pushing to main. This will cause the next release to be tagged as a stable version (e.g. `0.2.9`).
+
+If you want to manually control the version bump (for features or breaking changes), you can include special markers in your commit messages:
+
+##### 📝 How to Control Version Bumps
+
+Use the following +semver: tags in your commit messages to instruct GitVersion:
+| Marker           | Result                        | Example Commit Message                                      |
+|------------------|-------------------------------|-------------------------------------------------------------|
+| `+semver: patch` | Increment patch (x.y.z+1)     | `Fix null pointer in parser [+semver: patch]`              |
+| `+semver: minor` | Increment minor (x.y+1.0)     | `Add new user settings feature [+semver: minor]`           |
+| `+semver: major` | Increment major (x+1.0.0)     | `Refactor API breaking compatibility [+semver: major]`     |
+
+These markers can be placed anywhere in the commit message, and they take precedence over the default Patch increment.
+
 ---
 
 ### ⚙️ Assignment 2 – Provisioning Kubernetes Cluster (Vagrant + Ansible)
