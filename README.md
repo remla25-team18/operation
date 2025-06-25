@@ -307,6 +307,18 @@ Copy the token and paste it into the dashboard login page, you should be able to
 
 ### App Monitoring (Prometheus + Grafana)
 
+Inside the VM, add the Helm repo and install the monitoring stack:
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install prometheus prometheus-community/kube-prometheus-stack \
+  --namespace monitoring \
+  --create-namespace
+```
+
+This will expose Prometheus on port 9090 and Grafana on 3000 locally.
+
 Open a new terminal and connect to the VM via SSH:
 
 ```bash
