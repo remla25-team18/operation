@@ -17,16 +17,16 @@ This project implements a complete MLOps pipeline using Docker, Kubernetes, Helm
       - [3. Create a self-signed certificate for the cluster](#3-create-a-self-signed-certificate-for-the-cluster)
       - [4. Apply Kubernetes Configuration](#4-apply-kubernetes-configuration)
       - [5. Add Hostnames to `/etc/hosts`](#5-add-hostnames-to-etchosts)
-      - [6. Access Kubernetes Dashboard](#6-access-kubernetes-dashboard)
     - [☕️ Assignment 3 – Kubernetes Deployment \& Monitoring](#️-assignment-3--kubernetes-deployment--monitoring)
-      - [1. Install Dependencies](#1-install-dependencies)
-      - [2. Deploy the Kubernetes Cluster via Helm](#2-deploy-the-kubernetes-cluster-via-helm)
-      - [🧩 Multiple Installations from the Same Chart](#-multiple-installations-from-the-same-chart)
-      - [🔧 How to Install](#-how-to-install)
-      - [How to update the release](#how-to-update-the-release)
-      - [How to Uninstall](#how-to-uninstall)
-      - [3. Validate the Deployment](#3-validate-the-deployment)
-      - [4. App Monitoring (Prometheus + Grafana)](#4-app-monitoring-prometheus--grafana)
+    - [Kubernetes Deployment](#kubernetes-deployment)
+      - [Using Ansible Playbook](#using-ansible-playbook)
+      - [Using Helm](#using-helm)
+      - [1. Deploy the Kubernetes Cluster via Helm](#1-deploy-the-kubernetes-cluster-via-helm)
+      - [🧩 Multiple Installations from the Same Chart (Optional)](#-multiple-installations-from-the-same-chart-optional)
+        - [How to Install](#how-to-install)
+        - [How to Uninstall](#how-to-uninstall)
+      - [2. Validate the Deployment](#2-validate-the-deployment)
+    - [App Monitoring (Prometheus + Grafana)](#app-monitoring-prometheus--grafana)
     - [:car: Assignment 5 – Traffic Management](#car-assignment-5--traffic-management)
       - [Continuous Experimentation](#continuous-experimentation)
       - [Traffic Management](#traffic-management)
@@ -208,16 +208,6 @@ ping team18.local
 ping team18.k8s.dashboard.local
 ```
 
-#### 6. Access Kubernetes Dashboard
-
-1. Open: [https://team18.k8s.dashboard.local](https://team18.k8s.dashboard.local/) on your host machine.
-2. In the ssh terminal of ctrl, run this to get the token:
-
-   ```bash
-   kubectl -n kubernetes-dashboard create token admin-user
-   ```
-3. Copy the token and paste it into the dashboard login page, you should be able to see the app and model-service pods running.
-
 ---
 
 ### ☕️ Assignment 3 – Kubernetes Deployment & Monitoring
@@ -306,6 +296,14 @@ kubectl get pods
 kubectl get services
 kubectl get ingress
 ```
+Or you can do this using Kubernetes Dashboard, which is accessible at [https://team18.k8s.dashboard.local](https://team18.k8s.dashboard.local/) on your host machine.
+
+In the ssh terminal of ctrl, run this to get the token:
+
+   ```bash
+   kubectl -n kubernetes-dashboard create token admin-user
+   ```
+Copy the token and paste it into the dashboard login page, you should be able to see the app and model-service pods running.
 
 ### App Monitoring (Prometheus + Grafana)
 
