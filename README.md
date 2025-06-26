@@ -214,7 +214,7 @@ ping team18.k8s.dashboard.local
 
 This can be done two ways:
 - Method A) Using Ansible Playbook: in which case, proceed with the instructions that follow.
-- Method B) Using Helm: skip to the "Using Helm" section ############################################################################################################
+- Method B) Using Helm: skip to the "Using Helm" section 
 
 ### Kubernetes Deployment
 
@@ -240,7 +240,7 @@ After this step, you should have a fully functional Kubernetes cluster with the 
 
 Try `curl -k https://team18.local` to check if the cluster is up, running and the certificate is valid.
 
-Skip to #### App Monitoring (Prometheus + Grafana) #############################################################################################################
+Skip to "App Monitoring (Prometheus + Grafana)" section.
 
 #### Using Helm
 
