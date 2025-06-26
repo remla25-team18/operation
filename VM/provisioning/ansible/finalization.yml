@@ -76,15 +76,3 @@
           --key=/vagrant/tls/tls.key
       args:
         executable: /bin/bash
-
-    # Other tasks
-    - name: Ensure team18-tls secret exists (recreate if needed)
-      shell: |
-        if kubectl get secret team18-tls &>/dev/null; then
-          kubectl delete secret team18-tls
-        fi
-        kubectl create secret tls team18-tls \
-          --cert=/vagrant/tls/tls.crt \
-          --key=/vagrant/tls/tls.key
-      args:
-        executable: /bin/bash
