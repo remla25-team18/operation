@@ -142,8 +142,6 @@ Here's roughly how it works:
 
 ##### 📌 Default Behavior
 
-##### 📌 Default Behavior
-
 By default, pushes to main increment the patch version (e.g. 0.2.7 becomes 0.2.8), and the next version is set as a **pre-release** (e.g. `0.2.9-pre`) as configured in `GitVersion.yml`. This helps indicate that the current state is still under development.
 
 If you want to make a **stable release**, simply edit `GitVersion.yml` and remove the `-pre` suffix from the `next-version` field before merging or pushing to main. This will cause the next release to be tagged as a stable version (e.g. `0.2.9`).
@@ -353,6 +351,18 @@ Open a new terminal and connect to the VM via SSH:
 ssh -L 3000:localhost:3000 -L 9090:localhost:9090 vagrant@192.168.56.100
 ```
 
+Inside the ctrl VM, add the Helm repo and install the monitoring stack:
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install prometheus prometheus-community/kube-prometheus-stack \
+  --namespace monitoring \
+  --create-namespace
+```
+
+If you are deploying with the Ansible playbook `run_playbook.sh` option `1`, you need to rerun it.
+
 Now you can check the status of the Prometheus using:
 
 ```bash
@@ -380,8 +390,6 @@ Then open your browser and visit the following URLs:
   * Use the default grafana credentials: user `admin` and password `prom-operator`.
 
 Now you should see the dashboard called **team18** automatically loaded in Grafana, which contains the following panels. 
-
-TODO: Add more panels to the dashboard.
 
 > Custom app-specific metrics (counters, gauges) are auto-scraped by Prometheus via `ServiceMonitor`, you can view different versions of the app by querying `duration_validation_req`, you should see the different versions of the app in the `version` label like:
 > 
@@ -477,7 +485,6 @@ done
 We also implemented sticky sessions for the app, so that users will always be directed to the same version of the app they started with when there is a special header in their request. Check it by running the following commands!
 
 ```bash 
-vagrant ssh ctrl
 curl -k http://192.168.56.91/metrics -H "Host: team18.local" -H "experiment: v1"
 curl -k http://192.168.56.92/metrics -H "Host: team18.local" -H "experiment: v2"
 ```
@@ -513,52 +520,3 @@ done
 
 The first 10 requests should return a `200 - OK` response.
 After the 10th request, subsequent responses should return a `429 - Too Many Requests` error.
-
-
-## 📁 File Structure
-
-To be reorganized.
-
----
-
-## 🗓️ Progress Log
-
-### ✅ Assignment 1
-
-* Docker Compose setup with modular app and model.
-* Versioned model, reusable libraries (`lib-ml`, `lib-version`).
-
-### ✅ Assignment 2
-
-* Cluster provisioned via Vagrant + Ansible.
-* All tasks are idempotent and modular.
-
-### ✅ Assignment 3
-
-* Kubernetes deployment via Helm.
-* Monitoring with Prometheus and Grafana.
-* Exposes custom metrics and dashboards.
-
-
-### ✅ Assignment 4
-
-* Automated Tests: The tests follow the [ML Test Score](https://research.google/pubs/the-ml-test-score-a-rubric-for-ml-production-readiness-and-technical-debt-reduction/) methodology to measure test adequacy and there is at least one test per category: Feature and Data, Model Development, ML Infrastructure and Monitoring. The model's robustness is tested on semantically equivalent reviews and non-functional requirements, namely memory usage and latency, are tested for prediction.
-* Continuous Training
-* Project Organization
-* Pipeline Management with DVC
-* Code Quality: Pylint has a non-standard configuration and one custom rule for the ML code smell Randomness Uncontrolled. The project additionally applies flake8 and bandit, which have a non-default configuration. All three linters are automatically run as part of the GitHub workflow
-
-### ✅ Assignment 5
-
-* Istio-based app traffic management.
-* 90-10 traffic split between two app versions.
-* Sticky sessions for user consistency.
-* 2 versions of the app with a shared metric for continuous experimentation.
-* Rate limiting implemented via Istio's local rate limiting feature.
-
----
-
-## 🧠 Notes
-
-* Do **not** store secrets in source files. Use Kubernetes `Secrets`.
-* Use `--kubeconfig` or set `KUBECONFIG` to interact with your cluster from host.

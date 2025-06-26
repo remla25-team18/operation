@@ -23,7 +23,7 @@ spec:
           volumeMounts:
             - mountPath: /mnt/app_volume_v2/
               name: app-volume-v2
-          image: ghcr.io/remla25-team18/app:0.0.23
+          image: ghcr.io/remla25-team18/app:0.0.22
           ports:
             - containerPort: 4200
           env:
@@ -68,7 +68,7 @@ spec:
           volumeMounts:
             - mountPath: /mnt/app_volume_v1/
               name: app-volume-v1
-          image: ghcr.io/remla25-team18/app:0.0.25
+          image: ghcr.io/remla25-team18/app:0.0.21
           ports:
             - containerPort: 4200
           env:

@@ -184,7 +184,7 @@ Created PR: https://github.com/remla25-team18/operation/pull/31 (realted to A3)
 Approved PR: https://github.com/remla25-team18/app/pull/11
 
 
-# Week 8:
+# Week 9:
 -- Lászlo: --  
 
 Created PR: https://github.com/remla25-team18/model-training/pull/11
