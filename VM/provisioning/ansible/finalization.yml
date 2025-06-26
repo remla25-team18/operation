@@ -76,3 +76,31 @@
           --key=/vagrant/tls/tls.key
       args:
         executable: /bin/bash
+
+    # Other tasks
+    - name: Ensure team18-tls secret exists (recreate if needed)
+      shell: |
+        if kubectl get secret team18-tls &>/dev/null; then
+          kubectl delete secret team18-tls
+        fi
+        kubectl create secret tls team18-tls \
+          --cert=/vagrant/tls/tls.crt \
+          --key=/vagrant/tls/tls.key
+      args:
+        executable: /bin/bash
+
+    # Enabling Prometheus
+    - name: Add Prometheus Community Helm repo
+      ansible.builtin.shell: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+
+    - name: Update Helm repos
+      ansible.builtin.shell: helm repo update
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+
+    - name: Install kube-prometheus-stack (includes Prometheus Operator)
+      ansible.builtin.shell: helm install prometheus-operator prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
