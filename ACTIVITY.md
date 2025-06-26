@@ -187,15 +187,15 @@ Approved PR: https://github.com/remla25-team18/app/pull/11
 # Week 8:
 -- Lászlo: --  
 
-Created PR: 
+Created PR: https://github.com/remla25-team18/model-training/pull/11
 
-Approved PR: 
+Approved PR: https://github.com/remla25-team18/operation/pull/33
 
 -- Lemon: --  
 
-Created PR: 
+Created PR: https://github.com/remla25-team18/operation/pull/33
 
-Approved PR: 
+Approved PR: https://github.com/remla25-team18/operation/pull/36
 
 -- Madalena: --  
 
