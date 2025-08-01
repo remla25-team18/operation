@@ -286,6 +286,11 @@ Skip to "App Monitoring (Prometheus + Grafana)" section.
 Now, you can deploy the application using Helm. Continue in the VM terminal:
 
 ```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install prometheus prometheus-community/kube-prometheus-stack \
+  --namespace monitoring \
+  --create-namespace
 helm install team18 ./helm/
 ```
 
